@@ -33,6 +33,7 @@ package org.egov.stms.transactions.repository;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.demand.model.EgDemand;
 import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -79,4 +80,7 @@ public interface SewerageApplicationDetailsRepository extends JpaRepository<Sewe
             @Param("propertyIdentifier") String propertyIdentifier);
 
     SewerageApplicationDetails findByApplicationNumberOrConnection_DhscNumber(String applicationNumber, String dhscNumber);
+   
+    @Query("select scd from SewerageApplicationDetails scd where scd.connection.status not in ('INACTIVE') and scd.connection.demand.id =:demdId")
+    SewerageApplicationDetails getSewerageConnectionDetailsByDemandId( @Param("demdId") Long demand);
 }

@@ -134,7 +134,7 @@ public class SewerageApplicationDetailsService {
     private SewerageDemandService sewerageDemandService;
     
     @Autowired
-    @Qualifier("applicationWorkflowCustomDefaultImpl")
+    @Qualifier("seweargeApplicationWorkflowCustomDefaultImpl")
     private ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl;
     
     
@@ -219,6 +219,7 @@ public class SewerageApplicationDetailsService {
         return sewerageApplicationDetailsRepository.getSewerageConnectionDetailsByPropertyID(propertyIdentifier);
     }
 
+    
     public String checkValidPropertyAssessmentNumber(final String asessmentNumber) {
         String errorMessage = "";
         final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(asessmentNumber,
@@ -442,6 +443,12 @@ public class SewerageApplicationDetailsService {
         return balance;
     }
 
+    public SewerageApplicationDetails getSewerageConnectionDetailsByDemand(final EgDemand demand) {
+        if (demand != null)
+            return sewerageApplicationDetailsRepository.getSewerageConnectionDetailsByDemandId(demand.getId());
+        return null;
+    }
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }

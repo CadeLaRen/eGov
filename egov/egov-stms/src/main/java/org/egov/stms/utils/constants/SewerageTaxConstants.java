@@ -147,4 +147,19 @@ public class SewerageTaxConstants {
         }
     };
     public static final String FEES_ESTIMATIONCHARGES_CODE = "ESTIMATIONCHARGE";
+    public static final String APPLICATION_STATUS_COLLECTINSPECTIONFEE = "COLLECTINSPECTIONFEE";
+    public static final String SEWAREGE_FUCNTION_CODE = "SEWERAGE_FUNCTION_CODE";
+    public static final String APPCONFIG_COLLECT_INSPECTIONFEE = "SEWERAGE_COLLECTINSPECTION_FEE";
+
+    public static final String COLL_RECEIPTDETAIL_DESC_PREFIX = "Collection";
+    public static final String BILL_TYPE_AUTO = "AUTO";
+    public static final String STRING_DEPARTMENT_CODE = "REV";
+    public static final String STRING_SERVICE_CODE = "SWT";
+    public static final String EST_STRING_SERVICE_CODE = "SWT-EST";
+    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
+    public static final String DEFAULT_FUND_SRC_CODE = "01";
+    public static final String DEFAULT_FUND_CODE = "01";
+    public static final String DISPLAY_MESSAGE = "Sewerage Tax Collection";
+        
+        
 }

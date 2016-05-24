@@ -62,6 +62,8 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -123,7 +125,8 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     @Autowired
     protected AssignmentService assignmentService;
 
-    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     @Autowired
     private PropertyExternalService propertyExternalService;
     
@@ -174,9 +177,11 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             final BindingResult errors, @RequestParam("files") final MultipartFile[] files) {
 
         validatePropertyID(sewerageApplicationDetails, resultBinder);
-        if (sewerageApplicationDetails.getState() == null)
-            sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                    SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));
+        
+       
+        /**
+         * If inspection fee required to be collected, then change status to fee collection pending.
+         */
         if (LOG.isDebugEnabled())
             LOG.error("Model Level Validation occurs = " + resultBinder);
 
@@ -194,6 +199,20 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
             return "newconnection-form";
         }
+        
+        final AppConfigValues inspectionFeeCollectionRqd = appConfigValuesService.getConfigValuesByModuleAndKey(
+                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.APPCONFIG_COLLECT_INSPECTIONFEE).get(0);
+
+        if (sewerageApplicationDetails.getState() == null) {
+            if (inspectionFeeCollectionRqd != null && !inspectionFeeCollectionRqd.equals("YES")) {
+                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                        SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));
+            } else {
+                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                        SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE, SewerageTaxConstants.MODULETYPE));
+            }
+        }
+        
 
         final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
         Iterator<FileStoreMapper> fsIterator = null;
@@ -211,7 +230,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
-//TODO: TEMPORARILY ADDED FEE AS 500.
+        //TODO: TEMPORARILY ADDED FEE AS 500.
         SewerageConnectionFee connectionFees= new SewerageConnectionFee();
         connectionFees.setAmount(500);
         connectionFees.setFeesDetail(feesDetailMasterService.findByCodeAndIsActive(SewerageTaxConstants.FEE_INSPECTIONCHARGE, true));
