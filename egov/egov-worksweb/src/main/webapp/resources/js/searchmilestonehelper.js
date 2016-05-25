@@ -91,17 +91,32 @@ $(document).ready(function(){
 });
 
 jQuery('#btnsearch').click(function(e) {
-	callAjaxSearch();
+	var fromDate = '';
+	var toDate = '';
+	if ($('#milestoneFromDate').val() != "") {
+		fromDate = $('#milestoneFromDate').data('datepicker').date;
+	}
+	if ($('#milestoneToDate').val() != "") {
+		toDate = $('#milestoneToDate').data('datepicker').date;
+	}
+	var flag = true;
+	if (toDate != '' && fromDate != '') {
+		if (fromDate > toDate) {
+			flag = false;
+			bootbox.alert('Milestone Created To Date should be greater than Milestone Created From Date');
+		}
+	}
+	if(flag)
+		callAjaxSearch();
 });
 
-function getFormData($form) {
+function getFormDataJson($form) {
 	var unindexed_array = $form.serializeArray();
 	var indexed_array = {};
 
 	$.map(unindexed_array, function(n, i) {
 		indexed_array[n['name']] = n['value'];
 	});
-
 	return indexed_array;
 }
 
@@ -113,8 +128,7 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/egworks/milestone/ajax-search",
 					type : "POST",
-					"data" : getFormData(jQuery('form')),
-					contentType: "application/json"
+					data : getFormDataJson(jQuery('#searchRequestMilestone'))
 				},
 				"fnRowCallback" : function(row, data, index) {
 					$('td:eq(0)',row).html('<input type="radio" name="selectCheckbox" value="'+ data.id +'"/>');
@@ -134,6 +148,7 @@ function callAjaxSearch() {
 				},
 				"bPaginate": false,
 				"bDestroy" : true,
+				'bAutoWidth': false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",

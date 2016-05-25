@@ -82,6 +82,7 @@ import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.Address;
@@ -91,7 +92,6 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
@@ -156,6 +156,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
     private String ulbCode;
     private RevisionPetitionService revisionPetitionService;
     private String signedFileStoreId;
+    private boolean digitalSignEnabled;
 
     @Autowired
     private DesignationService designationService;
@@ -184,12 +185,16 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         return null;
     }
 
+    public void prepare() {
+        digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
+    }
+
     /**
      * @return
      */
     @Action(value = "/notice/propertyTaxNotice-generateBulkNotice")
     public String generateBulkNotice() {
-        setUlbCode(EgovThreadLocals.getCityCode());
+        setUlbCode(ApplicationThreadLocals.getCityCode());
         noticeType = NOTICE_TYPE_SPECIAL_NOTICE;
         actionType = WFLOW_ACTION_STEP_SIGN;
         final String entries[] = basicPropertyIds.split(",");
@@ -292,7 +297,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     @Action(value = "/notice/propertyTaxNotice-generateNotice")
     public String generateNotice() {
-        setUlbCode(EgovThreadLocals.getCityCode());
+        setUlbCode(ApplicationThreadLocals.getCityCode());
         final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService().findByNamedQuery(
                 QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
         property = (PropertyImpl) basicProperty.getProperty();
@@ -401,7 +406,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         ReportRequest reportInput = null;
         final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService
                 .getDesignationByName(COMMISSIONER_DESGN).getId());
-        reportParams.put("userId", !users.isEmpty() ? users.get(0).getId() : 0);
+        reportParams.put("userSignature", (!users.isEmpty() && users.get(0).getSignature() != null) ? new ByteArrayInputStream(users.get(0).getSignature()) : null);
         if (NOTICE_TYPE_SPECIAL_NOTICE.equals(noticeType)) {
             final HttpServletRequest request = ServletActionContext.getRequest();
             final String url = WebUtils.extractRequestDomainURL(request, false);
@@ -739,6 +744,14 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
     public void setSignedFileStoreId(String signedFileStoreId) {
         this.signedFileStoreId = signedFileStoreId;
+    }
+
+    public boolean isDigitalSignEnabled() {
+        return digitalSignEnabled;
+    }
+
+    public void setDigitalSignEnabled(boolean digitalSignEnabled) {
+        this.digitalSignEnabled = digitalSignEnabled;
     }
 
 }

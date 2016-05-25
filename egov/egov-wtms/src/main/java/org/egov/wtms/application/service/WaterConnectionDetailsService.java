@@ -62,7 +62,7 @@ import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -239,7 +239,7 @@ public class WaterConnectionDetailsService {
                 .save(waterConnectionDetails);
         final User meesevaUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
         if (meesevaUser.getUsername().equals(WaterTaxConstants.USERNAME_MEESEVA)) {
-            EgovThreadLocals.setUserId(meesevaUser.getId());
+            ApplicationThreadLocals.setUserId(meesevaUser.getId());
             savedWaterConnectionDetails.setCreatedBy(meesevaUser);
         }
         if (LOG.isDebugEnabled())
@@ -539,7 +539,7 @@ public class WaterConnectionDetailsService {
 
                 if (waterConnectionDetails.getConnection().getConsumerCode() == null)
                     waterConnectionDetails.getConnection().setConsumerCode(
-                            waterTaxNumberGenerator.generateConsumerNumber());
+                            waterTaxNumberGenerator.getNextConsumerNumber());
 
                 waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                         WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING, WaterTaxConstants.MODULETYPE));
@@ -959,7 +959,7 @@ public class WaterConnectionDetailsService {
         final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         BigDecimal balance = BigDecimal.ZERO;
         if (currentDemand != null) {
-            final List<Object> instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);
+            final List<Object> instVsAmt = connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand,waterConnectionDetails);
             for (final Object object : instVsAmt) {
                 final Object[] ddObject = (Object[]) object;
                 final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);

@@ -55,7 +55,7 @@
 
 </script>
 </head>
-<body onload="onLoadTask();">
+<body >
 	<br>
 	<s:form action="payment" theme="simple">
 		<s:token />
@@ -506,6 +506,11 @@
 			</div>
 
 			<script>
+			jQuery(document).ready(function() {
+				if(document.getElementById('approverDepartment'))
+					document.getElementById('approverDepartment').value = "-1";
+				});
+			 
 		function back(){
 			window.location = "/EGF/payment/payment-beforeSearch.action?salaryType";
 			return true;
@@ -530,11 +535,7 @@
 			else
 				document.getElementById('hiddenText').value=obj.value;
 		}
-		function onLoadTask()
-		{
-			if(document.getElementById('approverDepartment'))
-				document.getElementById('approverDepartment').value = "-1";
-			}
+		
 		function calcGrandTotal(obj)
 		{
 			var vBillListSize = document.getElementById('billListSize').value;
@@ -668,7 +669,7 @@
 				}
 			</s:if>
 			if(!balanceCheck()){
-				 var msg = confirm("Insuffiecient Bank Balance. Do you want to process ?");
+				 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
 				 if (msg == true) {
 					 document.forms[0].action='${pageContext.request.contextPath}/payment/payment-create.action';
 					return true;

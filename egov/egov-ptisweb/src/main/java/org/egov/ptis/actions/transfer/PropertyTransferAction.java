@@ -96,7 +96,7 @@ import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
@@ -118,6 +118,7 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -189,6 +190,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Autowired
     private NoticeService noticeService;
 
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
     // Model and View data
     private Long mutationId;
     private String assessmentNo;
@@ -226,6 +230,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private Map<String, String> guardianRelationMap;
     private List<Hashtable<String, Object>> historyMap = new ArrayList<Hashtable<String, Object>>();
     private String actionType;
+    private boolean digitalSignEnabled;
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -450,7 +455,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @SkipValidation
     @Action(value = "/printNotice")
     public String printNotice() {
-        setUlbCode(EgovThreadLocals.getCityCode());
+        setUlbCode(ApplicationThreadLocals.getCityCode());
         final HttpServletRequest request = ServletActionContext.getRequest();
         final String url = WebUtils.extractRequestDomainURL(request, false);
         final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
@@ -540,6 +545,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             addDropdownData("MutationReason", transferOwnerService.getPropertyTransferReasons());
             setGuardianRelationMap(GUARDIAN_RELATION);
         }
+        digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
     }
 
     @Override
@@ -1029,6 +1035,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
     public void setEnableApproverDetails(boolean enableApproverDetails) {
         this.enableApproverDetails = enableApproverDetails;
+    }
+
+    public boolean isDigitalSignEnabled() {
+        return digitalSignEnabled;
+    }
+
+    public void setDigitalSignEnabled(boolean digitalSignEnabled) {
+        this.digitalSignEnabled = digitalSignEnabled;
     }
 
 }

@@ -96,6 +96,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private static final String EGOV_ONLINE_AMOUNT = "EGOV_ONLINE_AMOUNT";
     private static final String EGOV_BANK = "EGOV_BANK";
     private static final String EGOV_BANK_ACCOUNT = "EGOV_BANK_ACCOUNT";
+    private static final String EGOV_REMITTANCE_VOUCHER = "EGOV_REMITTANCE_VOUCHER";
 
     private static final String PRINT_BANK_CHALLAN_TEMPLATE = "collection_remittance_bankchallan_report";
     private final Map<String, Object> critParams = new HashMap<String, Object>(0);
@@ -131,6 +132,8 @@ public class RemittanceStatementReportAction extends ReportFormAction {
                 persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUND));
         critParams.put(EGOV_FROM_DATE, new Date());
         critParams.put(EGOV_TO_DATE, new Date());
+        setReportParam(EGOV_FROM_DATE, new Date());
+        setReportParam(EGOV_TO_DATE, new Date());
         addDropdownData("bankList", Collections.EMPTY_LIST);
         addDropdownData("bankAccountList", Collections.EMPTY_LIST);
         final User user = collectionsUtil.getLoggedInUser();
@@ -181,6 +184,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         return REPORT;
     }
 
+    @SuppressWarnings("unchecked")
     @Action(value = "/reports/remittanceStatementReport-printBankChallan")
     public String printBankChallan() {
         critParams.put(EGOV_CASH_AMOUNT, totalCashAmount);
@@ -190,6 +194,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         critParams.put(EGOV_BANK_ACCOUNT, bankAccount);
         final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
         bankRemittanceList = (List<CollectionBankRemittanceReport>) getSession().get("REMITTANCE_LIST");
+        critParams.put(EGOV_REMITTANCE_VOUCHER, bankRemittanceList.isEmpty()?"":bankRemittanceList.get(0).getVoucherNumber());
         collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
         final ReportRequest reportInput = new ReportRequest(PRINT_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);
         final ReportOutput reportOutput = reportService.createReport(reportInput);

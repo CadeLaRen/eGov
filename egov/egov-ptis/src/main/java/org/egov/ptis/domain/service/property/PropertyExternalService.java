@@ -68,7 +68,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
@@ -136,6 +136,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_INACTIVE_ERR
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 
 public class PropertyExternalService {
+    private static final String ASSESSMENT = "Assessment";
     public static final Integer FLAG_MOBILE_EMAIL = 0;
     public static final Integer FLAG_TAX_DETAILS = 1;
     public static final Integer FLAG_FULL_DETAILS = 2;
@@ -391,6 +392,28 @@ public class PropertyExternalService {
         }
         return propertyTaxDetails;
     }
+    
+    public List<PropertyTaxDetails> getPropertyTaxDetails(final String assessmentNo, final String ownerName,
+            final String mobileNumber) {
+        final List<BasicProperty> basicProperties = basicPropertyDAO.getBasicPropertiesForTaxDetails(assessmentNo, ownerName,
+                mobileNumber);
+        List<PropertyTaxDetails> propTxDetailsList = new ArrayList<PropertyTaxDetails>();
+        if (null != basicProperties && !basicProperties.isEmpty()) {
+            for (final BasicProperty basicProperty : basicProperties) {
+                final PropertyTaxDetails propertyTaxDetails = getPropertyTaxDetails(basicProperty);
+                propTxDetailsList.add(propertyTaxDetails);
+            }
+        } else {
+            PropertyTaxDetails propertyTaxDetails = new PropertyTaxDetails();
+            final ErrorDetails errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_CODE);
+            errorDetails.setErrorMessage(ASSESSMENT
+                    + PropertyTaxConstants.PROPERTY_NOT_EXIST_ERR_MSG_SUFFIX);
+            propertyTaxDetails.setErrorDetails(errorDetails);
+            propTxDetailsList.add(propertyTaxDetails);
+        }
+        return propTxDetailsList;
+    }
 
     public List<PropertyTaxDetails> getPropertyTaxDetails(final String circleName, final String zoneName,
             final String wardName, final String blockName, final String ownerName, final String doorNo,
@@ -560,7 +583,7 @@ public class PropertyExternalService {
                 .getAssessmentNo());
         propertyTaxBillable.setBasicProperty(basicProperty);
         propertyTaxBillable.setUserId(2L);
-        EgovThreadLocals.setUserId(2L);
+        ApplicationThreadLocals.setUserId(2L);
         propertyTaxBillable.setReferenceNumber(propertyTaxNumberGenerator.generateBillNumber(basicProperty
                 .getPropertyID().getWard().getBoundaryNum().toString()));
         // propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
@@ -1694,7 +1717,7 @@ public class PropertyExternalService {
 
     private PropertyImpl transitionWorkFlow(final PropertyImpl property) {
         final DateTime currentDate = new DateTime();
-        final User user = userService.getUserById(EgovThreadLocals.getUserId());
+        final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
         final String approverComments = "Property has been successfully forwarded.";
         final String currentState = "Created";
         final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);

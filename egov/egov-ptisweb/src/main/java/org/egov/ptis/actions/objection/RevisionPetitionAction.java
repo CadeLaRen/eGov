@@ -74,7 +74,7 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -87,7 +87,6 @@ import org.egov.ptis.actions.common.PropertyTaxBaseAction;
 import org.egov.ptis.actions.view.ViewPropertyAction;
 import org.egov.ptis.bean.PropertyNoticeInfo;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -228,6 +227,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     private String fileStoreIds;
     private String ulbCode;
     private Map<String, Object> wfPropTaxDetailsMap;
+    private boolean digitalSignEnabled;
 
     public RevisionPetitionAction() {
 
@@ -305,6 +305,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         populatePropertyTypeCategory();
         setDeviationPercentageMap(DEVIATION_PERCENTAGE);
         setHearingTimingMap(HEARING_TIMINGS);
+        digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
 
     }
 
@@ -793,7 +794,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         final Address ownerAddress = basicProperty.getAddress();
         BigDecimal totalTax = BigDecimal.ZERO;
         BigDecimal propertyTax = BigDecimal.ZERO;
-        
+
         if (basicProperty.getPropertyOwnerInfo().size() > 1)
         	infoBean.setOwnerName(basicProperty.getFullOwnerName().concat(" and others"));
         else
@@ -930,8 +931,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         Position position = null;
         User user = null;
 
-        position = eisCommonService.getPositionByUserId(EgovThreadLocals.getUserId());
-        user = userService.getUserById(EgovThreadLocals.getUserId());
+        position = eisCommonService.getPositionByUserId(ApplicationThreadLocals.getUserId());
+        user = userService.getUserById(ApplicationThreadLocals.getUserId());
 
         /*
          * Change workflow object as Active property and Active one to history.
@@ -987,7 +988,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
     @ValidationErrorPage(value = "view")
     @Action(value = "/revPetition/revPetition-generateSpecialNotice")
     public String generateSpecialNotice() {
-        setUlbCode(EgovThreadLocals.getCityCode());
+        setUlbCode(ApplicationThreadLocals.getCityCode());
         if (PREVIEW.equalsIgnoreCase(actionType) || WFLOW_ACTION_STEP_SIGN.equalsIgnoreCase(actionType)) {
             objection = revisionPetitionService.findById(Long.valueOf(parameters.get("objectionId")[0]), false);
         }
@@ -1895,7 +1896,16 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
         this.historyMap = historyMap;
     }
 
-	public Map<String, Object> getWfPropTaxDetailsMap() {
-		return wfPropTaxDetailsMap;
-	}
+    public Map<String, Object> getWfPropTaxDetailsMap() {
+        return wfPropTaxDetailsMap;
+    }
+
+    public boolean isDigitalSignEnabled() {
+        return digitalSignEnabled;
+    }
+
+    public void setDigitalSignEnabled(boolean digitalSignEnabled) {
+        this.digitalSignEnabled = digitalSignEnabled;
+    }
+    
 }

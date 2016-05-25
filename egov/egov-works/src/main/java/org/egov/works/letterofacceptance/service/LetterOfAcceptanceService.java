@@ -408,7 +408,7 @@ public class LetterOfAcceptanceService {
     
     private void buildWhereClause(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final StringBuilder queryStr) {
         
-        queryStr.append("select distinct wo from WorkOrder wo where wo.egwStatus.moduletype = :moduleType and wo.egwStatus.code = :status ");
+        queryStr.append("select distinct wo from WorkOrder wo where wo.egwStatus.moduletype = :moduleType and wo.egwStatus.code = :status and not exists (select ms.workOrderEstimate.workOrder.id from Milestone ms where ms.workOrderEstimate.workOrder.id = wo.id and upper(wo.egwStatus.code)  != upper(:workorderstatus) )");
         queryStr.append(" and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.executingDepartment.id = :departmentName)");
         
         if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
@@ -439,6 +439,7 @@ public class LetterOfAcceptanceService {
 
             qry.setParameter("status", WorksConstants.APPROVED);
             qry.setParameter("moduleType", WorksConstants.WORKORDER);
+            qry.setParameter("workorderstatus", WorksConstants.CANCELLED_STATUS);
         if (searchRequestLetterOfAcceptance != null ) {
             qry.setParameter("departmentName", searchRequestLetterOfAcceptance.getDepartmentName());
         if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
@@ -628,4 +629,16 @@ public class LetterOfAcceptanceService {
         workOrder.setStatus(WorksConstants.CANCELLED.toString());
         return letterOfAcceptanceRepository.save(workOrder);
     }
+    
+    public List<WorkOrder> findWorkOrderByEstimateNumberAndEgwStatus(final String estimateNumber) {
+        return letterOfAcceptanceRepository.findByEstimateNumberAndEgwStatus_codeEquals(estimateNumber, WorksConstants.APPROVED);
+    }
+    
+    public List<String> getEstimateNumbersToSearchLOAToCancel(final Long lineEstimateId) {
+        final List<String> estimateNumbers = letterOfAcceptanceRepository
+                .findEstimateNumbersToSearchLOAToCancel(lineEstimateId,
+                        WorksConstants.APPROVED.toString());
+        return estimateNumbers;
+    }
+    
 }

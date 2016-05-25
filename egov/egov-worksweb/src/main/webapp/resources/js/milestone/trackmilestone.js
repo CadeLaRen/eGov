@@ -40,104 +40,6 @@
 
 $detailsRowCount = $('#detailsSize').val();
 
-//function initializeDatePicker()
-//{
-//	$('.datepicker').datepicker().off('changeDate');
-//	$(".scheduleEndDate").datepicker({
-//		format: "dd/mm/yyyy",
-//		autoclose:true
-//	}).on('changeDate', function (ev) {
-//		$(this).datepicker('hide');
-//		if(!validateScheduleEndDate())
-//		{
-//			$(this).val('');
-//			console.log('failure!');
-//		}
-//	});
-//	$('.scheduleStartDate').datepicker({
-//		format: "dd/mm/yyyy",
-//		autoclose:true
-//	}).on('changeDate', function (ev) {
-//		$(this).datepicker('hide');
-//		if(!validateScheduleStartDate())
-//		{
-//			$(this).val('');
-//			console.log('failure!');
-//		}
-//	});
-//	$('.datepicker').datepicker('update');
-//	try { $(".datepicker").inputmask(); }catch(e){}	
-//}
-//
-//function validateScheduleStartDate()
-//{
-//	var isValidationSuccess=true;
-//	var startDateCollection=[];
-//	$('.scheduleStartDate').each(function(i){
-//		var textbox=$(this);
-//		var currentDate=0;
-//		if($(this).val())
-//		{
-//			currentDate=$(this).data('datepicker').date;	
-//		}
-//		if(i===0)
-//		{
-//			if(currentDate<workOrderDate)
-//			{
-//				isValidationSuccess=false;
-//
-//				bootbox.alert("Scheduled start date cannot be less than the workorder date", function(){ 
-//					setTimeout(function(){ textbox.focus(); }, 400);
-//				});
-//				
-//				return false;	
-//			}
-//			startDateCollection.push(currentDate);
-//		}
-//		else {
-//			var isExit=false;
-//			$.each(startDateCollection, function(index, dateObj){
-//				if(currentDate instanceof Date){
-//					if(dateObj.getTime() > currentDate.getTime())
-//					{
-//						isValidationSuccess=false;
-//						bootbox.alert("Scheduled start date cannot be Less than the start date of previous stage", function(){ 
-//							setTimeout(function(){ textbox.focus(); }, 400);
-//						});
-//						isExit=true;
-//						return false;
-//					}
-//					startDateCollection.push(currentDate);
-//				}
-//			});
-//			if(isExit)
-//			{
-//				return false;
-//			}
-//		}
-//	});
-//	return isValidationSuccess;
-//}
-//
-//function validateScheduleEndDate()
-//{
-//	var isSuccess=true;
-//	$('.scheduleEndDate').each(function(i){
-//		var idx=$(this).data('idx');
-//		var scheduleStartDate=$('.scheduleStartDate[data-idx="'+ idx +'"]').data('datepicker').date;
-//		var scheduleEndDate=$(this).data('datepicker').date;
-//		if(scheduleStartDate>scheduleEndDate)
-//		{
-//			isSuccess=false;
-//			bootbox.alert('Scheduled end date cannot be less than the scheduled start date', function(){ 
-//				setTimeout(function(){ textbox.focus(); }, 400);
-//			});
-//			return false;
-//		}
-//	});
-//	return isSuccess;
-//}
-
 function validateCompletedPercentage(percentage) {
     var valid = /^[1-9](\d{0,9})?$/.test(percentage.value);
     var val = percentage.value;
@@ -191,34 +93,50 @@ function getFormData($form) {
 }
 
 $('#save').click(function() {
-	if($('#trackMilestoneForm').valid()) {
-		var milestoneId = $('#id').val();
-		$('.loader-class').modal('show', {backdrop: 'static'});
-		$.ajax({
-			type: "POST",
-			url: "/egworks/milestone/track/" + milestoneId,
-			cache: true,
-			dataType: "json",
-			"data": getFormData(jQuery('form')),
-			success: function (message) {
-				$('#trackMilestoneDiv').remove();
-				$('#successMessage').html(message);
-				$('#successPage').show();
-			},
-			error: function (error) {
-				console.log(error.responseText.slice(0,-2));
-				var json = $.parseJSON(error.responseText.slice(0,-2));
-				
-				$.each(json, function(key, value){
-					$('#errorMessage').append(value + '</br>');
-				});
-				$('#errorMessage').show();
+	var totalRows = $("#tblmilestone tbody tr").length;
+	var flag = false;
+	for(var i = 0; i < totalRows; i++) {
+		var scheduleStartDate = $('#hiddenScheduleStartDate_' + i).val();
+		var completionDate = $('#completionDate_' + i).data('datepicker').date;
+		if($('#completionDate_' + i).val() != "") {
+			if(completionDate.getTime() < new Date(scheduleStartDate).getTime()) {
+				$('#completionDate_' + i).val("");
+				flag = true;
 			}
-		});
-		$('.loader-class').modal('hide');
+		}
 	}
-	else
-		return false;
+	if(flag)
+		bootbox.alert('Completion Date should be greater than Schedule Start Date');
+	else {
+		if($('#trackMilestoneForm').valid()) {
+			var milestoneId = $('#id').val();
+			$('.loader-class').modal('show', {backdrop: 'static'});
+			$.ajax({
+				type: "POST",
+				url: "/egworks/milestone/track/" + milestoneId,
+				cache: true,
+				dataType: "json",
+				"data": getFormData(jQuery('form')),
+				success: function (message) {
+					$('#trackMilestoneDiv').remove();
+					$('#successMessage').html(message);
+					$('#successPage').show();
+				},
+				error: function (error) {
+					console.log(error.responseText.slice(0,-2));
+					var json = $.parseJSON(error.responseText.slice(0,-2));
+					
+					$.each(json, function(key, value){
+						$('#errorMessage').append(value + '</br>');
+					});
+					$('#errorMessage').show();
+				}
+			});
+			$('.loader-class').modal('hide');
+		}
+		else
+			return false;
+	}
 	
 	return false;
 });
@@ -234,8 +152,17 @@ function makeCompletionMandatory(currentStatus) {
 		$('#completedPercentage_' + rowcount).val(0);
 		$('#completedPercentage_' + rowcount).attr('readonly', 'true');
 		$('#completedPercentage_' + rowcount).removeAttr('required');
+		$('#completionDate_' + rowcount).val("");
+		$('#reasonForDelay_' + rowcount).removeAttr('required');
+		$('#reasonForDelay_' + rowcount).val("");
+		$('#reasonForDelay_' + rowcount).attr('readonly', 'true');
+		$('#completionDate_' + rowcount).removeAttr('required');
 	} else {
 		$('#completedPercentage_' + rowcount).removeAttr('readonly');
+		$('#completionDate_' + rowcount).val("");
+		$('#reasonForDelay_' + rowcount).removeAttr('required');
+		$('#reasonForDelay_' + rowcount).val("");
+		$('#reasonForDelay_' + rowcount).attr('readonly', 'true');
 		$('#completionDate_' + rowcount).removeAttr('required');
 		$('#completedPercentage_' + rowcount).attr('required', 'required');
 	}

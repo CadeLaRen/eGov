@@ -91,7 +91,23 @@ $(document).ready(function(){
 });
 
 jQuery('#btnsearch').click(function(e) {
-	callAjaxSearch();
+	var fromDate = '';
+	var toDate = '';
+	if($('#milestoneFromDate').val() != "") {
+		fromDate = $('#milestoneFromDate').data('datepicker').date;
+	}
+	if($('#milestoneToDate').val() != "") {
+		toDate = $('#milestoneToDate').data('datepicker').date;
+	}
+	var flag = true; 
+	if(toDate != '' && fromDate != '') {
+		if(fromDate > toDate) {
+			flag = false;
+			bootbox.alert('Milestone To Date should be greater than Milestone From Date');
+		}
+	}
+	if(flag)
+		callAjaxSearch();
 });
 
 function getFormData($form) {
@@ -111,7 +127,7 @@ function callAjaxSearch() {
 	reportdatatable = drillDowntableContainer
 			.dataTable({
 				ajax : {
-					url : "/egworks/milestone/ajax-search",
+					url : "/egworks/milestone/ajax-searchmilestoneforview",
 					type : "POST",
 					"data" : getFormData(jQuery('form'))
 				},
@@ -132,6 +148,7 @@ function callAjaxSearch() {
 				},
 				"bPaginate": false,
 				"bDestroy" : true,
+				'bAutoWidth': false,
 				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",

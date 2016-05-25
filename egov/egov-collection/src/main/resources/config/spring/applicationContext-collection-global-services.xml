@@ -70,6 +70,13 @@
 		<property name="contraWorkflowService" ref="contraWorkflowService" /> -->
 	</bean>
 	
+	<bean id="collectionRemittanceService" class="org.egov.collection.service.CollectionRemittanceServiceImpl" scope="prototype">
+		<property name="collectionsUtil" ref="collectionsUtil" />
+		<property name="financialsUtil" ref="financialsUtil" />
+		<property name="receiptHeaderService" ref="receiptHeaderService" />
+		<property name="persistenceService" ref="persistenceService" />
+	</bean>
+	
 	<bean id="collectionCommon" class="org.egov.collection.utils.CollectionCommon" scope="prototype">
 		<property name="persistenceService" ref="persistenceService" />
 		<!-- <property name="commonsServiceImpl" ref="commonsServiceImpl" /> -->
@@ -136,11 +143,7 @@
 	</bean>
 	
 	<bean id="bankAccountMappingService" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.infstr.models.BankAccountServiceMap" />
-	</bean>
-	
-	<bean id="bankAccountServiceMap" parent="persistenceService" scope="prototype">
-		<property name="type" value="org.egov.infstr.models.BankAccountServiceMap" />
+		<property name="type" value="org.egov.commons.entity.BankAccountServiceMap" />
 	</bean>
 	
 	<bean id="xmlHandler" class="org.egov.collection.handler.BillCollectXmlHandler">

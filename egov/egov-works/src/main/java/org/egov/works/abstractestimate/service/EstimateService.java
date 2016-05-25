@@ -104,7 +104,8 @@ public class EstimateService {
         abstractEstimate.setDescription(lineEstimateDetails.getNameOfWork());
         abstractEstimate.setWard(lineEstimateDetails.getLineEstimate().getWard());
         abstractEstimate.setNatureOfWork(lineEstimateDetails.getLineEstimate().getNatureOfWork());
-        abstractEstimate.setLocation(lineEstimateDetails.getLineEstimate().getLocation().getName());
+        if(lineEstimateDetails.getLineEstimate().getLocation() != null)
+            abstractEstimate.setLocation(lineEstimateDetails.getLineEstimate().getLocation().getName());
         abstractEstimate.setParentCategory(lineEstimateDetails.getLineEstimate().getTypeOfWork());
         abstractEstimate.setCategory(lineEstimateDetails.getLineEstimate().getSubTypeOfWork());
         abstractEstimate.setExecutingDepartment(lineEstimateDetails.getLineEstimate().getExecutingDepartment());
@@ -165,6 +166,11 @@ public class EstimateService {
 
     public AbstractEstimate getAbstractEstimateByEstimateNumberAndStatus(final String estimateNumber) {
         return abstractEstimateRepository.findByLineEstimateDetails_EstimateNumberAndEgwStatus_codeEquals(estimateNumber,
+                AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
+    }
+    
+    public AbstractEstimate getAbstractEstimateByLineEstimateDetailsForCancelLineEstimate(final Long id) {
+        return abstractEstimateRepository.findByLineEstimateDetails_IdAndEgwStatus_codeEquals(id,
                 AbstractEstimate.EstimateStatus.ADMIN_SANCTIONED.toString());
     }
 

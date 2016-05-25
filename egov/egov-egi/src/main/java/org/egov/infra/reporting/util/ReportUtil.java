@@ -40,7 +40,17 @@
 
 package org.egov.infra.reporting.util;
 
-import java.io.ByteArrayInputStream;
+import org.apache.struts2.ServletActionContext;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.NumberUtil;
+import org.egov.infra.web.utils.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -50,20 +60,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.struts2.ServletActionContext;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.infra.utils.NumberUtil;
-import org.egov.infra.web.utils.WebUtils;
-import org.egov.infstr.utils.HibernateUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides utility methods related to reports
@@ -104,23 +100,6 @@ public final class ReportUtil {
     }
 
     /**
-     * Returns User Signature InputStream
-     *
-     * @param user id
-     *
-     * @return user signature for the given user id
-     */
-    public static InputStream getUserSignature(final Long userId) {
-        final User user = (User) HibernateUtil.getCurrentSession().load(User.class, userId);
-        if (user != null && user.getSignature() != null)
-            return new ByteArrayInputStream(user.getSignature());
-        else {
-            LOGGER.warn("User Signature not found");
-            return null;
-        }
-    }
-
-    /**
      * Returns input stream for given image file. First checks in the custom location (/custom/reports/images/). If not found,
      * tries the product location (/reports/images/)
      *
@@ -132,7 +111,7 @@ public final class ReportUtil {
     }
 
     public static String getCityName() {
-        return EgovThreadLocals.getMunicipalityName();
+        return ApplicationThreadLocals.getMunicipalityName();
     }
 
     /**
