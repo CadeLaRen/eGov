@@ -64,11 +64,11 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -294,7 +294,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         model.addAttribute("currentUserDesgn", currentUserDesgn);
         model.addAttribute("nextDesign", nextDesign);
 
-        model.addAttribute("cityName", EgovThreadLocals.getCityName());
+        model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
         model.addAttribute("mode", "ack");
         setCommonDetails(sewerageApplicationDetails, modelMap, request);
         return new ModelAndView("application-success", "sewerageApplicationDetails", sewerageApplicationDetails);

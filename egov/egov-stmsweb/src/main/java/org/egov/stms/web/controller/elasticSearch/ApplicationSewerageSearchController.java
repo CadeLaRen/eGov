@@ -57,7 +57,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.utils.EgovThreadLocals;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.search.domain.Document;
 import org.egov.search.domain.Page;
@@ -142,7 +142,7 @@ public class ApplicationSewerageSearchController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public List<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageConnSearchRequest searchRequest) {
-        final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         searchRequest.setUlbName(cityWebsite.getName());
         final Sort sort = Sort.by().field(SewerageTaxConstants.CLAUSES_APPLICATION_DATE, SortOrder.DESC);
         final SearchResult searchResult = searchService.search(asList(Index.SEWARAGE.toString()),

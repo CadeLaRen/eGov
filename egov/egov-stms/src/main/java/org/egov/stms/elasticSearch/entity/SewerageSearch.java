@@ -40,18 +40,18 @@
 
 package org.egov.stms.elasticSearch.entity;
 
-import org.egov.infra.search.elastic.Indexable;
-import org.egov.infra.utils.EgovThreadLocals;
-import org.egov.search.domain.Searchable;
-
 import java.util.Date;
+
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.search.elastic.Indexable;
+import org.egov.search.domain.Searchable;
 
 public class SewerageSearch implements Indexable {
 
 	@Override
 	public String getIndexId() {
 		// TODO Auto-generated method stub
-		return EgovThreadLocals.getCityCode() + "-" + applicationNumber;
+		return ApplicationThreadLocals.getCityCode() + "-" + applicationNumber;
 	}
 	
 	@Searchable(name = "consumernumber", group = Searchable.Group.SEARCHABLE)

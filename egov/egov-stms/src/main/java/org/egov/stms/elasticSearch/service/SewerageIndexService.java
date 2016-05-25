@@ -45,8 +45,8 @@ import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.search.elastic.annotation.Indexing;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.elasticSearch.entity.SewerageSearch;
@@ -65,7 +65,7 @@ public class SewerageIndexService {
 	@Indexing(name = Index.SEWARAGE, type = IndexType.SEWARAGESEARCH) 
 	public SewerageSearch createSewarageIndex(final SewerageApplicationDetails sewerageApplicationDetails, final AssessmentDetails assessmentDetails){ 
 		
-		final City cityWebsite = cityService.getCityByURL(EgovThreadLocals.getDomainName());
+		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 		
 		SewerageSearch sewarageSearch = new SewerageSearch(sewerageApplicationDetails.getApplicationNumber(),
 				 cityWebsite.getName(),cityWebsite.getGrade(), sewerageApplicationDetails.getCreatedDate(), cityWebsite.getDistrictName(), cityWebsite.getRegionName(),

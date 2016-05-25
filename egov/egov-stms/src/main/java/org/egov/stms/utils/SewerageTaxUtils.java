@@ -59,8 +59,8 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
@@ -338,7 +338,7 @@ public class SewerageTaxUtils {
     }
 
     public String getCityCode() {
-        return cityService.getCityByURL(EgovThreadLocals.getDomainName()).getCode();
+        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getCode();
     }
     
     //allowing only for CollectionOperator to collect Fees
@@ -346,8 +346,8 @@ public class SewerageTaxUtils {
     public Boolean checkCollectionOperatorRole() {
         Boolean isCSCOperator = false;
         // as per Adoni allowing collection for ULB Operator
-        if (EgovThreadLocals.getUserId() != null) {
-            final User userObj = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null) {
+            final User userObj = userService.getUserById(ApplicationThreadLocals.getUserId());
             if (userObj != null)
                 for (final Role role : userObj.getRoles())
                     if (role != null && (role.getName().contains(SewerageTaxConstants.ROLE_BILLCOLLECTOR) )) {
@@ -360,8 +360,8 @@ public class SewerageTaxUtils {
     
     public Boolean getCitizenUserRole() {
         Boolean citizenrole = Boolean.FALSE;
-        if (EgovThreadLocals.getUserId() != null) {
-            final User currentUser = userService.getUserById(EgovThreadLocals.getUserId());
+        if (ApplicationThreadLocals.getUserId() != null) {
+            final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
             if (currentUser.getRoles().isEmpty() && securityUtils.getCurrentUser().getUsername().equals("anonymous"))
                 citizenrole = Boolean.TRUE;
             for (final Role userrole : currentUser.getRoles())
