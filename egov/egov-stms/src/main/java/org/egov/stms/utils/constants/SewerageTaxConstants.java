@@ -112,9 +112,9 @@ public class SewerageTaxConstants {
     public static final String PREVIEWWORKFLOWACTION = "Preview";
         
     public static final String VIEW = "View";
-    public static final String COLLECTDONATIONCHARHGES = "Collect Donation charges";
+    public static final String COLLECTDONATIONCHARHGES = "Collect Fee";
     public static final String VIEWURL = "/stms/existing/sewerage/view/";
-    public static final  String COLLECTDONATIONCHARHGESURL = "/stms/existing/sewerage/donationcharges/";
+    public static final  String COLLECTDONATIONCHARHGESURL = "/stms/collection/generatebill";
     
     // Elastic Search Constants
     public static final String SEARCHABLE_DHSCNO           = "searchable.dhscnumber";
@@ -154,7 +154,7 @@ public class SewerageTaxConstants {
     public static final String COLL_RECEIPTDETAIL_DESC_PREFIX = "Collection";
     public static final String BILL_TYPE_AUTO = "AUTO";
     public static final String STRING_DEPARTMENT_CODE = "REV";
-    public static final String STRING_SERVICE_CODE = "SWT";
+    public static final String STRING_SERVICE_CODE = "STAX";
     public static final String EST_STRING_SERVICE_CODE = "SWT-EST";
     public static final String DEFAULT_FUNCTIONARY_CODE = "1";
     public static final String DEFAULT_FUND_SRC_CODE = "01";

@@ -151,6 +151,7 @@ public class SewerageBillServiceImpl extends BillServiceInterface {
         String collectXML;
         try {
             collectXML = URLEncoder.encode(super.getBillXML(billObj),"UTF-8");
+            LOGGER.info("collectXML --------------------------> "+collectXML); 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());

@@ -59,6 +59,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.EgovThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -225,7 +226,7 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public Long getUserId() {
-        return userId;
+        return EgovThreadLocals.getUserId() == null ? null : Long.valueOf(EgovThreadLocals.getUserId()); 
     }
 
     @Override

@@ -40,10 +40,11 @@
 
 package org.egov.stms.web.controller.collection;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
@@ -57,20 +58,22 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/collection")
 public class SewerageBillGeneratorController {
-   
+    private String SEWERAGE_BILLNUMBER = "SEQ_SEWERAGEBILL_NUMBER";
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
     private @Autowired SewerageBillServiceImpl sewerageBillServiceImpl;
+    private @Autowired SequenceNumberGenerator sequenceNumberGenerator;
     
     private @Autowired SewerageBillable sewerageBillable;
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
 
-    @RequestMapping(value = "/generatebill/{id}", method = POST)
+    @RequestMapping(value = "/generatebill/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
     public String payTax(@PathVariable final String consumernumber, @PathVariable final String assessmentnumber,
             final Model model, final ModelMap modelMap,
             @ModelAttribute SewerageApplicationDetails sewerageApplicationDetails, final HttpServletRequest request ) {
@@ -80,9 +83,14 @@ public class SewerageBillGeneratorController {
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
         AssessmentDetails assessmentDetails = sewerageThirdPartyServices.getPropertyDetails(sewerageApplicationDetails,
                 assessmentnumber, request);
-              
+        final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(SEWERAGE_BILLNUMBER);
+     
         sewerageBillable.setSewerageApplicationDetails(sewerageApplicationDetails);
         sewerageBillable.setAssessmentDetails(assessmentDetails);
+        sewerageBillable.setReferenceNumber((String.format(
+                "%s%06d", "", referenceNumber)));
+        //todo: check any pending tax ? theN redirect.
+        
         model.addAttribute("collectxml", sewerageBillServiceImpl.getBillXML(sewerageBillable));
 
         return "collecttax-redirection";

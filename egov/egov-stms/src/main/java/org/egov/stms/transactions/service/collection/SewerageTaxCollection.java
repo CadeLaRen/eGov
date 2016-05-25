@@ -258,8 +258,8 @@ public class SewerageTaxCollection extends TaxCollection {
                 && demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().trim()
                 .equalsIgnoreCase(demandMasterReasonDesc)
                         && financialYearDesc != null
-                        && financialYearDesc.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgInstallmentMaster()
-                                .getFinYearRange())) {
+                        && financialYearDesc.equalsIgnoreCase(demandDetail.getEgDemandReason().getEgInstallmentMaster().getDescription()
+                                )) {
                
                     demandDetail.addCollected(recAccInfo.getCrAmount());
                     /*
