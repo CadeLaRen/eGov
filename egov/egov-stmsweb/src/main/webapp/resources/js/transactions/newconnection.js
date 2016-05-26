@@ -45,6 +45,48 @@ $(document).ready(function(){
 		validateSewerageConnection();
 	});
 	
+	$('#noOfClosetsResidential').blur(function(){
+		var propertyType = $('#propertyType').val()
+		var noOfClosetsResidential = $('#noOfClosetsResidential').val()
+		validateClosets(propertyType , noOfClosetsResidential,true);
+	});
+	
+	$('#noOfClosetsNonResidential').blur(function(){
+		var propertyType = $('#propertyType').val()
+		var noOfClosetsNonResidential = $('#noOfClosetsNonResidential').val()
+		validateClosets(propertyType , noOfClosetsNonResidential,false);
+	});
+	
+
+	function validateClosets(propertyType,noOfClosets,flag)
+	{
+			$.ajax({
+				url: "/stms/ajaxconnection/check-closets-exists",      
+				type: "GET",
+				data: {
+					propertyType : propertyType , 
+					noOfClosets : noOfClosets,
+					flag : flag
+				},
+				dataType: "json",
+				success: function (response) { 
+					if(response != '') {
+						bootbox.alert(response);
+						resetClosetDetails();
+					}
+				}, 
+				error: function (response) {
+					
+					bootbox.alert("connection validation failed");
+				}
+			});
+	}
+	
+	function resetClosetDetails() {
+		$('#noOfClosetsResidential').val('');
+		$('#noOfClosetsNonResidential').val('');
+	}
+	
 	function validateSewerageConnection() {
 		propertyID=$('#propertyIdentifier').val()
 		if(propertyID != '') {
@@ -90,6 +132,7 @@ $(document).ready(function(){
 		}		
 	}
 });
+
 
 function loadPropertyDetails() {
 	propertyID=$('#propertyIdentifier').val()

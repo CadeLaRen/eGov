@@ -42,8 +42,6 @@
 
 var tableContainer;
 jQuery(document).ready(function($) {
-	
-	
 	tableContainer = $("#aplicationSearchResults");
 	 document.onkeydown=function(evt){
 		 var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
@@ -83,11 +81,16 @@ $(document).on('change', 'select.actiondropdown', function() {
 });
 
 function callurl(url, consumernumber, ptassessmentno){
-	var url = url + "/" + consumernumber + "/" + ptassessmentno;
+	
+	url=url.replace('{consumerno}', consumernumber);
+	url=url.replace('{assessmentno}', ptassessmentno);
+	
 	$('#sewerageSearchRequestForm').attr('method', 'get');
 	$('#sewerageSearchRequestForm').attr('action', url);
 	window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 }
+
+
 
 
 function submitButton() {

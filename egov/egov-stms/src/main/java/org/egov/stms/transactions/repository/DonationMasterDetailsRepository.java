@@ -47,11 +47,16 @@ import org.egov.stms.masters.entity.enums.PropertyType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface DonationMasterDetailsRepository extends JpaRepository<DonationDetailMaster, Long> {
 
-    @Query("select amount from DonationDetailMaster ddm where ddm.donation.propertyType =:propertyType and ddm.noOfClosets =:noofclosets")
+    @Query("select ddm.amount from DonationDetailMaster ddm where ddm.donation.propertyType =:propertyType and ddm.noOfClosets =:noofclosets and ddm.donation.active = true and (ddm.donation.fromDate  >=(select max(dm.fromDate) from DonationMaster dm)) and ddm.donation.toDate <= current_date")
     BigDecimal getDonationAmount(@Param("noofclosets") Integer noofclosets,
             @Param("propertyType") PropertyType propertyType);
 
+    @Query("select ddm.noOfClosets from DonationDetailMaster ddm where ddm.donation.propertyType =:propertyType and ddm.noOfClosets =:noofclosets and ddm.donation.active = true and (ddm.donation.fromDate  >=(select max(dm.fromDate) from DonationMaster dm)) and ddm.donation.toDate <= current_date")
+    Integer getDonationMasterDetails(@Param("propertyType") PropertyType propertyType,
+            @Param("noofclosets") Integer noofclosets);
 }

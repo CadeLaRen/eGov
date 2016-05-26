@@ -62,8 +62,8 @@
 					      </tr>
 				         </thead>
 					<tbody>
-						
-								<c:forEach items="${sewerageApplicationDetails.fieldInspectionDetails}" var="fid"
+						<c:if test="${sewerageApplicationDetails.fieldInspections != null && sewerageApplicationDetails.fieldInspections.isActive == true}">
+								<c:forEach items="${sewerageApplicationDetails.fieldInspections}" var="fid"
 									varStatus="counter">
 							      <tr class="">
 									<%-- <td class="text-center"><span id="slNo1">${counter.index+1}</span></td> --%>
@@ -85,6 +85,7 @@
 									
 							      </tr>
 					       		</c:forEach>
+					       	</c:if>
 					</tbody>
 				</table>
 		

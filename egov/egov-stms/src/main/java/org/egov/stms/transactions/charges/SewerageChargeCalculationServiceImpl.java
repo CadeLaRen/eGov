@@ -43,6 +43,7 @@ package org.egov.stms.transactions.charges;
 import java.math.BigDecimal;
 
 import org.egov.stms.masters.entity.enums.PropertyType;
+import org.egov.stms.masters.repository.SewerageRatesMasterRepository;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnectionDetail;
 import org.egov.stms.transactions.repository.DonationMasterDetailsRepository;
@@ -55,9 +56,13 @@ public class SewerageChargeCalculationServiceImpl implements SewerageChargeCalcu
     @Autowired
     private DonationMasterDetailsRepository donationMasterDetailsRepository;
 
+    @Autowired
+    private SewerageRatesMasterRepository sewerageRatesMasterRepository;
+
     /**
      * @param sewerageApplicationDetails
-     * @return
+     * @return This will return donation charges based on NoOfClosets and
+     *         Property Type.
      */
     @Override
     public BigDecimal calculateDonationCharges(final SewerageApplicationDetails sewerageApplicationDetails) {
@@ -83,6 +88,47 @@ public class SewerageChargeCalculationServiceImpl implements SewerageChargeCalcu
                         sewerageConnectionDetail.getPropertyType());
             }
         }
-        return amount;
+        return amount != null ? amount : BigDecimal.ZERO;
+    }
+
+    /**
+     * @param sewerageApplicationDetails
+     * @return This will return sewerage charges for monthly based on
+     *         NoOfClosets and Property Type.
+     */
+
+    @Override
+    public BigDecimal calculateSewerageCharges(final SewerageApplicationDetails sewerageApplicationDetails) {
+        Integer noOfClosets;
+        BigDecimal sewerateRate = BigDecimal.ZERO;
+        Double monthlyRateAmount = 0.0;
+        if (sewerageApplicationDetails.getConnection() != null
+                && sewerageApplicationDetails.getConnection().getConnectionDetail() != null) {
+            final SewerageConnectionDetail sewerageConnectionDetail = sewerageApplicationDetails.getConnection()
+                    .getConnectionDetail();
+            if (sewerageConnectionDetail != null
+                    && sewerageConnectionDetail.getPropertyType().equals(PropertyType.MIXED)) {
+                noOfClosets = sewerageConnectionDetail.getNoOfClosetsResidential();
+                monthlyRateAmount = sewerageRatesMasterRepository.getSewerageRates(PropertyType.RESIDENTIAL);
+
+                if (monthlyRateAmount != null)
+                    sewerateRate = BigDecimal.valueOf(noOfClosets * monthlyRateAmount);
+                noOfClosets = sewerageConnectionDetail.getNoOfClosetsNonResidential();
+                monthlyRateAmount = sewerageRatesMasterRepository.getSewerageRates(PropertyType.NON_RESIDENTIAL);
+
+                if (monthlyRateAmount != null)
+                    sewerateRate = sewerateRate.add(BigDecimal.valueOf(noOfClosets * monthlyRateAmount));
+                return sewerateRate;
+            } else {
+                noOfClosets = sewerageConnectionDetail.getPropertyType().equals(PropertyType.RESIDENTIAL) ? sewerageConnectionDetail
+                        .getNoOfClosetsResidential() : sewerageConnectionDetail.getPropertyType().equals(
+                        PropertyType.NON_RESIDENTIAL) ? sewerageConnectionDetail.getNoOfClosetsNonResidential() : 0;
+                monthlyRateAmount = sewerageRatesMasterRepository.getSewerageRates(sewerageConnectionDetail
+                        .getPropertyType());
+                if (monthlyRateAmount != null)
+                    sewerateRate = BigDecimal.valueOf(monthlyRateAmount * noOfClosets);
+            }
+        }
+        return sewerateRate != null ? sewerateRate : BigDecimal.ZERO;
     }
 }

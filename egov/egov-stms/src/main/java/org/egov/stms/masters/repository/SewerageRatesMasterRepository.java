@@ -41,9 +41,12 @@ package org.egov.stms.masters.repository;
 
 import java.util.Date;
 import java.util.List;
+
 import org.egov.stms.masters.entity.SewerageRatesMaster;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -56,4 +59,7 @@ public interface SewerageRatesMasterRepository extends JpaRepository<SewerageRat
 
     SewerageRatesMaster findByPropertyTypeAndActive(PropertyType propertyType,
             boolean active);
+    
+    @Query("select srm.monthlyRate from SewerageRatesMaster srm where srm.propertyType =:propertyType and srm.active = true and (srm.fromDate>=(select max(sm.fromDate) from SewerageRatesMaster sm)) and srm.toDate <= current_date")
+    Double getSewerageRates(@Param("propertyType") PropertyType propertyType);    
 }

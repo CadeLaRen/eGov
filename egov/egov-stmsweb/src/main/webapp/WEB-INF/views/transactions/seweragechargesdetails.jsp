@@ -51,13 +51,12 @@
 				<table class="table table-striped table-bordered" id="connectionFees">
 					<thead>
 					      <tr>
-							<th class="text-center"><spring:message code="lbl.feesdescription" /></th>
-							<th class="text-center"><spring:message code="lbl.feestype" /></th>
+					      	<th class="text-center"><spring:message code="lbl.feestype" /></th>
 							<th class="text-center"><spring:message code="lbl.amount" /></th>
 					      </tr>
 				         </thead>
 					<tbody>
-						
+						  
 								<c:forEach items="${sewerageApplicationDetails.connectionFees}" var="fees"
 									varStatus="counter">
 							      <tr class="">

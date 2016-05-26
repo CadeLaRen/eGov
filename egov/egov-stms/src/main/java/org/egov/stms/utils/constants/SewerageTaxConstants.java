@@ -65,7 +65,7 @@ public class SewerageTaxConstants {
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
     public static final String APPLICATION_STATUS_SANCTIONED = "SANCTIONED";
     public static final String APPLICATION_STATUS_CLERKAPPROVED = "Clerk approved";
-    
+
     public static final String APPLICATION_STATUS_INSPECTIONFEEPAID = "INSPECTIONFEEPAID";
     public static final String APPLICATION_STATUS_INITIALAPPROVED = "INITIALAPPROVED";
     public static final String APPLICATION_STATUS_FIELDINSPECTED = "FIELD INSPECTED";
@@ -110,40 +110,45 @@ public class SewerageTaxConstants {
     public static final String WF_WORKORDER_BUTTON = "Generate Work Order";
 
     public static final String PREVIEWWORKFLOWACTION = "Preview";
-        
+
     public static final String VIEW = "View";
-    public static final String COLLECTDONATIONCHARHGES = "Collect Fee";
-    public static final String VIEWURL = "/stms/existing/sewerage/view/";
-    public static final  String COLLECTDONATIONCHARHGESURL = "/stms/collection/generatebill";
-    
+    public static final String COLLECTDONATIONCHARHGES = "Collect Donation charges";
+    public static final String VIEWURL = "/stms/existing/sewerage/view/{consumerno}/{assessmentno}";
+    public static final String COLLECTDONATIONCHARHGESURL = "/stms/existing/sewerage/donationcharges/{consumerno}";
+
     // Elastic Search Constants
-    public static final String SEARCHABLE_DHSCNO           = "searchable.dhscnumber";
-    public static final String     CLAUSES_CITYNAME            = "clauses.cityname";
-    public static final String SEARCHABLE_CONSUMER_NAME    = "searchable.consumername";
-    public static final String CLAUSES_MOBILENO            = "clauses.mobilenumber";
-    public static final String  CLAUSES_DOORNO             = "clauses.doorno";
-    public static final String     CLAUSES_REVWARD_NAME            = "clauses.revwardname";
-    public static final String CLAUSES_APPLICATION_DATE    = "clauses.applicationdate";
-    
-    public static final String FEE_INSPECTIONCHARGE    =  "INSPECTIONCHARGE";
-    
+    public static final String SEARCHABLE_DHSCNO = "searchable.dhscnumber";
+    public static final String CLAUSES_CITYNAME = "clauses.cityname";
+    public static final String SEARCHABLE_CONSUMER_NAME = "searchable.consumername";
+    public static final String CLAUSES_MOBILENO = "clauses.mobilenumber";
+    public static final String CLAUSES_DOORNO = "clauses.doorno";
+    public static final String CLAUSES_REVWARD_NAME = "clauses.revwardname";
+    public static final String CLAUSES_APPLICATION_DATE = "clauses.applicationdate";
+
+    public static final String FEE_INSPECTIONCHARGE = "INSPECTIONCHARGE";
+
     public static final LinkedHashMap<Integer, Integer> PIPE_SCREW_SIZE = new LinkedHashMap<Integer, Integer>() {
+        /**
+         *
+         */
+        private static final long serialVersionUID = -1063445500884125741L;
+
         {
-            put(1,1);
-            put(2,2);
-            put(3,3);
-            put(4,4);
-            put(5,5);
-            put(6,6);
-            put(7,7);
-            put(8,8);
-            put(9,9);
-            put(10,10);
-            put(11,11);
-            put(12,12);
-            put(13,13);
-            put(14,14);
-            put(15,15);
+            put(1, 1);
+            put(2, 2);
+            put(3, 3);
+            put(4, 4);
+            put(5, 5);
+            put(6, 6);
+            put(7, 7);
+            put(8, 8);
+            put(9, 9);
+            put(10, 10);
+            put(11, 11);
+            put(12, 12);
+            put(13, 13);
+            put(14, 14);
+            put(15, 15);
         }
     };
     public static final String FEES_ESTIMATIONCHARGES_CODE = "ESTIMATIONCHARGE";
@@ -160,6 +165,6 @@ public class SewerageTaxConstants {
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
     public static final String DISPLAY_MESSAGE = "Sewerage Tax Collection";
-    
+
     public static final String FEES_DONATIONCHARGE_CODE = "DONATIONCHARGE";
 }

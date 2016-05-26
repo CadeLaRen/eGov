@@ -66,6 +66,7 @@ import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
+import org.egov.stms.transactions.charges.SewerageChargeCalculationServiceImpl;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
@@ -87,7 +88,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(value = "/existing/sewerage")
 public class ApplicationSewerageSearchController {
-    private static final String SERVER_URI = "http://localhost:9880";
+
     @Autowired
     private SearchService searchService;
     @Autowired
@@ -102,6 +103,9 @@ public class ApplicationSewerageSearchController {
 
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
+
+    @Autowired
+    private SewerageChargeCalculationServiceImpl sewerageChargeCalculationServiceImpl;
 
     private static final Logger LOGGER = Logger.getLogger(ApplicationSewerageSearchController.class);
 
@@ -127,11 +131,10 @@ public class ApplicationSewerageSearchController {
 
         if (consumernumber != null)
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(consumernumber);
-        AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(sewerageApplicationDetails,
-                assessmentnumber, request);
-        if (propertyOwnerDetails != null) {
+        final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(
+                sewerageApplicationDetails, assessmentnumber, request);
+        if (propertyOwnerDetails != null)
             modelMap.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
-        }
         final BigDecimal sewerageTaxDue = sewerageConnectionService.getTotalAmount(sewerageApplicationDetails
                 .getConnection());
         modelMap.addAttribute("sewerageTaxDue", sewerageTaxDue);
@@ -149,13 +152,14 @@ public class ApplicationSewerageSearchController {
                 asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), sort, Page.NULL);
 
-        List<SewerageSearchResult> searchResultFomatted = new ArrayList<SewerageSearchResult>(0);
+        final List<SewerageSearchResult> searchResultFomatted = new ArrayList<SewerageSearchResult>(0);
 
         for (final Document document : searchResult.getDocuments()) {
 
-            Map<String, String> searchableObjects = (Map<String, String>) document.getResource().get("searchable");
+            final Map<String, String> searchableObjects = (Map<String, String>) document.getResource()
+                    .get("searchable");
             if (searchableObjects != null) {
-                SewerageSearchResult searchActions = SewerageActionDropDownUtil
+                final SewerageSearchResult searchActions = SewerageActionDropDownUtil
                         .getSearchResultWithActions(searchableObjects.get("status"));
                 if (searchActions != null) {
                     searchActions.setDocument(document);

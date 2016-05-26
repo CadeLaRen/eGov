@@ -46,4 +46,6 @@ import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 
 public interface SewerageChargeCalculationService {
     public BigDecimal calculateDonationCharges(final SewerageApplicationDetails sewerageApplicationDetails);
+
+    public BigDecimal calculateSewerageCharges(final SewerageApplicationDetails sewerageApplicationDetails);
 }
