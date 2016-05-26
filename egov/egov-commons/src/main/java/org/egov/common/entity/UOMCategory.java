@@ -45,24 +45,55 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UOMCategory implements java.io.Serializable {
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.validator.constraints.Length;
+
+@Entity
+@Table(name ="EG_UOMCATEGORY")
+@Cacheable
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
+public class UOMCategory extends AbstractPersistable<Integer> implements java.io.Serializable {
 
 	private static final long serialVersionUID = -5071889556823525112L;
 
 	private Integer id;
 
+	@NotNull
+	@Length(max =30)
+	@Column(unique =true)
 	private String category;
-
+	
+	@Length(max =250)
 	private String narration;
 
+	@NotNull
+	@Length(max=7)
 	private Date lastmodified;
-
+	
+	@NotNull
+	@Length(max =7)
 	private Date createddate;
-
+	
+	@NotNull
+	@Column(precision=22, scale=0)
 	private BigDecimal createdby;
 
+	@Column(precision=22, scale=0)
 	private BigDecimal lastmodifiedby;
-
+	
+	@NotNull
+	@Column(precision=22, scale=0)
+	@OneToMany(mappedBy ="uomCategory")
+	@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 	private Set<UOM> uoms = new HashSet<>();
 
 	public UOMCategory() {

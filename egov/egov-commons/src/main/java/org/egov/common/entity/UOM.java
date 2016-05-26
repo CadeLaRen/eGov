@@ -43,28 +43,81 @@ package org.egov.common.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class UOM implements java.io.Serializable {
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.validator.constraints.Length;
+
+
+@Entity
+@Table(name="EG_UOM")
+@NamedQueries({
+    @NamedQuery(name = UOM.GETALLUOMSOFSAMECAT_BY_UOM, query = "from  org.egov.common.entity.UOM as uoms where uoms.uomCategory.id =(select uom.uomCategory.id  from org.egov.common.entity.UOM uom where uom.id=?)"),
+    @NamedQuery(name = UOM.CONVERSIONFACTOR_BY_UOM , query ="select uom.convFactor from org.egov.common.entity.UOM as uom where uom.id =?")})
+@SequenceGenerator(name = UOM.SEQ, sequenceName = UOM.SEQ, allocationSize = 1)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+public class UOM extends AbstractPersistable<Integer> implements java.io.Serializable  {
 
 	private static final long serialVersionUID = 8964393733499647786L;
-
+	public static final String SEQ = "seq_eg_uom"; 
+	public static final String GETALLUOMSOFSAMECAT_BY_UOM = "egi.getAllUomsOfSameCategoryByUOM";
+	public static final String CONVERSIONFACTOR_BY_UOM = "egi.getConversionFactorByUom";
+	
+	@Id
+	@GeneratedValue(generator = UOM.SEQ, strategy = GenerationType.SEQUENCE)
 	private Integer id;
-
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name ="UOMCATEGORYID")
+	@NotNull
+	@Column(precision=22, scale=0)
 	private UOMCategory uomCategory;
-
+	
+	@Column(unique =true)
+	@Length(max =30)
+	@NotNull
 	private String uom;
-
+	
+	@Length(max =250)
 	private String narration;
-
+	
+	@NotNull
+	@Column(precision=22, scale=0)
 	private BigDecimal convFactor;
-
+	
+	@NotNull
+	@Column(precision=1, scale=0)
 	private boolean baseuom;
-
+	
+	@NotNull
+	@Length(max =7)
 	private Date lastmodified;
 
+	@NotNull
+	@Length(max =7)
 	private Date createddate;
-
+	
+	@NotNull
+	@Column(precision=22, scale=0)
 	private BigDecimal createdby;
 
+	@Column(precision=22 , scale=0)
 	private BigDecimal lastmodifiedby;
 
 	public UOM() {

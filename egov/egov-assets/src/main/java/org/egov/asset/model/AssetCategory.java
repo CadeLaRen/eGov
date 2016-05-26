@@ -42,6 +42,8 @@ package org.egov.asset.model;
 import org.egov.asset.util.AssetConstants;
 import org.egov.common.entity.UOM;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.Fund;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
@@ -49,32 +51,73 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import javax.validation.Valid;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+
+@Entity
+@Table(name="EGASSET_ASSET_CATEGORY")
+@SequenceGenerator(name = AssetCategory.SEQ, sequenceName = AssetCategory.SEQ, allocationSize = 1)
 @Unique(fields = { "code" }, id = "id", tableName = "EGASSET_ASSET_CATEGORY", columnName = {
-        "CODE" }, message = "assetcat.code.isunique")
-public class AssetCategory extends BaseModel {
+"CODE" }, message = "assetcat.code.isunique")
+public class AssetCategory extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 4664412673598282808L;
 
     /** default constructor */
     public AssetCategory() {
     }
-
+    
+    public static enum AssetType {
+    	LAND, MOVABLEASSET, IMMOVABLEASSET
+    }
+    public static enum DepreciationMethod {
+    	STRAIGHT_LINE_METHOD, WRITTENDOWN_VALUE_METHOD
+    }
+    
+    public static final String SEQ = "seq_egasset_asset_category";
+    
+    @Id
+    @GeneratedValue(generator =AssetCategory.SEQ ,strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asset_accountcode")
     @Required(message = "assetcat.assetaccountcode.null")
     private CChartOfAccounts assetAccountCode;
 
     private Long maxLife;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accdep_accountcode")
     private CChartOfAccounts accDepAccountCode;
-
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "revaluation_accountcode")
     @Required(message = "assetcat.revaccountcode.null")
     private CChartOfAccounts revAccountCode;
 
+    
+    @Enumerated(EnumType.ORDINAL)
     private DepreciationMethod depreciationMethod;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="depexp_accountcode")
     private CChartOfAccounts depExpAccountCode;
 
     @Required(message = "assetcat.code.null")
@@ -89,14 +132,21 @@ public class AssetCategory extends BaseModel {
 
     private String catAttrTemplate;
 
+    @Enumerated(EnumType.ORDINAL)
     @Required(message = "assetcat.assettype.null")
     private AssetType assetType;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="UOM_ID")
     @Required(message = "assetcat.uom.null")
     private UOM uom;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="PARENTID")
     private AssetCategory parent;
 
+    @OneToMany(orphanRemoval =true,cascade ={CascadeType.ALL,CascadeType.PERSIST})
+    @JoinColumn(name ="DEPMD_AC_INDEX")
     @Valid
     private List<DepreciationMetaData> depreciationMetaDataList = new LinkedList<DepreciationMetaData>();
 
@@ -217,7 +267,14 @@ public class AssetCategory extends BaseModel {
     public void setAssets(final List<Asset> assets) {
         this.assets = assets;
     }
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     @Override
     public String toString() {
         final StringBuilder objString = new StringBuilder();
@@ -236,7 +293,7 @@ public class AssetCategory extends BaseModel {
         return objString.toString();
     }
 
-    @Override
+   
     public List<ValidationError> validate() {
         final List<ValidationError> errorList = new ArrayList<ValidationError>();
         if (depreciationMetaDataList != null && !depreciationMetaDataList.isEmpty())

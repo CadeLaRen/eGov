@@ -41,13 +41,16 @@ package org.egov.asset.model;
 
 import org.egov.asset.util.AssetConstants;
 import org.egov.commons.EgwStatus;
+import org.egov.commons.Fund;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.workflow.entity.State;
 import org.egov.infstr.models.BaseModel;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.validator.constraints.Length;
@@ -57,9 +60,31 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+
+@Entity
+@Table(name="EGASSET_ASSET")
+@NamedQueries({
+    @NamedQuery(name = State.WORKFLOWTYPES_QRY, query = "SELECT id FROM egasset_asset_category CONNECT BY PRIOR id=parentid START WITH id =:assetcatId ")})
+@SequenceGenerator(name = Asset.SEQ, sequenceName = Asset.SEQ, allocationSize = 1)
 @Unique(fields = { "code" }, id = "id", tableName = "EGASSET_ASSET", columnName = {
         "CODE" }, message = "asset.code.isunique")
-public class Asset extends BaseModel {
+public class Asset extends AbstractPersistable<Long> {
 
     // Constructors
 
@@ -68,46 +93,107 @@ public class Asset extends BaseModel {
     /** default constructor */
     public Asset() {
     }
+    public enum ModeOfAcquisition {
 
+        ACQUIRED, CONSTRUCTION, PURCHASE, TENDER;
+    }
+    public static final String WORKFLOWTYPES_QRY = "ParentChildCategories";
+    
+    public static final String SEQ = "seq_egasset_asset"; 
+    
+    @Id
+    @GeneratedValue(generator = Asset.SEQ, strategy = GenerationType.SEQUENCE)
+    private Long id;
+    
     // Fields
     @Required(message = "asset.code.null")
     @Length(max = 50, message = "asset.code.length")
+    @NotNull
     @OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "asset.code.alphaNumericwithspecialchar")
     private String code;
 
-    @Required(message = "asset.name.null")
-    @Length(max = 100, message = "asset.name.length")
+    public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@Required(message = "asset.name.null")
+    @Length(max = 256, message = "asset.name.length")
     @OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "asset.name.alphaNumericwithspecialchar")
-    private String name;
-
+    @NotNull
+	private String name;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ASSETCATEGORY_ID")
     @Required(message = "asset.category.null")
+	@Column(precision=22, scale=0)
     private AssetCategory assetCategory;
-
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name ="AREA_ID")
+	@NotNull
+	@Column(precision=22, scale=0)
     private Boundary area;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name ="LOCATION_ID")
+	@Column(precision=22, scale=0)
     private Boundary location;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name ="STREET_ID")
+	@Column(precision=22, scale=0)
     private Boundary street;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name ="WARD_ID")
+	@Column(precision=22, scale=0)
     private Boundary ward;
+	
+	
     private String assetDetails;
-
+    
+    @Enumerated(EnumType.ORDINAL)
     @Required(message = "asset.modeofacqui.null")
+    @NotNull
     private ModeOfAcquisition modeOfAcquisition;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="STATUSID")
     @Required(message = "asset.status.null")
+    @Column(precision=22, scale=0)
+    @NotNull
     private EgwStatus status;
+    
+    @Length(max =256)
     private String description;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="DEPARTMENTID")
     private Department department;
+    
+    @Length(max =7)
     private Date dateOfCreation;
-
+    
+    @Length(max =1024)
     private String remarks;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="PREPAREDBY")
     private PersonalInformation preparedBy;
     private BigDecimal grossValue;
     private BigDecimal accDepreciation;
     private BigDecimal length;
     private BigDecimal width;
     private BigDecimal totalArea;
+    
+    @Length(max =150)
     private String sourcePath;
 
-    @Override
+    
     public List<ValidationError> validate() {
         final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
         if (dateOfCreation != null && !DateUtils.compareDates(new Date(), dateOfCreation))
