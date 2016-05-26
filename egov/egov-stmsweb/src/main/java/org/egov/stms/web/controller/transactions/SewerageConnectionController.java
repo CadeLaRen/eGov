@@ -162,7 +162,9 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         model.addAttribute("propertyTypes", PropertyType.values());
 
         model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
-        prepareWorkflow(model, sewerageApplicationDetails, new WorkflowContainer());
+        WorkflowContainer workFlowContainer= new WorkflowContainer();
+        workFlowContainer.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
+        prepareWorkflow(model, sewerageApplicationDetails, workFlowContainer);
         model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
         model.addAttribute("typeOfConnection", SewerageTaxConstants.NEWSEWERAGECONNECTION);

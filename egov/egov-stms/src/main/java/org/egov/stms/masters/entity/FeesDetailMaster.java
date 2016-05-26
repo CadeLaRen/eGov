@@ -40,6 +40,8 @@
 
 package org.egov.stms.masters.entity;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -87,6 +89,24 @@ public class FeesDetailMaster extends AbstractAuditable {
     private FeesMaster fees;
 
     private boolean isMandatory;
+    private boolean isFixedRate;
+    private BigDecimal amount;
+    
+    public boolean isFixedRate() {
+        return isFixedRate;
+    }
+
+    public void setFixedRate(boolean isFixedRate) {
+        this.isFixedRate = isFixedRate;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
     private boolean isActive;
 

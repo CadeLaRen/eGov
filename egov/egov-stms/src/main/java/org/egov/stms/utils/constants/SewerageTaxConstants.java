@@ -112,9 +112,9 @@ public class SewerageTaxConstants {
     public static final String PREVIEWWORKFLOWACTION = "Preview";
 
     public static final String VIEW = "View";
-    public static final String COLLECTDONATIONCHARHGES = "Collect Donation charges";
+    public static final String COLLECTDONATIONCHARHGES = "Collect Fee";
     public static final String VIEWURL = "/stms/existing/sewerage/view/{consumerno}/{assessmentno}";
-    public static final String COLLECTDONATIONCHARHGESURL = "/stms/existing/sewerage/donationcharges/{consumerno}";
+    public static final String COLLECTDONATIONCHARHGESURL = "/stms/collection/generatebill/{consumerno}/{assessmentno}";
 
     // Elastic Search Constants
     public static final String SEARCHABLE_DHSCNO = "searchable.dhscnumber";

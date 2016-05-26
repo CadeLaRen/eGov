@@ -66,7 +66,6 @@ import org.egov.search.domain.Sort;
 import org.egov.search.service.SearchService;
 import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
-import org.egov.stms.transactions.charges.SewerageChargeCalculationServiceImpl;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
@@ -104,8 +103,6 @@ public class ApplicationSewerageSearchController {
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
 
-    @Autowired
-    private SewerageChargeCalculationServiceImpl sewerageChargeCalculationServiceImpl;
 
     private static final Logger LOGGER = Logger.getLogger(ApplicationSewerageSearchController.class);
 
