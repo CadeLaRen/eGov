@@ -140,6 +140,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
 
+    
     @Autowired
     public SewerageConnectionController(final SewerageTaxUtils sewerageTaxUtils,
             final SewerageApplicationDetailsService sewerageApplicationDetailsService) {
@@ -201,17 +202,16 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
             return "newconnection-form";
         }
-        
-        final AppConfigValues inspectionFeeCollectionRqd = appConfigValuesService.getConfigValuesByModuleAndKey(
-                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.APPCONFIG_COLLECT_INSPECTIONFEE).get(0);
-
+       
         if (sewerageApplicationDetails.getState() == null) {
-            if (inspectionFeeCollectionRqd != null && !inspectionFeeCollectionRqd.equals("YES")) {
-                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                        SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));
-            } else {
+            if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
+
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE, SewerageTaxConstants.MODULETYPE));
+            } else {
+                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                        SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));
+
             }
         }
         

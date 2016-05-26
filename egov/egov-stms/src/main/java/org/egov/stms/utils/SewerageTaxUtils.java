@@ -374,6 +374,17 @@ public class SewerageTaxUtils {
         return citizenrole;
     }
     
+    public boolean isInspectionFeeCollectionRequired() {
+        final AppConfigValues inspectionFeeCollectionRqd = appConfigValuesService.getConfigValuesByModuleAndKey(
+                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.APPCONFIG_COLLECT_INSPECTIONFEE).get(0);
+        if (inspectionFeeCollectionRqd != null && !inspectionFeeCollectionRqd.equals("YES"))
+            return true;
+
+        return false;
+    }
+   
+    
+    
 }
 
 
