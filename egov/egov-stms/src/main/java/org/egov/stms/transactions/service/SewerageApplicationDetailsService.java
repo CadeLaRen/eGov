@@ -522,9 +522,11 @@ public class SewerageApplicationDetailsService {
             final Long approvalPosition, final String approvalComent, String additionalRule,
             final String workFlowAction, final String mode, final ReportOutput reportOutput) throws ValidationException {
         applicationStatusChange(sewerageApplicationDetails, workFlowAction, mode);
-
+               
+        sewerageDemandService.updateDemand(sewerageApplicationDetails.getConnectionFees(), sewerageApplicationDetails.getConnection().getDemand());
         SewerageApplicationDetails updatedSewerageApplicationDetails = sewerageApplicationDetailsRepository
                 .save(sewerageApplicationDetails);
+      
     //    final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
         if (LOG.isDebugEnabled())
             LOG.debug("applicationWorkflowCustomDefaultImpl initialization is done");

@@ -300,13 +300,13 @@
 									<td class="text-center"><span id="slNo1">${counter.index+1}</span></td>
 									<td class="text-center">${var1.description}</td>
 									<td class="text-right">
-									<form:hidden path="connectionFees[${counter.index}].feesDetail" value="${var1.id}"/>
-									<form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="connectionFees${counter.index}amount" maxlength="8" value="0.00" /></td>
+									<form:hidden path="connectionFees[${connectionFees.size()+1}].feesDetail" value="${var1.id}"/>
+									<form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="connectionFees[${connectionFees.size()+1}].amount" id="connectionFees${counter.index}amount" maxlength="8" value="0.00" /></td>
 								  </tr>
 								</c:forEach>
 							</c:when>
 					 </c:choose>
-			         </tbody>
+			         </tbody> 
 				</table>
 			</div>				
 		</div>

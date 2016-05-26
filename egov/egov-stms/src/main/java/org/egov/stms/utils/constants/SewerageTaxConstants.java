@@ -160,6 +160,6 @@ public class SewerageTaxConstants {
     public static final String DEFAULT_FUND_SRC_CODE = "01";
     public static final String DEFAULT_FUND_CODE = "01";
     public static final String DISPLAY_MESSAGE = "Sewerage Tax Collection";
-        
-        
+    
+    public static final String FEES_DONATIONCHARGE_CODE = "DONATIONCHARGE";
 }

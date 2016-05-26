@@ -67,6 +67,7 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.stms.masters.entity.enums.OwnerOfTheRoad;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.service.FeesDetailMasterService;
+import org.egov.stms.transactions.charges.SewerageChargeCalculationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnectionEstimationDetails;
 import org.egov.stms.transactions.entity.SewerageConnectionFee;
@@ -118,6 +119,9 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
 
     @Autowired
     private UOMService uOMService;
+    
+    @Autowired
+    private SewerageChargeCalculationService sewerageChargeCalculationService;
 
     @Autowired
     public SewerageUpdateConnectionController(
@@ -323,15 +327,18 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     }
 
     private void populateFeesDetails(final SewerageApplicationDetails sewerageApplicationDetails) {
-        final List<SewerageConnectionFee> sewerageConnectionFeeList = new ArrayList<SewerageConnectionFee>();
-        if (!sewerageApplicationDetails.getConnectionFees().isEmpty())
+        if (!sewerageApplicationDetails.getConnectionFees().isEmpty()){
             for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees()) {
                 scf.setApplicationDetails(sewerageApplicationDetails);
-                sewerageConnectionFeeList.add(scf);
             }
-        sewerageApplicationDetails.getConnectionFees().clear();
-        sewerageApplicationDetails.setConnectionFees(sewerageConnectionFeeList);
-    }
+        }
+        // Add donation charges. Donation charge is from the master based on propertytype and closets
+        final SewerageConnectionFee connectionFee = new SewerageConnectionFee(); 
+        connectionFee.setFeesDetail(feesDetailMasterService.findByCodeAndIsActive(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE, true));
+        connectionFee.setAmount(sewerageChargeCalculationService.calculateDonationCharges(sewerageApplicationDetails).doubleValue());
+        connectionFee.setApplicationDetails(sewerageApplicationDetails);
+        sewerageApplicationDetails.getConnectionFees().add(connectionFee);
+    } 
 
     private void populateInspectionDetails(final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpServletRequest request, final MultipartFile[] files) {
