@@ -189,8 +189,10 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
 
         if (recordCreatedBYNonEmployee
                 && request.getAttribute("mode") == null
-                && sewerageApplicationDetails.getStatus().getCode()
-                .equals(SewerageTaxConstants.APPLICATION_STATUS_CREATED)
+                && ( sewerageApplicationDetails.getStatus().getCode()
+                .equals(SewerageTaxConstants.APPLICATION_STATUS_CREATED) || 
+                sewerageApplicationDetails.getStatus().getCode()
+                .equals(SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE) )
                 && sewerageApplicationDetails.getState().getHistory() != null
                 || !recordCreatedBYNonEmployee
                 && sewerageApplicationDetails.getStatus() != null

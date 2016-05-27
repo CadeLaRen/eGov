@@ -79,7 +79,7 @@
 	<c:if test="${sewerageApplicationDetails.status.code != 'CREATED'}">
 		<jsp:include page="connectionDetails-view.jsp"></jsp:include>
 	</c:if>
-	<c:if test="${sewerageApplicationDetails.status.code =='CREATED' && mode=='fieldInspection'}">
+	<c:if test="${(sewerageApplicationDetails.status.code =='CREATED' || sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE') && mode=='fieldInspection'}">
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
 		</div>
