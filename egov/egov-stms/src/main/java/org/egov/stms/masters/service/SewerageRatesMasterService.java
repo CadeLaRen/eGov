@@ -41,6 +41,7 @@ package org.egov.stms.masters.service;
 
 import java.util.Date;
 import java.util.List;
+
 import org.egov.stms.masters.entity.SewerageRatesMaster;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.repository.SewerageRatesMasterRepository;
@@ -94,6 +95,10 @@ public class SewerageRatesMasterService {
     public SewerageRatesMaster findByPropertyTypeAndActive(final PropertyType propertyType,
             final boolean active) {
         return sewerageRatesMasterRepository.findByPropertyTypeAndActive(propertyType, active);
+    }
+
+    public Double getSewerageMonthlyRatesByPropertytype(PropertyType propertyType) {
+        return sewerageRatesMasterRepository.getSewerageMonthlyRatesByPropertytype(propertyType);
     }
 
 }

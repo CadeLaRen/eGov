@@ -39,12 +39,16 @@
  */
 package org.egov.stms.masters.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
+import org.egov.stms.masters.entity.DonationDetailMaster;
 import org.egov.stms.masters.entity.DonationMaster;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.repository.DonationMasterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +57,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class DonationMasterService {
 
+    @Autowired
     private final DonationMasterRepository donationMasterRepository;
+
+    @Autowired
+    private ResourceBundleMessageSource messageSource;
 
     @Autowired
     public DonationMasterService(final DonationMasterRepository donationMasterRepository) {
@@ -74,9 +82,8 @@ public class DonationMasterService {
         donationMasterRepository.save(donationMaster);
     }
 
-    // TODO : noofcloset removed as part of entity change - need to read from donationdetail
     public List<DonationMaster> findAll() {
-        return donationMasterRepository.findAll(new Sort(Sort.Direction.DESC, "propertyType","fromDate"));
+        return donationMasterRepository.findAll(new Sort(Sort.Direction.DESC, "propertyType", "fromDate"));
     }
 
     public List<DonationMaster> findAllByPropertyType(final PropertyType propertyType) {
@@ -86,15 +93,34 @@ public class DonationMasterService {
     public DonationMaster load(final Long id) {
         return donationMasterRepository.getOne(id);
     }
-    
- // TODO : noofcloset removed as part of entity change - need to read from donationdetail
-    public DonationMaster findByPropertyTypeAndFromDateAndActive(final PropertyType propertyType,
-            final Date fromDate, final boolean active) {
+
+    public DonationMaster findByPropertyTypeAndFromDateAndActive(final PropertyType propertyType, final Date fromDate,
+            final boolean active) {
         return donationMasterRepository.findByPropertyTypeAndFromDateAndActive(propertyType, fromDate, active);
     }
 
-    public DonationMaster findByPropertyTypeAndActive(final PropertyType propertyType,
-            final boolean active) {
+    public DonationMaster findByPropertyTypeAndActive(final PropertyType propertyType, final boolean active) {
         return donationMasterRepository.findByPropertyTypeAndActive(propertyType, active);
     }
+
+    public String checkClosetsPresentForGivenCombination(final PropertyType propertyType, final Integer noofclosets) {
+        String validationMessage = "";
+        final DonationDetailMaster donationDetailMaster = donationMasterRepository
+                .getDonationDetailMasterByNoOfClosetsAndPropertytypeForCurrentDate(propertyType, noofclosets);
+        if (donationDetailMaster == null) 
+            validationMessage = messageSource.getMessage("err.validate.sewerage.closets.isPresent", new String[] {
+                    propertyType.toString(), noofclosets.toString() }, null);
+
+        return validationMessage;
+    }
+/**
+ * 
+ * @param noOfClosetsResidential
+ * @param propertyType
+ * @return
+ */
+    public BigDecimal getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(Integer noOfClosetsResidential,
+            PropertyType propertyType) {
+    return donationMasterRepository.getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(noOfClosetsResidential, propertyType);
+   }
 }

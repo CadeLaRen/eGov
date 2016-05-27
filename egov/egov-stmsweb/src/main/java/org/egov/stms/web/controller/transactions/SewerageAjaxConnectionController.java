@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.stms.masters.entity.enums.PropertyType;
+import org.egov.stms.masters.service.DonationMasterService;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -60,6 +61,9 @@ public class SewerageAjaxConnectionController {
 
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
+
+    @Autowired
+    private DonationMasterService donationMasterService;
 
     @Autowired
     private PropertyService propertyservice;
@@ -79,12 +83,11 @@ public class SewerageAjaxConnectionController {
     @RequestMapping(value = "/ajaxconnection/check-closets-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String isClosetsPresent(@RequestParam final PropertyType propertyType,
             @RequestParam final Integer noOfClosets, @RequestParam final Boolean flag) {
-        if (flag)
-            return sewerageApplicationDetailsService.checkClosetsPresentForGivenCombination(PropertyType.RESIDENTIAL,
-                    noOfClosets);
+        if (flag)  
+            return donationMasterService.checkClosetsPresentForGivenCombination(PropertyType.RESIDENTIAL, noOfClosets);
         else
-            return sewerageApplicationDetailsService.checkClosetsPresentForGivenCombination(
-                    PropertyType.NON_RESIDENTIAL, noOfClosets);
+            return donationMasterService.checkClosetsPresentForGivenCombination(PropertyType.NON_RESIDENTIAL,
+                    noOfClosets);
 
     }
 }

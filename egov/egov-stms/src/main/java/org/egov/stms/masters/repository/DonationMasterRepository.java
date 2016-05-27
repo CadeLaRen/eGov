@@ -39,23 +39,32 @@
  */
 package org.egov.stms.masters.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.stms.masters.entity.DonationDetailMaster;
 import org.egov.stms.masters.entity.DonationMaster;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DonationMasterRepository extends JpaRepository<DonationMaster, Long> {
 
     List<DonationMaster> findAllByPropertyType(PropertyType propertyType);
-    
-  // TODO : noofcloset removed as part of entity change - need to read from donationdetail
-    DonationMaster findByPropertyTypeAndFromDateAndActive(PropertyType propertyType,
-            Date fromDate, boolean active);
 
-    DonationMaster findByPropertyTypeAndActive(PropertyType propertyType,
-            boolean active);
- }
+    DonationMaster findByPropertyTypeAndFromDateAndActive(PropertyType propertyType, Date fromDate, boolean active);
+
+    DonationMaster findByPropertyTypeAndActive(PropertyType propertyType, boolean active);
+
+    @Query("select ddm.amount from DonationDetailMaster ddm where ddm.donation.propertyType =:propertyType and ddm.noOfClosets =:noofclosets and ddm.donation.active = true and ddm.donation.fromDate  <= current_date and (ddm.donation.toDate >= current_date or ddm.donation.toDate is null)")
+    BigDecimal getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(@Param("noofclosets") Integer noofclosets,
+            @Param("propertyType") PropertyType propertyType);
+
+    @Query("select ddm from DonationDetailMaster ddm where ddm.donation.propertyType =:propertyType and ddm.noOfClosets =:noofclosets and ddm.donation.active = true and ddm.donation.fromDate <=current_date and (ddm.donation.toDate >= current_date or ddm.donation.toDate is null)")
+    DonationDetailMaster getDonationDetailMasterByNoOfClosetsAndPropertytypeForCurrentDate(
+            @Param("propertyType") PropertyType propertyType, @Param("noofclosets") Integer noofclosets);
+}

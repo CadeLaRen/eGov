@@ -62,7 +62,7 @@
 					      </tr>
 				         </thead>
 					<tbody>
-						<c:if test="${sewerageApplicationDetails.fieldInspections != null && sewerageApplicationDetails.fieldInspections.isActive == true}">
+						<c:if test="${sewerageApplicationDetails.fieldInspections != null}">
 								<c:forEach items="${sewerageApplicationDetails.fieldInspections}" var="fid"
 									varStatus="counter">
 							      <tr class="">

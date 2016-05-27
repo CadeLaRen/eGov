@@ -68,11 +68,9 @@ import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.elasticSearch.service.SewerageIndexService;
 import org.egov.stms.masters.entity.SewerageApplicationType;
-import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.repository.SewerageApplicationTypeRepository;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
-import org.egov.stms.transactions.repository.DonationMasterDetailsRepository;
 import org.egov.stms.transactions.repository.SewerageApplicationDetailsRepository;
 import org.egov.stms.transactions.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.stms.utils.SewerageTaxNumberGenerator;
@@ -138,9 +136,6 @@ public class SewerageApplicationDetailsService {
     @Autowired
     @Qualifier("seweargeApplicationWorkflowCustomDefaultImpl")
     private ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl;
-
-    @Autowired
-    private DonationMasterDetailsRepository donationMasterDetailsRepository;
 
     @Autowired
     private EisCommonService eisCommonService;
@@ -665,13 +660,5 @@ public class SewerageApplicationDetailsService {
         return historyTable;
     }
 
-    public String checkClosetsPresentForGivenCombination(final PropertyType propertyType, final Integer noofclosets) {
-        String validationMessage = "";
-        final Integer noOfclosets = donationMasterDetailsRepository.getDonationMasterDetails(propertyType, noofclosets);
-        if (noOfclosets == null || noOfclosets == 0)
-            validationMessage = messageSource.getMessage("err.validate.sewerage.closets.isPresent", new String[] {
-                    propertyType.toString(), noofclosets.toString() }, null);
-
-        return validationMessage;
-    }
+    
 }
