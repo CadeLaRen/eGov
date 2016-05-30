@@ -123,9 +123,14 @@ public class SewerageApplicationDetails extends StateAware {
     @Temporal(value = TemporalType.DATE)
     private Date workOrderDate;
 
+    // TODO : Remove this after supporting multiple document attachments
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "filestoreid")
+    @JoinColumn(name = "filestoreid") 
     private FileStoreMapper fileStore;
+    
+    @OneToMany(mappedBy = "applicationDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SewerageApplicationDetailsDocument> appDetailsDocument = new ArrayList<SewerageApplicationDetailsDocument>(
+            0);
 
     private boolean isActive;
 
@@ -311,5 +316,13 @@ public class SewerageApplicationDetails extends StateAware {
 
     public void setFieldInspections(final List<SewerageFieldInspection> fieldInspections) {
         this.fieldInspections = fieldInspections;
+    }
+
+    public List<SewerageApplicationDetailsDocument> getAppDetailsDocument() {
+        return appDetailsDocument;
+    }
+
+    public void setAppDetailsDocument(List<SewerageApplicationDetailsDocument> appDetailsDocument) {
+        this.appDetailsDocument = appDetailsDocument;
     }
 }
