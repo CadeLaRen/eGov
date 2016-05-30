@@ -108,6 +108,7 @@ public class SewerageTaxConstants {
     public static final String WF_STATE_CONNECTION_EXECUTION_BUTTON = "Execute Connection";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final String WF_WORKORDER_BUTTON = "Generate Work Order";
+    public static final String WF_INSPECTIONFEE_COLLECTION= "Inspection Fee Collection";
 
     public static final String PREVIEWWORKFLOWACTION = "Preview";
 
