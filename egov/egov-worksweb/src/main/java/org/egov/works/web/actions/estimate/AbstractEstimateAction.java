@@ -60,7 +60,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.asset.model.Asset;
+import org.egov.assets.model.Asset;
 import org.egov.common.entity.UOM;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.EgwTypeOfWork;
@@ -721,9 +721,9 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
     }
 
     private boolean checkValidStatus(final Asset ass, final List<String> strStatus) {
-        for (final String desc : strStatus)
+       /* for (final String desc : strStatus)
             if (desc.trim().equalsIgnoreCase(ass.getStatus().getDescription()))
-                return true;
+                return true;*/
         return false;
     }
 

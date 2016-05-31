@@ -62,7 +62,7 @@ function setupAjaxAssettype(elem){
 	disableDepreciation(elem.value);
 }
 function disableDepreciation(assettype){
-	if(assettype == '<s:property value="@org.egov.asset.model.AssetType@LAND" />'){
+	if(assettype == '<s:property value="@org.egov.assets.model.AssetType@LAND" />'){
 		document.getElementById('depreciationMethod').disabled=true;
 		document.getElementById('accDepAccountCode').disabled=true;
 		document.getElementById('depExpAccountCode').disabled=true;

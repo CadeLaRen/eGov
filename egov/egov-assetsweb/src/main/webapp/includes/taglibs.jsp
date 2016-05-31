@@ -39,10 +39,6 @@
   --%>
 
 <%@ page language="java" errorPage="/error/error.jsp" pageEncoding="UTF-8"  %>
-
-<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator"%>
-<%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page"%>
-<%@ taglib prefix="s" uri="/WEB-INF/taglibs/struts-tags.tld" %>  
-<%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %> 
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>    

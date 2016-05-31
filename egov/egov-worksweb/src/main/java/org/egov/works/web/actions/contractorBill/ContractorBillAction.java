@@ -65,13 +65,11 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.asset.model.Asset;
-import org.egov.asset.service.CommonAssetsService;
+import org.egov.assets.model.Asset;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.commons.EgPartytype;
-import org.egov.commons.EgwStatus;
 import org.egov.commons.EgwTypeOfWork;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -156,7 +154,7 @@ public class ContractorBillAction extends BaseFormAction {
     private EgPartytypeHibernateDAO egPartytypeHibernateDAO;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-    private CommonAssetsService commonAssetsService;
+   // private CommonAssetsService commonAssetsService;
     private MeasurementBookServiceImpl measurementBookService;
     private EgovCommon egovCommon;
     @Autowired
@@ -1447,17 +1445,17 @@ public class ContractorBillAction extends BaseFormAction {
     private void addAssetForBill(final AssetForBill adb) {
         if (!workOrderEstimate.getAssetValues().isEmpty() && adb.getAsset() != null) {
             final AssetForBill assetForBill = new AssetForBill();
-            final Asset assetNew = commonAssetsService.getAssetById(adb.getAsset().getId());
+            final Asset assetNew=null;//  = commonAssetsService.getAssetById(adb.getAsset().getId());
             final String value = worksService.getWorksConfigValue("WORKS_ASSET_STATUS");
             if (StringUtils.isBlank(value)) {
                 final List<ValidationError> errors = new ArrayList<ValidationError>();
                 errors.add(new ValidationError("asset.status", "asset.status.configvalue"));
                 throw new ValidationException(errors);
             }
-            if (assetNew.getStatus().getDescription().equals(value.split(",")[0])) {
+         /*   if (assetNew.getStatus().getDescription().equals(value.split(",")[0])) {
                 final EgwStatus status = egwStatusHibernateDAO.getStatusByModuleAndCode("ASSET", value.split(",")[1]);
                 assetNew.setStatus(status);
-            }
+            }*/
             assetForBill.setEgbill(contractorBillRegister);
             assetForBill.setCoa(chartOfAccountsHibernateDAO.findById(adb.getCoa().getId(), false));
             assetForBill.setWorkOrderEstimate(workOrderEstimate);
@@ -1744,9 +1742,9 @@ public class ContractorBillAction extends BaseFormAction {
         this.completionDate = completionDate;
     }
 
-    public void setCommonAssetsService(final CommonAssetsService commonAssetsService) {
+   /* public void setCommonAssetsService(final CommonAssetsService commonAssetsService) {
         this.commonAssetsService = commonAssetsService;
-    }
+    }*/
 
     public ContractorBillRegister getContractorBillRegister() {
         return contractorBillRegister;

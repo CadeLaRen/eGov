@@ -185,8 +185,8 @@ function validateFormAndSubmit(){
 }
 
 function validateLocationDetails(){
-    if($('catTypeIdDummy').options[$('catTypeIdDummy').selectedIndex].text == '<s:property value="@org.egov.asset.model.AssetType@IMMOVABLEASSET" />' || 
-    		$('catTypeIdDummy').options[$('catTypeIdDummy').selectedIndex].text == '<s:property value="@org.egov.asset.model.AssetType@LAND" />'){
+    if($('catTypeIdDummy').options[$('catTypeIdDummy').selectedIndex].text == '<s:property value="@org.egov.assets.model.AssetType@IMMOVABLEASSET" />' || 
+    		$('catTypeIdDummy').options[$('catTypeIdDummy').selectedIndex].text == '<s:property value="@org.egov.assets.model.AssetType@LAND" />'){
 		if(document.getElementById("zoneId").value=='-1'){
 		  dom.get("asset_error").style.display='';
 		  document.getElementById("asset_error").innerHTML='Please select Zone'

@@ -597,11 +597,11 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
                 else
                     contractorBillMainTable.addCell("");
 
-                if (flag && i < assetLen)
+              /*  if (flag && i < assetLen)
                     contractorBillMainTable.addCell(
                             assetForBillList.get(i).getAsset().getCode() + "-" + assetForBillList.get(i).getAsset().getName());
                 else
-                    contractorBillMainTable.addCell("");
+                    contractorBillMainTable.addCell("");*/
                 contractorBillMainTable.getDefaultCell().setColspan(1);
                 if (i < mbLen) {
                     String mbRefNo = "";

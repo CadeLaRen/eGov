@@ -58,6 +58,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -72,7 +73,7 @@ import org.hibernate.validator.constraints.Length;
 @SequenceGenerator(name = UOM.SEQ, sequenceName = UOM.SEQ, allocationSize = 1)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class UOM extends AbstractPersistable<Integer> implements java.io.Serializable  {
+public class UOM extends AbstractAuditable  {
 
 	private static final long serialVersionUID = 8964393733499647786L;
 	public static final String SEQ = "seq_eg_uom"; 
@@ -86,7 +87,7 @@ public class UOM extends AbstractPersistable<Integer> implements java.io.Seriali
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="UOMCATEGORYID")
 	@NotNull
-	@Column(precision=22, scale=0)
+	
 	private UOMCategory uomCategory;
 	
 	@Column(unique =true)
@@ -98,7 +99,7 @@ public class UOM extends AbstractPersistable<Integer> implements java.io.Seriali
 	private String narration;
 	
 	@NotNull
-	@Column(precision=22, scale=0)
+	
 	private BigDecimal convFactor;
 	
 	@NotNull
@@ -114,10 +115,10 @@ public class UOM extends AbstractPersistable<Integer> implements java.io.Seriali
 	private Date createddate;
 	
 	@NotNull
-	@Column(precision=22, scale=0)
+	
 	private BigDecimal createdby;
 
-	@Column(precision=22 , scale=0)
+	
 	private BigDecimal lastmodifiedby;
 
 	public UOM() {
@@ -150,13 +151,6 @@ public class UOM extends AbstractPersistable<Integer> implements java.io.Seriali
 		this.lastmodifiedby = lastmodifiedby;
 	}
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(final Integer id) {
-		this.id = id;
-	}
 
 	public UOMCategory getUomCategory() {
 		return uomCategory;
@@ -228,6 +222,18 @@ public class UOM extends AbstractPersistable<Integer> implements java.io.Seriali
 
 	public void setLastmodifiedby(final BigDecimal lastmodifiedby) {
 		this.lastmodifiedby = lastmodifiedby;
+	}
+
+	@Override
+	protected void setId(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Long getId() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

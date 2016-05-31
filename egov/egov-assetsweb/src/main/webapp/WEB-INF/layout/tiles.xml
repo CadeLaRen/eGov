@@ -59,256 +59,31 @@
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/index.jsp"/>
     </definition>
-
-<definition name="openingbalance" template="/WEB-INF/jsp/activity/openingbalance.jsp" />
-
-
-<definition name="transactionsummary-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.transactionsummary.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactionsummary/transactionsummary-new.jsp"/>
+    
+    
+<definition name="assetcategory-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.assetcategory.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-new.jsp"/>
 </definition>
 
-<definition name="transactionsummary-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.transactionsummary.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactionsummary/transactionsummary-view.jsp"/>
+<definition name="assetcategory-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.assetcategory.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-view.jsp"/>
 </definition>
 
-<definition name="transactionsummary-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.transactionsummary.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactionsummary/transactionsummary-edit.jsp"/>
+<definition name="assetcategory-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.assetcategory.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-edit.jsp"/>
 </definition>
 
-<definition name="transactionsummary-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.transactionsummary.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactionsummary/transactionsummary-result.jsp"/>
+<definition name="assetcategory-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.assetcategory.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-result.jsp"/>
 </definition>
 
-<definition name="accountdetailtype-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.accountdetailtype.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-new.jsp"/>
-</definition>
-
-<definition name="accountdetailtype-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.accountdetailtype.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-view.jsp"/>
-</definition>
-
-<definition name="accountdetailtype-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.accountdetailtype.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-edit.jsp"/>
-</definition>
-
-<definition name="accountdetailtype-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.accountdetailtype.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-result.jsp"/>
-</definition>
-
-<definition name="accountdetailtype-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.accountdetailtype.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/accountdetailtype/accountdetailtype-search.jsp"/>
-</definition>
-
-<definition name="relation-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.relation.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/relation/relation-new.jsp"/>
-</definition>
-
-<definition name="relation-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.relation.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/relation/relation-view.jsp"/>
-</definition>
-
-<definition name="relation-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.relation.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/relation/relation-edit.jsp"/>
-</definition>
-
-<definition name="relation-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.relation.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/relation/relation-result.jsp"/>
-</definition>
-
-<definition name="relation-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.relation.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/relation/relation-search.jsp"/>
-</definition>
-
-<definition name="accountentity-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.accountentity.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-new.jsp"/>
-</definition>
-
-<definition name="accountentity-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.accountentity.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-view.jsp"/>
-</definition>
-
-<definition name="accountentity-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.accountentity.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-edit.jsp"/>
-</definition>
-
-<definition name="accountentity-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.accountentity.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-result.jsp"/>
-</definition>
-
-<definition name="accountentity-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.accountentity.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/accountentity/accountentity-search.jsp"/>
-</definition>
-
-<definition name="recovery-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.recovery.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/recovery/recovery-new.jsp"/>
-</definition>
-
-<definition name="recovery-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.recovery.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/recovery/recovery-view.jsp"/>
-</definition>
-
-<definition name="recovery-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.recovery.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/recovery/recovery-edit.jsp"/>
-</definition>
-
-<definition name="recovery-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.recovery.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/recovery/recovery-result.jsp"/>
-</definition>
-
-<definition name="recovery-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.recovery.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/recovery/recovery-search.jsp"/>
-</definition>
-
-<definition name="budgetuploadreport-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.budgetuploadreport.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/budgetuploadreport/budgetuploadreport-search.jsp"/>
-</definition>
-
-<definition name="approvebudget-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.approvebudget.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/approvebudget/approvebudget-search.jsp"/>
-</definition>
-
-<definition name="fund-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.fund.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/fund/fund-new.jsp"/>
-</definition>
-<definition name="fund-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.fund.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/fund/fund-view.jsp"/>
-</definition>
-<definition name="fund-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.fund.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/fund/fund-edit.jsp"/>
-</definition>
-<definition name="function-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.function.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/function/function-new.jsp"/>
-</definition>
-
-<definition name="function-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.function.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/function/function-view.jsp"/>
-</definition>
-
-<definition name="function-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.function.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/function/function-edit.jsp"/>
-</definition>
-
-<definition name="function-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.function.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/function/function-result.jsp"/>
-</definition>
-
-<definition name="function-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.function.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/function/function-search.jsp"/>
-</definition>
-
-
-<definition name="cfinancialyear-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.cfinancialyear.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/cfinancialyear/cfinancialyear-new.jsp"/>
-</definition>
-
-<definition name="cfinancialyear-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.cfinancialyear.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/cfinancialyear/cfinancialyear-view.jsp"/>
-</definition>
-
-<definition name="cfinancialyear-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.cfinancialyear.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/cfinancialyear/cfinancialyear-edit.jsp"/>
-</definition>
-
-<definition name="cfinancialyear-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.cfinancialyear.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/cfinancialyear/cfinancialyear-result.jsp"/>
-</definition>
-
-<definition name="cfinancialyear-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.cfinancialyear.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/cfinancialyear/cfinancialyear-search.jsp"/>
-</definition>
-
-<definition name="fund-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.fund.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/fund/fund-result.jsp"/>
-</definition>
-
-<definition name="fund-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.fund.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/fund/fund-search.jsp"/>
-</definition>
-
-
-<definition name="fundsource-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.fundsource.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-new.jsp"/>
-</definition>
-
-<definition name="fundsource-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.fundsource.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-view.jsp"/>
-</definition>
-
-<definition name="fundsource-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.fundsource.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-edit.jsp"/>
-</definition>
-
-<definition name="fundsource-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.fundsource.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-result.jsp"/>
-</definition>
-
-<definition name="fundsource-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.fundsource.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/fundsource/fundsource-search.jsp"/>
-</definition>
-
-
-
-
-<definition name="closedperiod-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.closedperiod.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/closedperiod/closedperiod-edit.jsp"/>
-</definition>
-
-<definition name="closedperiod-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.closedperiod.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/closedperiod/closedperiod-result.jsp"/>
-</definition>
-
-<definition name="closedperiod-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.closedperiod.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/closedperiod/closedperiod-search.jsp"/>
-
+<definition name="assetcategory-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.assetcategory.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-search.jsp"/>
 </definition>
 
 

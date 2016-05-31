@@ -52,7 +52,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.Length;
@@ -61,11 +61,11 @@ import org.hibernate.validator.constraints.Length;
 @Table(name ="EG_UOMCATEGORY")
 @Cacheable
 @Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
-public class UOMCategory extends AbstractPersistable<Integer> implements java.io.Serializable {
+public class UOMCategory extends AbstractAuditable  {
 
 	private static final long serialVersionUID = -5071889556823525112L;
 
-	private Integer id;
+	private Long id;
 
 	@NotNull
 	@Length(max =30)
@@ -99,34 +99,9 @@ public class UOMCategory extends AbstractPersistable<Integer> implements java.io
 	public UOMCategory() {
 	}
 
-	public UOMCategory(final Integer id, final String category, final Date lastmodified, final Date createddate,
-			final BigDecimal createdby) {
-		this.id = id;
-		this.category = category;
-		this.lastmodified = lastmodified;
-		this.createddate = createddate;
-		this.createdby = createdby;
-	}
+	
 
-	public UOMCategory(final Integer id, final String category, final String narration, final Date lastmodified,
-			final Date createddate, final BigDecimal createdby, final BigDecimal lastmodifiedby, final Set<UOM> uoms) {
-		this.id = id;
-		this.category = category;
-		this.narration = narration;
-		this.lastmodified = lastmodified;
-		this.createddate = createddate;
-		this.createdby = createdby;
-		this.lastmodifiedby = lastmodifiedby;
-		this.uoms = uoms;
-	}
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(final Integer id) {
-		this.id = id;
-	}
 
 	public String getCategory() {
 		return category;
@@ -182,6 +157,20 @@ public class UOMCategory extends AbstractPersistable<Integer> implements java.io
 
 	public void setUoms(final Set<UOM> uoms) {
 		this.uoms = uoms;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
+
+
+
+	@Override
+	public Long getId() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
