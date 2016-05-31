@@ -671,13 +671,6 @@ public class SewerageApplicationDetailsService {
     }
     
     
-    public void updateStateTransition(final SewerageApplicationDetails sewerageApplicationDetails, final Long approvalPosition,
-            final String approvalComent, final String additionalRule, final String workFlowAction) {
-        if (approvalPosition != null && additionalRule != null && StringUtils.isNotEmpty(workFlowAction))
-            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(sewerageApplicationDetails, approvalPosition, approvalComent, additionalRule, workFlowAction);
-        //TODO : update index on collection 
-    }
-
     public void updateStateTransition(final SewerageApplicationDetails sewerageApplicationDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,
             final String workFlowAction) {
