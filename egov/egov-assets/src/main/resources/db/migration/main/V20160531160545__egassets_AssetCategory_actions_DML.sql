@@ -9,7 +9,7 @@ VALUES (NEXTVAL('SEQ_EG_MODULE'),'Asset Masters Category','true',null,
 'Category', 1);
 
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),
-'New-AssetCategory','/assetcategory/new',(select id from eg_module where name='Asset Masters Category' ),1,'New-AssetCategory',true,'egassets',(select id from eg_module where
+'New-AssetCategory','/assetcategory/new',(select id from eg_module where name='Asset Masters Category' ),1,'Add-AssetCategory',true,'egassets',(select id from eg_module where
 name='Asset Management' and parentmodule is null));
 
 Insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='New-AssetCategory'));
@@ -30,10 +30,10 @@ Insert into eg_roleaction values((select id from eg_role where name='Super User'
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'Result-AssetCategory','/assetcategory/result',(select id from eg_module where name='Asset Masters Category' ),1,'Result-AssetCategory',false,'egassets',(select id from eg_module where name='Asset Management' and parentmodule is null));
 Insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Result-AssetCategory'));
 
-Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'Search and View-AssetCategory','/assetcategory/search/view',(select id from eg_module where name='Asset Masters Category' ),2,'Search and View-AssetCategory',true,'egassets',(select id from eg_module where name='Asset Management' and parentmodule is null));
+Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'Search and View-AssetCategory','/assetcategory/search/view',(select id from eg_module where name='Asset Masters Category' ),2,'View AssetCategory',true,'egassets',(select id from eg_module where name='Asset Management' and parentmodule is null));
 Insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Search and View-AssetCategory'));
 
-Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'Search and Edit-AssetCategory','/assetcategory/search/edit',(select id from eg_module where name='Asset Masters Category' ),3,'Search and Edit-AssetCategory',true,'egassets',(select id from eg_module where name='Asset Management' and parentmodule is null));
+Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'Search and Edit-AssetCategory','/assetcategory/search/edit',(select id from eg_module where name='Asset Masters Category' ),3,'Edit AssetCategory',true,'egassets',(select id from eg_module where name='Asset Management' and parentmodule is null));
 Insert into eg_roleaction values((select id from eg_role where name='Super User'),(select id from eg_action where name='Search and Edit-AssetCategory'));
 
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),'Search and View Result-AssetCategory','/assetcategory/ajaxsearch/view',(select id from eg_module where name='Asset Masters Category' ),1,'Search and View Result-AssetCategory',false,'egassets',(select id from eg_module where name='Asset Management' and parentmodule is null));

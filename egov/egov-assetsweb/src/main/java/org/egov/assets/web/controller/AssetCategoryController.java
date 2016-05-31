@@ -11,6 +11,7 @@ import org.egov.assets.service.AssetCategoryService;
 import org.egov.assets.util.AssetConstants;
 import org.egov.assets.web.adaptor.AssetCategoryJsonAdaptor;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
+import org.egov.commons.service.UOMService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,8 @@ public class AssetCategoryController {
 	 
 	@Autowired
 	private ChartOfAccountsHibernateDAO chartOfAccountsService;
+	@Autowired
+    private UOMService uomService;
 	
 	
 	/*@Autowiredc
@@ -74,7 +77,7 @@ public class AssetCategoryController {
 				AssetConstants.REVRESACCPURPOSEID).get(0);
 		model.addAttribute("accountRevRess",
 				chartOfAccountsService.getAccountCodeByPurpose(Integer.valueOf(accountRevResPurposeId.getValue())));
-		model.addAttribute("uOMs",new ArrayList());
+		model.addAttribute("uOMs",uomService.findAllOrderByCategory());
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)

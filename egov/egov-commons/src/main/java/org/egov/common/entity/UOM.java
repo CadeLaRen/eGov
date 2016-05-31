@@ -64,94 +64,47 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.Length;
 
-
 @Entity
-@Table(name="EG_UOM")
+@Table(name = "EG_UOM")
 @NamedQueries({
-    @NamedQuery(name = UOM.GETALLUOMSOFSAMECAT_BY_UOM, query = "from  org.egov.common.entity.UOM as uoms where uoms.uomCategory.id =(select uom.uomCategory.id  from org.egov.common.entity.UOM uom where uom.id=?)"),
-    @NamedQuery(name = UOM.CONVERSIONFACTOR_BY_UOM , query ="select uom.convFactor from org.egov.common.entity.UOM as uom where uom.id =?")})
+		@NamedQuery(name = UOM.GETALLUOMSOFSAMECAT_BY_UOM, query = "from  org.egov.common.entity.UOM as uoms where uoms.uomCategory.id =(select uom.uomCategory.id  from org.egov.common.entity.UOM uom where uom.id=?)"),
+		@NamedQuery(name = UOM.CONVERSIONFACTOR_BY_UOM, query = "select uom.convFactor from org.egov.common.entity.UOM as uom where uom.id =?") })
 @SequenceGenerator(name = UOM.SEQ, sequenceName = UOM.SEQ, allocationSize = 1)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-public class UOM extends AbstractAuditable  {
+public class UOM extends AbstractAuditable {
 
 	private static final long serialVersionUID = 8964393733499647786L;
-	public static final String SEQ = "seq_eg_uom"; 
+	public static final String SEQ = "seq_eg_uom";
 	public static final String GETALLUOMSOFSAMECAT_BY_UOM = "egi.getAllUomsOfSameCategoryByUOM";
 	public static final String CONVERSIONFACTOR_BY_UOM = "egi.getConversionFactorByUom";
-	
+
 	@Id
 	@GeneratedValue(generator = UOM.SEQ, strategy = GenerationType.SEQUENCE)
-	private Integer id;
-	
+	private Long id;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name ="UOMCATEGORYID")
+	@JoinColumn(name = "UOMCATEGORYID")
 	@NotNull
-	
 	private UOMCategory uomCategory;
-	
-	@Column(unique =true)
-	@Length(max =30)
+
+	@Column(unique = true)
+	@Length(max = 30)
 	@NotNull
 	private String uom;
-	
-	@Length(max =250)
+
+	@Length(max = 250)
 	private String narration;
-	
+
 	@NotNull
-	
+	@Column(name="conv_Factor")
 	private BigDecimal convFactor;
-	
+
 	@NotNull
-	@Column(precision=1, scale=0)
+	@Column(precision = 1, scale = 0)
 	private boolean baseuom;
-	
-	@NotNull
-	@Length(max =7)
-	private Date lastmodified;
 
-	@NotNull
-	@Length(max =7)
-	private Date createddate;
-	
-	@NotNull
-	
-	private BigDecimal createdby;
-
-	
-	private BigDecimal lastmodifiedby;
-
-	public UOM() {
-	}
-
-	public UOM(final Integer id, final UOMCategory egUomcategory, final String uom, final BigDecimal convFactor,
-			final boolean baseuom, final Date lastmodified, final Date createddate, final BigDecimal createdby) {
-		this.id = id;
-		this.uomCategory = egUomcategory;
-		this.uom = uom;
-		this.convFactor = convFactor;
-		this.baseuom = baseuom;
-		this.lastmodified = lastmodified;
-		this.createddate = createddate;
-		this.createdby = createdby;
-	}
-
-	public UOM(final Integer id, final UOMCategory egUomcategory, final String uom, final String narration,
-			final BigDecimal convFactor, final boolean baseuom, final Date lastmodified, final Date createddate,
-			final BigDecimal createdby, final BigDecimal lastmodifiedby) {
-		this.id = id;
-		this.uomCategory = egUomcategory;
-		this.uom = uom;
-		this.narration = narration;
-		this.convFactor = convFactor;
-		this.baseuom = baseuom;
-		this.lastmodified = lastmodified;
-		this.createddate = createddate;
-		this.createdby = createdby;
-		this.lastmodifiedby = lastmodifiedby;
-	}
-
-
+	 
 	public UOMCategory getUomCategory() {
 		return uomCategory;
 	}
@@ -192,48 +145,12 @@ public class UOM extends AbstractAuditable  {
 		this.baseuom = baseuom;
 	}
 
-	public Date getLastmodified() {
-		return lastmodified;
-	}
-
-	public void setLastmodified(final Date lastmodified) {
-		this.lastmodified = lastmodified;
-	}
-
-	public Date getCreateddate() {
-		return createddate;
-	}
-
-	public void setCreateddate(final Date createddate) {
-		this.createddate = createddate;
-	}
-
-	public BigDecimal getCreatedby() {
-		return createdby;
-	}
-
-	public void setCreatedby(final BigDecimal createdby) {
-		this.createdby = createdby;
-	}
-
-	public BigDecimal getLastmodifiedby() {
-		return lastmodifiedby;
-	}
-
-	public void setLastmodifiedby(final BigDecimal lastmodifiedby) {
-		this.lastmodifiedby = lastmodifiedby;
-	}
-
-	@Override
-	protected void setId(Long id) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public Long getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 }

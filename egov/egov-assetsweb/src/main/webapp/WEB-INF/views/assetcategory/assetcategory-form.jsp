@@ -107,16 +107,16 @@
               </form:select>
               <form:errors path="depExpAccountCode" cssClass="error-msg" />
             </div>
-           <%--  <label class="col-sm-3 control-label text-right"><spring:message code="lbl.uom" /> <span
+        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.uom" /> <span
               class="mandatory"></span> </label>
             <div class="col-sm-3 add-margin">
               <form:select path="uom" id="uom" cssClass="form-control" cssErrorClass="form-control error">
                 <form:option value="">
                   <spring:message code="lbl.select" />
                 </form:option>
-                <form:options items="${uOMs}" itemValue="id" itemLabel="name"  />
+                <form:options items="${uOMs}" itemValue="id" itemLabel="uom"  />
               </form:select>
               <form:errors path="uom" cssClass="error-msg" />
-            </div> --%>
+            </div>  
           </div>
           <input type="hidden" name="assetCategory" value="${assetCategory.id}" />

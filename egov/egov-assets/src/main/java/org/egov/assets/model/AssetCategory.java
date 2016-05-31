@@ -136,11 +136,11 @@ public class AssetCategory extends AbstractAuditable {
     @Required(message = "assetcat.assettype.null")
     private AssetType assetType;
 
-   /* @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="UOM_ID")
     @Required(message = "assetcat.uom.null")
     private UOM uom;
-*/
+ 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="PARENTID")
     private AssetCategory parent;
@@ -219,13 +219,13 @@ public class AssetCategory extends AbstractAuditable {
         this.assetType = assetType;
     }
 
-  /*  public UOM getUom() {
+  public UOM getUom() {
         return uom;
     }
 
     public void setUom(final UOM uom) {
         this.uom = uom;
-    }*/
+    } 
 
     public AssetCategory getParent() {
         return parent;
