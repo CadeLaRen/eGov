@@ -98,7 +98,7 @@ public class AssetCategoryController {
 		}
 		assetCategoryService.create(assetCategory);
 		redirectAttrs.addFlashAttribute("message", messageSource.getMessage(
-				"msg.assetCategory.success", null, null));
+				"msg.assetcategory.success", null, null));
 		return "redirect:/assetcategory/result/" + assetCategory.getId();
 	}
 

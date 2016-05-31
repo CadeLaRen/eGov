@@ -2,4 +2,4 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <div class="alert alert-success" role="alert">
   <strong>${message}</strong>
-</div><%@ include file="assetCategory-view.jsp"%>
+</div><%@ include file="assetcategory-view.jsp"%>
