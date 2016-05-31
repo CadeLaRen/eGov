@@ -55,6 +55,7 @@ import org.egov.config.search.Index;
 import org.egov.config.search.IndexType;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -71,6 +72,7 @@ import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.utils.SewerageActionDropDownUtil;
+import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +98,9 @@ public class ApplicationSewerageSearchController {
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
     @Autowired
     private BoundaryService boundaryService;
-
+    @Autowired
+    private SewerageTaxUtils sewerageTaxUtils;
+    
     @Autowired
     private SewerageConnectionService sewerageConnectionService;
 
@@ -149,6 +153,11 @@ public class ApplicationSewerageSearchController {
                 asList(IndexType.SEWARAGESEARCH.toString()), searchRequest.searchQuery(),
                 searchRequest.searchFilters(), sort, Page.NULL);
 
+        List<String> roleList = new ArrayList<String>();
+        for (final Role userrole : sewerageTaxUtils.getLoginUserRoles()) {
+            roleList.add(userrole.getName());
+        }
+
         final List<SewerageSearchResult> searchResultFomatted = new ArrayList<SewerageSearchResult>(0);
 
         for (final Document document : searchResult.getDocuments()) {
@@ -156,8 +165,8 @@ public class ApplicationSewerageSearchController {
             final Map<String, String> searchableObjects = (Map<String, String>) document.getResource()
                     .get("searchable");
             if (searchableObjects != null) {
-                final SewerageSearchResult searchActions = SewerageActionDropDownUtil
-                        .getSearchResultWithActions(searchableObjects.get("status"));
+                final SewerageSearchResult searchActions = SewerageActionDropDownUtil.getSearchResultWithActions(
+                        roleList, searchableObjects.get("status"));
                 if (searchActions != null) {
                     searchActions.setDocument(document);
                     searchResultFomatted.add(searchActions);

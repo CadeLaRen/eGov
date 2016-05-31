@@ -99,7 +99,7 @@ function submitButton() {
 	$('#searchResultDiv').show();
 	$.post("/stms/existing/sewerage/",$('#sewerageSearchRequestForm').serialize())
 	.done(function(searchResult) {
-	console.log(JSON.stringify(searchResult));
+	//console.log(JSON.stringify(searchResult));
 	tableContainer.dataTable({
 	destroy : true,
 	"sPaginationType" : "bootstrap",
@@ -136,11 +136,15 @@ function submitButton() {
 	           {title : 'Address',data : 'document.resource.searchable.address'},
 	           {"title" : "Actions","sortable":false,
 	           render : function(data, type, row) {
-	        	   console.log('data ->'+ JSON.stringify(row));
+	        	   //console.log('data ->'+ JSON.stringify(row));
 	        	   var option = "<option>Select from Below</option>";
-	        	   $.each(row.actions, function(key, value){
-	        		   option+= "<option value="+key+">"+value+"</option>";
-	        	   });
+	        	//   console.log('Actions'+row.actions)
+	        	   if(row.actions != null){
+	        		   $.each(row.actions, function(key, value){
+		        		   option+= "<option value="+key+">"+value+"</option>";
+		        	   });
+	        	   }
+	        	   
 				   return ('<select class="actiondropdown" data-consumer-no="'+ row.document.resource.searchable.consumernumber +'">'+ option +'</select>');
 	           }}],
 	           "aaSorting": [[5, 'asc']]

@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.egov.commons.EgwStatus;
+import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
@@ -63,7 +64,6 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -82,10 +82,6 @@ public class SewerageTaxUtils {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
-
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
 
     @Autowired
     @Qualifier("propertyIntegrationServiceImpl")
@@ -115,22 +111,29 @@ public class SewerageTaxUtils {
     @Autowired
     private SecurityUtils securityUtils;
 
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    
+    /**
+     * 
+     * @return false by default. If configuration value is Yes, then returns true.
+     */
     public Boolean isNewConnectionAllowedIfPTDuePresent() {
-        AppConfigValues appConfigValue = null;
-        if (appConfigValuesService.getConfigValuesByModuleAndKey(
-                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE).size() == 0) {
-            appConfigValue = new AppConfigValues();
-            appConfigValue.setValue("NO");
-        } else
-            appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                    SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE).get(0);
-
-        return "YES".equalsIgnoreCase(appConfigValue.getValue());
+        
+        List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
+                SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE);
+        
+        if(appConfigValue!=null && appConfigValue.size()>0)
+        {
+            return "YES".equalsIgnoreCase((appConfigValue.get(0)).getValue());
+        }
+        
+       return false; 
     }
 
     public EgwStatus getStatusByCodeAndModuleType(final String code, final String moduleName) {
-        return (EgwStatus) persistenceService.find("from EgwStatus where moduleType=? and code=?", moduleName, code);
-    }
+       return  egwStatusHibernateDAO.getStatusByModuleAndCode(moduleName, code);
+      }
 
     public AssessmentDetails getAssessmentDetailsForFlag(final String asessmentNumber, final Integer flagDetail) {
         final AssessmentDetails assessmentDetails = propertyIntegrationService.getAssessmentDetailsForFlag(asessmentNumber,
@@ -383,8 +386,17 @@ public class SewerageTaxUtils {
         return false;
     }
    
-    
-    
+    public List<Role> getLoginUserRoles() {
+
+        List<Role> roleList = new ArrayList<Role>();
+        if (ApplicationThreadLocals.getUserId() != null) {
+            final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
+            for (final Role userrole : currentUser.getRoles()) {
+                roleList.add(userrole);
+            }
+        }
+        return roleList;
+    }
 }
 
 

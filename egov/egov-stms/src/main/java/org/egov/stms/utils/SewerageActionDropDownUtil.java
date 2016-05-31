@@ -39,56 +39,109 @@
  */
 package org.egov.stms.utils;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 
 public class SewerageActionDropDownUtil {
 
-    public static final Map<String, String> BOTHACTIONMETHODMAP = new LinkedHashMap<String, String>();
-    public static final Map<String, String> VIEWACTIONMETHODMAP = new LinkedHashMap<String, String>();
-    public static final Map<String, String> COLLECTACTIONMETHODMAP = new LinkedHashMap<String, String>();
-    public static final Map<String, Map<String, String>> map = new HashMap<String, Map<String, String>>();
+    private static Logger LOGGER = Logger.getLogger(SewerageActionDropDownUtil.class);
+    public static final String DEFAULT = "DEFAULT";
+    
+    public static final Map<String, Map<String, String>> actionUrlMap = new HashMap<String, Map<String, String>>();
+    public static final Map<String, List<String>> STATUSACTIONMAP = new HashMap<String, List<String>>();
+    public static final Map<String, List<String>> SEWERAGEROLEACTIONMAP = new HashMap<String, List<String>>();
 
-    public static final Map<String, String> statusCreatedActions() {
-        BOTHACTIONMETHODMAP.put(SewerageTaxConstants.VIEWURL, SewerageTaxConstants.VIEW);
-        BOTHACTIONMETHODMAP.put(SewerageTaxConstants.COLLECTDONATIONCHARHGESURL,
-                SewerageTaxConstants.COLLECTDONATIONCHARHGES);
-        VIEWACTIONMETHODMAP.put(SewerageTaxConstants.VIEWURL, SewerageTaxConstants.VIEW);
-        COLLECTACTIONMETHODMAP.put(SewerageTaxConstants.COLLECTDONATIONCHARHGESURL,
-                SewerageTaxConstants.COLLECTDONATIONCHARHGES);
+    static {
+        // Status wise define different actions.
+        STATUSACTIONMAP.put("CREATED", Arrays.asList(SewerageTaxConstants.VIEW));
+        STATUSACTIONMAP.put("COLLECTINSPECTIONFEE",Arrays.asList(SewerageTaxConstants.VIEW, SewerageTaxConstants.COLLECTDONATIONCHARHGES));
 
-        map.put("CLERK", BOTHACTIONMETHODMAP);
-        map.put("ASSISTANTENGINEER", VIEWACTIONMETHODMAP);
-        map.put("COLLECTIONOFFICER", COLLECTACTIONMETHODMAP);
+        //Rolewise define action mappings
+        SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR, Arrays.asList(SewerageTaxConstants.VIEW));
+        SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_SEWERAGETAX_ADMINISTRATOR, Arrays.asList(SewerageTaxConstants.VIEW));
+        SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER, Arrays.asList(SewerageTaxConstants.VIEW));
+        SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_CSCOPERTAOR, Arrays.asList(SewerageTaxConstants.VIEW, SewerageTaxConstants.COLLECTDONATIONCHARHGES));
+        SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_ULBOPERATOR, Arrays.asList(SewerageTaxConstants.VIEW, SewerageTaxConstants.COLLECTDONATIONCHARHGES));
+        SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_BILLCOLLECTOR, Arrays.asList(SewerageTaxConstants.VIEW, SewerageTaxConstants.COLLECTDONATIONCHARHGES));
+        SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_SUPERUSER,Arrays.asList(SewerageTaxConstants.VIEW, SewerageTaxConstants.COLLECTDONATIONCHARHGES));
+        SEWERAGEROLEACTIONMAP.put(DEFAULT, Arrays.asList(SewerageTaxConstants.VIEW));
 
-        return BOTHACTIONMETHODMAP;
+        //For each action, define url mapping
+        actionUrlMap.put(SewerageTaxConstants.VIEW,getActionWithUrl(SewerageTaxConstants.VIEWURL, SewerageTaxConstants.VIEW));
+        actionUrlMap.put(SewerageTaxConstants.COLLECTDONATIONCHARHGES,getActionWithUrl(SewerageTaxConstants.COLLECTDONATIONCHARHGESURL,
+                        SewerageTaxConstants.COLLECTDONATIONCHARHGES));
+
     }
 
-    private Map getActionMap(String role) {
-        if (map.containsKey(role)) {
-            return map.get(role);
+    private static Map<String, String> getActionWithUrl(String url, String action) {
+        Map<String, String> actionwithurl = new LinkedHashMap<String, String>();
+        actionwithurl.put(url, action);
+        return actionwithurl;
+    }
+
+    public static Map<String, String> filterActionsByStatus(List<String> actions, String status) {
+        if (actions != null && !actions.isEmpty()) {
+            Map<String, String> result = new LinkedHashMap<String, String>();
+
+            List<String> statusActionList = Collections.EMPTY_LIST;
+
+            if (status != null && !status.equals("")) {
+                LOGGER.info(" ************ registrationStatus  " + status);
+                statusActionList = STATUSACTIONMAP.get(status.toUpperCase());
+                LOGGER.info(" ....... statusActionList  " + statusActionList);
+                for (String action : actions) {
+                    if (statusActionList != null && statusActionList.contains(action)) {
+                        result.putAll(actionUrlMap.get(action));
+                    }
+                }
+
+                return result;
+            } else
+                return Collections.EMPTY_MAP;
+        } else
+            return Collections.EMPTY_MAP;
+    }
+
+    public static Map<String, String> getActionsByRoles(List<String> roleName, String collectionStatus) {
+        List<String> actionList = Collections.EMPTY_LIST;
+        
+        LOGGER.debug(" ************ Role Name " + roleName);
+        LOGGER.debug(" ************ registrationStatus  " + collectionStatus);
+      
+        if (roleName != null && !roleName.isEmpty()) {
+            if (roleName.contains(SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR)) {
+                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR);
+            } else if (roleName.contains(SewerageTaxConstants.ROLE_SUPERUSER)) {
+                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SUPERUSER);
+            } else if (roleName.contains(SewerageTaxConstants.ROLE_SEWERAGETAX_ADMINISTRATOR)) {
+                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SEWERAGETAX_ADMINISTRATOR);
+            } else if (roleName.contains(SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER)) {
+                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER);
+            } else if (roleName.contains(SewerageTaxConstants.ROLE_CSCOPERTAOR)) {
+                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_CSCOPERTAOR);
+            } else if (roleName.contains(SewerageTaxConstants.ROLE_ULBOPERATOR)) {
+                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_ULBOPERATOR);
+            } else if (roleName.contains(SewerageTaxConstants.ROLE_BILLCOLLECTOR)) {
+                actionList = SEWERAGEROLEACTIONMAP.get(SewerageTaxConstants.ROLE_BILLCOLLECTOR);
+            } else {
+                actionList = SEWERAGEROLEACTIONMAP.get(DEFAULT);
+            }
         }
-        return null;
+        return filterActionsByStatus(actionList, collectionStatus);
     }
 
-    public static final SewerageSearchResult getSearchResultWithActions(final String status) {
+    public static final SewerageSearchResult getSearchResultWithActions(List<String> roleName, final String status) {
         SewerageSearchResult searchActions = new SewerageSearchResult();
-        if (status != null
-                && status.toUpperCase()
-                        .equals(SewerageTaxConstants.APPLICATION_STATUS_CREATED.toString().toUpperCase())) {
-            searchActions.setActions(statusCreatedActions());
-
-        }
-        if (status != null
-                && status.toUpperCase().equals(
-                        SewerageTaxConstants.APPLICATION_STATUS_FIELDINSPECTED.toString().toUpperCase())) {
-            searchActions.setActions(statusCreatedActions());
-
-        }
+        if (status != null)
+            searchActions.setActions(getActionsByRoles(roleName, status));
         return searchActions;
     }
 
