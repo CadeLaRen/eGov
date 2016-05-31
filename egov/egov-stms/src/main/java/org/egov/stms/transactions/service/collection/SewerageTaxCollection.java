@@ -83,7 +83,7 @@ public class SewerageTaxCollection extends TaxCollection {
     
     @Autowired
     private  SewerageTaxUtils sewerageTaxUtils;
-   
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -289,6 +289,7 @@ public class SewerageTaxCollection extends TaxCollection {
             }
             demand.setModifiedDate(new Date());
         }
+        updateWorkflowState(demand);
         return totalAmountCollected;
     }
 
@@ -323,10 +324,7 @@ public class SewerageTaxCollection extends TaxCollection {
 
         if (demand != null) {
             final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService.getSewerageConnectionDetailsByDemand(demand);
-            /**
-             * If the current status of advertisement permit is approved, then only call next level workflow. Assumption: Payment
-             * collection is pending in this stage.
-             */
+           
             if (sewerageApplicationDetails != null
                     && sewerageApplicationDetails.getState() != null
                     && sewerageApplicationDetails.getStatus() != null
@@ -334,7 +332,10 @@ public class SewerageTaxCollection extends TaxCollection {
                     .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE)) {
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID, SewerageTaxConstants.MODULETYPE));
-                sewerageApplicationDetailsService.save(sewerageApplicationDetails);
+                
+                sewerageApplicationDetailsService.updateStateTransition(sewerageApplicationDetails, sewerageApplicationDetails.getState().getOwnerPosition().getId() ,SewerageTaxConstants.COLLECTION_REMARKS, 
+                        sewerageApplicationDetails.getApplicationType().getCode(), SewerageTaxConstants.COLLECTION_WF_ACTION);
+                sewerageApplicationDetailsService.save(sewerageApplicationDetails); 
             } 
         }
     }

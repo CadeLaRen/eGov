@@ -168,4 +168,6 @@ public class SewerageTaxConstants {
     public static final String DISPLAY_MESSAGE = "Sewerage Tax Collection";
 
     public static final String FEES_DONATIONCHARGE_CODE = "DONATIONCHARGE";
+    public static final String COLLECTION_REMARKS = "Collection done";
+    public static final String COLLECTION_WF_ACTION = "Forward";
 }
