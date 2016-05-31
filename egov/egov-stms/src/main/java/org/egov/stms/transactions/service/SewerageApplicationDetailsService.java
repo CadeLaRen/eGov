@@ -568,9 +568,18 @@ public class SewerageApplicationDetailsService {
                 && null != sewerageApplicationDetails.getStatus().getCode())
             if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(SewerageTaxConstants.APPLICATION_STATUS_CREATED)
-                    && sewerageApplicationDetails.getState() != null && workFlowAction.equals("Submit"))
+                    || sewerageApplicationDetails.getStatus().getCode()
+                            .equals(SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID))
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                        SewerageTaxConstants.APPLICATION_STATUS_FIELDINSPECTED, SewerageTaxConstants.MODULETYPE));
+                        SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED, SewerageTaxConstants.MODULETYPE));
+            else if (sewerageApplicationDetails.getStatus().getCode()
+                    .equals(SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE))
+                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                        SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID, SewerageTaxConstants.MODULETYPE));
+            else if (sewerageApplicationDetails.getStatus().getCode()
+                    .equals(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED))
+                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                        SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED, SewerageTaxConstants.MODULETYPE));
             else if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(SewerageTaxConstants.APPLICATION_STATUS_VERIFIED))
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
@@ -669,5 +678,14 @@ public class SewerageApplicationDetailsService {
         //TODO : update index on collection 
     }
 
-    
+    public void updateStateTransition(final SewerageApplicationDetails sewerageApplicationDetails,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction) {
+        if (approvalPosition != null && additionalRule != null
+                && org.apache.commons.lang.StringUtils.isNotEmpty(workFlowAction))
+            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(sewerageApplicationDetails,
+                    approvalPosition, approvalComent, additionalRule, workFlowAction);
+        // TODO : update index on collection
+    }
+
 }

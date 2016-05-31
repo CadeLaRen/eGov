@@ -51,8 +51,8 @@ $(document).ready(function()
 	var mode =$('#mode').val();
 	$('#approvalComent').show();
 	var closerConnection=$('#closerConnection').val();
-	var approvalPositionExist=$('#approvalPositionExist').val();
-	if(approvalPositionExist!=0 && ((status=='CREATED' && wfstate!=null )|| status=='VERIFIED' || status=='CHECKED' ||status=='ESTIMATIONAMOUNTPAID' || status=='WORKORDERGENERATED' || status=='APPROVED'))
+	var approvalPositionExist=$('#approvalPositionExist').val(); 
+	if(approvalPositionExist!=0 && ((status=='CREATED' && wfstate!=null ) || status=='INITIALAPPROVED' || status=='VERIFIED' || status=='CHECKED' ||status=='ESTIMATIONAMOUNTPAID' || status=='WORKORDERGENERATED' || status=='APPROVED'))
 		{
 		$(".show-row").hide(); 
 		$('#approverDetailHeading').hide();
