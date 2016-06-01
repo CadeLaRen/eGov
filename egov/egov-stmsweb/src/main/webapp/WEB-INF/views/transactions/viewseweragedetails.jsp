@@ -55,6 +55,11 @@
 			<jsp:include page="fieldInspectionDetails.jsp"/>
 		</div>
 		<div class="panel panel-primary" data-collapsed="0">
+		<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="title.seweragecharges"/>
+				</div>
+			</div>
 			<jsp:include page="seweragechargesdetails.jsp"/>
 		</div>
 		
@@ -77,7 +82,7 @@
 </div>
 
 <script src="<c:url value='/resources/js/transactions/applicationview.js?rnd=${app_release_no}'/>"></script>
-<script type="text/javascript">
+<script type="text/javascript">  
 function printDiv(divName) {
     var printContents = document.getElementById(divName).innerHTML;
     var originalContents = document.body.innerHTML;

@@ -66,21 +66,37 @@
 				</div>
 				<div class="panel-body custom-form ">
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
-					<jsp:include page="connectiondetails.jsp"></jsp:include>	
+					<jsp:include page="connectiondetails.jsp"></jsp:include>
+					
+						 
+					
 					<%-- <jsp:include page="documentdetails.jsp"></jsp:include>	 --%>
 					<div class="form-group">
-						<div class="row">
-							<label class="col-sm-3 control-label text-right"><spring:message code="lbl.attachdocument"/></label>
-							<div class="col-sm-3 add-margin">
-								<input type="file" id="fileStoreId" name="files" class="file-ellipsis upload-file">
-								<div class="add-margin error-msg" ><font size="2">
-									<spring:message code="lbl.mesg.document"/>	
-									</font></div>
-							</div>
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.attachdocument"/></label>
+						<div class="col-sm-3 add-margin">
+							<input type="file" id="fileStoreId" name="files" class="file-ellipsis upload-file">
+							<div class="add-margin error-msg" ><font size="2">
+								<spring:message code="lbl.mesg.document"/>	
+								</font></div>
 						</div>
 				   </div>
 				</div>
-			</div>			
+			</div>
+
+			<c:if test="${inspectionFeesCollectionRequired == 'true'}">
+
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<spring:message code="lbl.title.inspectionCharges" />
+						</div>
+					</div>
+					<div class="panel-body">
+						<jsp:include page="inspectionCharges.jsp"></jsp:include>
+
+					</div>
+				</div>
+			</c:if>
 			
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			<div class="buttonbottom" align="center">

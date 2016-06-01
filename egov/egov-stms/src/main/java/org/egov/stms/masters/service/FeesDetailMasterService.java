@@ -66,4 +66,7 @@ public class FeesDetailMasterService {
       public List<FeesDetailMaster> findAllFeesDetailByFeesCode(final String code) {
           return feesDetailMasterRepository.findAllByFeesCode(code);
       }
+      public List<FeesDetailMaster> findAllActiveFeesDetailByFeesCode(final String code) {
+          return feesDetailMasterRepository.findAllActiveFeesDetailByFeesCode(code);
+      }
 }

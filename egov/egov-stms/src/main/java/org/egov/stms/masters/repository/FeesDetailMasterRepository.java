@@ -52,6 +52,11 @@ public interface FeesDetailMasterRepository extends JpaRepository<FeesDetailMast
 
     FeesDetailMaster findByCodeAndIsActive(String code, boolean active);
 
-    @Query("select fd from FeesDetailMaster fd where UPPER(fd.fees.code) = UPPER(:code) order by fd.id")
+    @Query("select fd from FeesDetailMaster fd where UPPER(fd.fees.code) = UPPER(:code)  order by fd.id")
     List<FeesDetailMaster> findAllByFeesCode(@Param("code") String code);
+    
+    @Query("select fd from FeesDetailMaster fd where UPPER(fd.fees.code) = UPPER(:code) and isActive=true order by fd.id")
+    List<FeesDetailMaster> findAllActiveFeesDetailByFeesCode(@Param("code") String code);
+ 
+    
 }

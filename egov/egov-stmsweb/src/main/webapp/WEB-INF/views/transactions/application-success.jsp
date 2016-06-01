@@ -66,7 +66,22 @@
 			</div>
 			<jsp:include page="commonApplicationDetails-view.jsp"/>
 		</div>
-		<jsp:include page="connectionDetails-view.jsp"></jsp:include>
+				<c:if
+					test="${inspectionFeesCollectionRequired!=null && inspectionFeesCollectionRequired == 'true'}">
+
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-heading">
+							<div class="panel-title">
+								<spring:message code="lbl.title.inspectionCharges" />
+							</div>
+						</div>
+						<div class="panel-body">
+							<jsp:include page="inspectionChargesView.jsp"></jsp:include>
+
+						</div>
+					</div>
+				</c:if>
+				<jsp:include page="connectionDetails-view.jsp"></jsp:include>
 	<div class="panel panel-default" data-collapsed="0">
 		<div class="panel-body">
 			<div class="row">

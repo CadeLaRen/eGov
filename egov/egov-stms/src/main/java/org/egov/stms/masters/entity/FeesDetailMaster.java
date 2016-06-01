@@ -92,7 +92,7 @@ public class FeesDetailMaster extends AbstractAuditable {
     private boolean isFixedRate;
     private BigDecimal amount;
     
-    public boolean isFixedRate() {
+    public boolean getIsFixedRate() {
         return isFixedRate;
     }
 
@@ -147,12 +147,15 @@ public class FeesDetailMaster extends AbstractAuditable {
     public boolean isMandatory() {
         return isMandatory;
     }
+    public boolean getIsMandatory() {
+        return isMandatory;
+    } 
 
     public void setMandatory(final boolean isMandatory) {
         this.isMandatory = isMandatory;
     }
 
-    public boolean isActive() {
+    public boolean getIsActive() {
         return isActive;
     }
 
