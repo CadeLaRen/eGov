@@ -65,7 +65,10 @@
                 <form:option value="">
                   <spring:message code="lbl.select" />
                 </form:option>
-                <form:options items="${accountCodes}" itemValue="id" itemLabel="name"  />
+               <c:forEach var="accountCodes" items="${accountCodes}">
+								<option value="${accountCodes.id}">
+									${accountCodes.glcode} - ${accountCodes.name}</option>
+							</c:forEach>
               </form:select>
               <form:errors path="assetAccountCode" cssClass="error-msg" />
             </div>
@@ -78,7 +81,10 @@
                 <form:option value="">
                   <spring:message code="lbl.select" />
                 </form:option>
-                <form:options items="${accountDeps}" itemValue="id" itemLabel="name" />
+                <c:forEach var="accountDeps" items="${accountDeps}">
+								<option value="${accountDeps.id}">
+									${accountDeps.glcode} - ${accountDeps.name}</option>
+							</c:forEach>
               </form:select>
               <form:errors path="accDepAccountCode" cssClass="error-msg" />
             </div>
@@ -90,7 +96,10 @@
                 <form:option value="">
                   <spring:message code="lbl.select" />
                 </form:option>
-                <form:options items="${accountRevRess}" itemValue="id" itemLabel="name"  />
+                <c:forEach var="accountRevRess" items="${accountRevRess}">
+								<option value="${accountRevRess.id}">
+									${accountRevRess.glcode} - ${accountRevRess.name}</option>
+							</c:forEach>
               </form:select>
               <form:errors path="revAccountCode" cssClass="error-msg" />
             </div>
@@ -103,7 +112,11 @@
                 <form:option value="">
                   <spring:message code="lbl.select" />
                 </form:option>
-                <form:options items="${accountDepExps}" itemValue="id" itemLabel="name" />
+                <c:forEach var="accountDepExps" items="${accountDepExps}">
+								<option value="${accountDepExps.id}">
+									${accountDepExps.glcode} - ${accountDepExps.name}</option>
+							</c:forEach>
+                <!--<form:options items="${accountDepExps}" itemValue="id" itemLabel="name" />  -->
               </form:select>
               <form:errors path="depExpAccountCode" cssClass="error-msg" />
             </div>
