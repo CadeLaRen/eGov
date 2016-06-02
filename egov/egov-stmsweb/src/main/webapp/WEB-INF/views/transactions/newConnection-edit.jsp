@@ -54,6 +54,16 @@
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<form:hidden path="applicationType" id="applicationType" value="${sewerageApplicationDetails.applicationType.id}"/>
 	<form:hidden path="connection.status" id="connection.status" value="${sewerageApplicationDetails.connection.status}"/>
+	
+	<c:if test="${sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE'}">
+	 <div  data-collapsed="0">
+		<div class="panel-heading">
+			<div  style="color: red; font-size: 16px;" align="center">
+				<spring:message  code="lbl.collect.inspectionFee"/> 
+			</div>
+		</div>
+	</div>	
+	 </c:if>
 	<%-- <div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
 			<div class="panel-title">

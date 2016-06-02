@@ -88,15 +88,15 @@ public class FeesDetailMaster extends AbstractAuditable {
     @JoinColumn(name = "fees", nullable = false)
     private FeesMaster fees;
 
-    private boolean isMandatory;
-    private boolean isFixedRate;
+    private Boolean isMandatory;
+    private Boolean isFixedRate;
     private BigDecimal amount;
     
-    public boolean getIsFixedRate() {
+    public Boolean getIsFixedRate() {
         return isFixedRate;
     }
 
-    public void setFixedRate(boolean isFixedRate) {
+    public void setFixedRate(Boolean isFixedRate) {
         this.isFixedRate = isFixedRate;
     }
 
@@ -144,10 +144,10 @@ public class FeesDetailMaster extends AbstractAuditable {
         this.fees = fees;
     }
 
-    public boolean isMandatory() {
+    public Boolean isMandatory() {
         return isMandatory;
     }
-    public boolean getIsMandatory() {
+    public Boolean getIsMandatory() {
         return isMandatory;
     } 
 
