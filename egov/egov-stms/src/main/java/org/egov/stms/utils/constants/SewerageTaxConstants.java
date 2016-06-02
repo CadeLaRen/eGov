@@ -53,36 +53,58 @@ public class SewerageTaxConstants {
 
     // appconfig keys
     public static final String NEWCONNECTIONALLOWEDIFPTDUE = "NEWCONNECTIONALLOWEDIFPTDUE";
+    public static final String APPCONFIG_COLLECT_INSPECTIONFEE = "SEWERAGE_COLLECTINSPECTION_FEE";
 
-    // application constants
+    // application status constants - start
     public static final String APPLICATION_STATUS_CREATED = "CREATED";
-    public static final String APPLICATION_STATUS_CHECKED = "CHECKED";
-    public static final String APPLICATION_STATUS_APPROVED = "APPROVED";
-    public static final String APPLICATION_STATUS_VERIFIED = "VERIFIED";
+    public static final String APPLICATION_STATUS_FINALAPPROVED = "FINALAPPROVED";
     public static final String APPLICATION_STATUS_ESTIMATENOTICEGEN = "ESTIMATIONNOTICEGENERATED";
     public static final String APPLICATION_STATUS_FEEPAID = "ESTIMATIONAMOUNTPAID";
     public static final String APPLICATION_STATUS_WOGENERATED = "WORKORDERGENERATED";
     public static final String APPLICATION_STATUS_CANCELLED = "CANCELLED";
     public static final String APPLICATION_STATUS_SANCTIONED = "SANCTIONED";
-    public static final String APPLICATION_STATUS_CLERKAPPROVED = "Clerk approved";
-
+    public static final String APPLICATION_STATUS_INSPECTIONFEEPENDING = "INSPECTIONFEEPENDING";
     public static final String APPLICATION_STATUS_INSPECTIONFEEPAID = "INSPECTIONFEEPAID";
     public static final String APPLICATION_STATUS_INITIALAPPROVED = "INITIALAPPROVED";
-    public static final String APPLICATION_STATUS_FIELDINSPECTED = "FIELD INSPECTED";
+    public static final String APPLICATION_STATUS_FIELDINSPECTED = "FIELDINSPECTED";
     public static final String APPLICATION_STATUS_REJECTED = "REJECTED";
     public static final String APPLICATION_STATUS_DEEAPPROVED = "DEEAPPROVED";
+    public static final String APPLICATION_STATUS_COLLECTINSPECTIONFEE = "COLLECTINSPECTIONFEE";
+    // application status constants - end
+    
+    // workflow related - start 
+    public static final String COLLECTION_REMARKS = "Collection done";
+    public static final String WORKFLOWTYPE_DISPLAYNAME = "Sewerage Connection";
+    
+    // current states
+    public static final String WF_STATE_REJECTED = "Rejected";
+    public static final String WF_STATE_CLERK_APPROVED = "Clerk Approved";
+    public static final String WF_STATE_DEPUTY_EXE_APPROVED = "Deputy Executive Engineer Approved";
+    public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Engineer Approved";
+    public static final String WF_STATE_INSPECTIONFEE_PENDING = "Inspection Fee Pending";
+    public static final String WF_STATE_INSPECTIONFEE_COLLECTED = "Inspection Fee Collected";
+    public static final String WF_STATE_ESTIMATIONNOTICE_GENERATED = "Estimation Notice Generated";
+    public static final String WF_STATE_PAYMENTDONE = "Payment Done Against Estimation";
+    public static final String WF_STATE_EE_APPROVED = "Executive Engineer Approved";
+    public static final String WF_STATE_WO_GENERATED = "Work Order Generated";
+    
+    // validactions
+    public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
+    public static final String WFLOW_ACTION_STEP_CANCEL = "Cancel";
+    public static final String WFLOW_ACTION_STEP_FORWARD = "Forward";
+    public static final String WF_ESTIMATION_NOTICE_BUTTON = "Generate Estimation Notice";
+    public static final String WF_STATE_CONNECTION_EXECUTION_BUTTON = "Execute Connection";
+    public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
+    public static final String WF_WORKORDER_BUTTON = "Generate Work Order";
+    public static final String WF_INSPECTIONFEE_COLLECTION= "Inspection Fee Collection";
+    
+    //Pendingactions
+    public static final String WFPA_REJECTED_INSPECTIONFEE_COLLECTION= "Rejected Inspection Fee Collection";
+    // workflow related - end
+
 
     public static final String CLERKDESIGNATIONFORCSCOPERATOR = "CLERKDESIGNATIONFORCSCOPERATOR";
     public static final String SEWERAGETAXWORKFLOWDEPARTEMENT = "DEPARTMENTFORWORKFLOW";
-
-    public static final String WORKFLOWTYPE_DISPLAYNAME = "Sewerage Connection";
-
-    public static final String WF_STATE_REJECTED = "Rejected";
-    public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
-
-    public static final String WF_STATE_CLERK_APPROVED = "Clerk approved";
-    public static final String WF_STATE_DEPUTY_EXE_APPROVED = "Deputy executive engineer approved";
-    public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Engineer approved";
 
     // designations
     public static final String DESIGNATION_DEPUTY_EXE_ENGINEER = "deputy executive engineer";
@@ -108,12 +130,6 @@ public class SewerageTaxConstants {
     public static final String SUBMITWORKFLOWACTION = "Submit";
     public static final String APPROVEWORKFLOWACTION = "Approve";
 
-    public static final String WF_ESTIMATION_NOTICE_BUTTON = "Generate Estimation Notice";
-    public static final String WF_STATE_CONNECTION_EXECUTION_BUTTON = "Execute Connection";
-    public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
-    public static final String WF_WORKORDER_BUTTON = "Generate Work Order";
-    public static final String WF_INSPECTIONFEE_COLLECTION= "Inspection Fee Collection";
-
     public static final String PREVIEWWORKFLOWACTION = "Preview";
 
     public static final String VIEW = "View";
@@ -129,8 +145,6 @@ public class SewerageTaxConstants {
     public static final String CLAUSES_DOORNO = "clauses.doorno";
     public static final String CLAUSES_REVWARD_NAME = "clauses.revwardname";
     public static final String CLAUSES_APPLICATION_DATE = "clauses.applicationdate";
-
-    public static final String FEE_INSPECTIONCHARGE = "INSPECTIONCHARGE";
 
     public static final LinkedHashMap<Integer, Integer> PIPE_SCREW_SIZE = new LinkedHashMap<Integer, Integer>() {
         /**
@@ -156,11 +170,15 @@ public class SewerageTaxConstants {
             put(15, 15);
         }
     };
+    
+    // Fees Master Code - start
     public static final String FEES_ESTIMATIONCHARGES_CODE = "ESTIMATIONCHARGE";
-    public static final String APPLICATION_STATUS_COLLECTINSPECTIONFEE = "COLLECTINSPECTIONFEE";
+    public static final String FEES_DONATIONCHARGE_CODE = "DONATIONCHARGE";
+    public static final String FEE_INSPECTIONCHARGE = "INSPECTIONCHARGE";
+    // Fees Master Code - end
+    
+    
     public static final String SEWAREGE_FUCNTION_CODE = "SEWERAGE_FUNCTION_CODE";
-    public static final String APPCONFIG_COLLECT_INSPECTIONFEE = "SEWERAGE_COLLECTINSPECTION_FEE";
-
     public static final String COLL_RECEIPTDETAIL_DESC_PREFIX = "Collection";
     public static final String BILL_TYPE_AUTO = "AUTO";
     public static final String STRING_DEPARTMENT_CODE = "REV";
@@ -171,7 +189,4 @@ public class SewerageTaxConstants {
     public static final String DEFAULT_FUND_CODE = "01";
     public static final String DISPLAY_MESSAGE = "Sewerage Tax Collection";
 
-    public static final String FEES_DONATIONCHARGE_CODE = "DONATIONCHARGE";
-    public static final String COLLECTION_REMARKS = "Collection done";
-    public static final String COLLECTION_WF_ACTION = "Forward";
 }

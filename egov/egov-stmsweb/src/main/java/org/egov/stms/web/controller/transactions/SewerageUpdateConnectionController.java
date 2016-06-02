@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -165,8 +166,12 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
         model.addAttribute("feesDetails",
                 feesDetailMasterService.findAllFeesDetailByFeesCode(SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE));
         model.addAttribute("uomList", uOMService.findAllOrderByCategory());
-        appendModeBasedOnApplicationCreator(model, request, sewerageApplicationDetails);
-
+       // appendModeBasedOnApplicationCreator(model, request, sewerageApplicationDetails);
+        
+        Map<String, Object> modelParams = sewerageApplicationDetailsService.showApprovalDetailsByApplcationCurState(sewerageApplicationDetails);
+        model.addAttribute("mode", modelParams.get("mode"));
+        model.addAttribute("showApprovalDtls", modelParams.get("showApprovalDtls"));
+        
         final BigDecimal sewerageTaxDue = sewerageApplicationDetailsService.getTotalAmount(sewerageApplicationDetails);
         model.addAttribute("sewerageTaxDue", sewerageTaxDue);
         model.addAttribute("propertyTypes", PropertyType.values());
@@ -250,15 +255,17 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
 
         // For Get Configured ApprovalPosition from workflow history
-        if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
+      /*  if (approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
             approvalPosition = sewerageApplicationDetailsService.getApprovalPositionByMatrixDesignation(
                     sewerageApplicationDetails, approvalPosition, sewerageApplicationDetails.getApplicationType()
                     .getCode(), mode, workFlowAction);
-
+       */
+        
         // To get modes to hide and show details in every user inbox
         request.getSession().setAttribute("APPROVAL_POSITION", approvalPosition);
-
-        appendModeBasedOnApplicationCreator(model, request, sewerageApplicationDetails);
+        
+        //commented out for time being
+        //appendModeBasedOnApplicationCreator(model, request, sewerageApplicationDetails);
         if ((approvalPosition == null || approvalPosition.equals(Long.valueOf(0)))
                 && request.getParameter("approvalPosition") != null
                 && !request.getParameter("approvalPosition").isEmpty())

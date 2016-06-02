@@ -40,7 +40,23 @@
 $(document).ready(function()
 {
 	
-	var typeOfConnection=$('#typeOfConnection').val();
+	var mode =$('#mode').val();
+	var showApprovalDtls = $('#showApprovalDtls').val();
+	if(showApprovalDtls == 'no'){
+		$(".show-row").hide(); 
+		$('#approverDetailHeading').hide();
+		$('#approvalDepartment').removeAttr('required');
+		$('#approvalDesignation').removeAttr('required');
+		$('#approvalPosition').removeAttr('required');
+	} else {
+		$(".show-row").show(); 
+		$('#approverDetailHeading').show();
+		$('#approvalDepartment').attr('required', 'required');
+		$('#approvalDesignation').attr('required', 'required');
+		$('#approvalPosition').attr('required', 'required');
+	}
+	
+	/*var typeOfConnection=$('#typeOfConnection').val();
     if (typeOfConnection=="CHANGEOFUSE"){
     	$("#waterSourceDropdown").prop("disabled", true);
     	$("#connectionCategorie").prop("disabled", true);
@@ -52,14 +68,15 @@ $(document).ready(function()
 	$('#approvalComent').show();
 	var closerConnection=$('#closerConnection').val();
 	var approvalPositionExist=$('#approvalPositionExist').val(); 
-	if(approvalPositionExist!=0 && ((status=='CREATED' && wfstate!=null ) || status=='INITIALAPPROVED' || status=='VERIFIED' || status=='CHECKED' ||status=='ESTIMATIONAMOUNTPAID' || status=='WORKORDERGENERATED' || status=='APPROVED'))
-		{
+	
+	if(approvalPositionExist!=0 && ((status=='CREATED' && wfstate!=null )  || status=='VERIFIED' || status=='CHECKED' ||status=='ESTIMATIONAMOUNTPAID' || status=='WORKORDERGENERATED' || status=='APPROVED'))
+	{
 		$(".show-row").hide(); 
 		$('#approverDetailHeading').hide();
 		$('#approvalDepartment').removeAttr('required');
 		$('#approvalDesignation').removeAttr('required');
 		$('#approvalPosition').removeAttr('required');
-		}
+	}
 	if(approvalPositionExist!=0 && ((mode=='' || mode=='closereditForAE' || mode=='reconEditForAE')&& closerConnection !=null ))
 	{
 	$(".show-row").hide(); 
@@ -86,11 +103,18 @@ $(document).ready(function()
 			$('#approvalPosition').attr('required', 'required');
 		}
 	 
-		if(approvalPositionExist=='' || approvalPositionExist==0){
+	if((approvalPositionExist=='' || approvalPositionExist==0) && status!='INITIALAPPROVED'){
 		$(".show-row").show(); 
 		$('#approvalDepartment').attr('required', 'required');
 		$('#approvalDesignation').attr('required', 'required');
 		$('#approvalPosition').attr('required', 'required');
+		}
+	else{
+			$(".show-row").hide(); 
+			$('#approverDetailHeading').hide();
+			$('#approvalDepartment').removeAttr('required');
+			$('#approvalDesignation').removeAttr('required');
+			$('#approvalPosition').removeAttr('required'); 
 		}
 		if(status=='ESTIMATIONNOTICEGENERATED')
 		{
@@ -98,7 +122,7 @@ $(document).ready(function()
 			//$(".btn-primary").hide();
 			$("#button2").show();
 			
-		}
+		}*/
 		
 		
 		/*if($('#validationMessage').val()!='')

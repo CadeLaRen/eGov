@@ -35,9 +35,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
@@ -299,7 +301,7 @@ public class SewerageApplicationDetailsService {
      * .getBean("seweargeApplicationWorkflowCustomDefaultImpl"); return
      * applicationWorkflowCustomDefaultImpl; }
      */
-
+    
     public void updateIndexes(final SewerageApplicationDetails sewerageApplicationDetails) {
         // TODO : Need to make Rest API call to get assessmentdetails
         final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
@@ -358,10 +360,6 @@ public class SewerageApplicationDetailsService {
                         .equals(SewerageTaxConstants.APPLICATION_STATUS_CREATED)) {
             if (sewerageApplicationDetails.getStatus() != null
                     && (sewerageApplicationDetails.getStatus().getCode()
-                            .equals(SewerageTaxConstants.APPLICATION_STATUS_APPROVED)
-                            || sewerageApplicationDetails.getStatus().getCode()
-                                    .equals(SewerageTaxConstants.APPLICATION_STATUS_VERIFIED)
-                            || sewerageApplicationDetails.getStatus().getCode()
                                     .equals(SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)
                             || sewerageApplicationDetails.getStatus().getCode()
                                     .equals(SewerageTaxConstants.APPLICATION_STATUS_FEEPAID)
@@ -370,15 +368,14 @@ public class SewerageApplicationDetailsService {
                             || sewerageApplicationDetails.getStatus().getCode()
                                     .equals(SewerageTaxConstants.APPLICATION_STATUS_WOGENERATED) || sewerageApplicationDetails
                             .getStatus().getCode().equals(SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED))
-                    || sewerageApplicationDetails.getStatus().getCode()
-                            .equals(SewerageTaxConstants.APPLICATION_STATUS_CHECKED)) {
+                   ) {
                 applicationIndex.setStatus(sewerageApplicationDetails.getStatus().getDescription());
                 applicationIndex.setApplicantAddress(assessmentDetails.getPropertyAddress());
                 applicationIndex.setOwnername(user.getUsername() + "::" + user.getName());
                 if (sewerageApplicationDetails.getConnection().getDhscNumber() != null)
                     applicationIndex.setConsumerCode(sewerageApplicationDetails.getConnection().getDhscNumber());
                 if (sewerageApplicationDetails.getStatus().getCode()
-                        .equals(SewerageTaxConstants.APPLICATION_STATUS_APPROVED)
+                        .equals(SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED)
                         || sewerageApplicationDetails.getStatus().getCode()
                                 .equals(SewerageTaxConstants.APPLICATION_STATUS_WOGENERATED))
                     applicationIndex.setApproved(ApprovalStatus.APPROVED);
@@ -471,14 +468,18 @@ public class SewerageApplicationDetailsService {
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-
+    
+    //TODO : Commented out code as statuses are changed.  Need to correct
     public Long getApprovalPositionByMatrixDesignation(final SewerageApplicationDetails sewerageApplicationDetails,
             Long approvalPosition, final String additionalRule, final String mode, final String workFlowAction) {
         final WorkFlowMatrix wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails
                 .getStateType(), null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(),
                 null);
         if (sewerageApplicationDetails.getStatus() != null && sewerageApplicationDetails.getStatus().getCode() != null)
-            if (sewerageApplicationDetails.getStatus().getCode()
+            if (sewerageApplicationDetails.getStatus().getCode()     // At DEE level
+                    .equals(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED))
+                    approvalPosition=null;
+            else if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(SewerageTaxConstants.APPLICATION_STATUS_CREATED)
                     && sewerageApplicationDetails.getState() != null)
                 if (mode.equals("edit"))
@@ -486,7 +487,7 @@ public class SewerageApplicationDetailsService {
                 else
                     approvalPosition = sewerageTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                             sewerageApplicationDetails);
-            else if (sewerageApplicationDetails.getStatus().getCode()
+           /* else if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(SewerageTaxConstants.APPLICATION_STATUS_APPROVED)
                     || SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN
                             .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
@@ -494,14 +495,14 @@ public class SewerageApplicationDetailsService {
                     && workFlowAction.equals(SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT)
                     && sewerageApplicationDetails.getState().getValue().equals("Rejected"))
                 approvalPosition = sewerageTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
-                        sewerageApplicationDetails);
+                        sewerageApplicationDetails);*/
             else if (wfmatrix.getNextDesignation() != null
                     && (sewerageApplicationDetails.getStatus().getCode()
                             .equals(SewerageTaxConstants.APPLICATION_STATUS_FEEPAID) || workFlowAction
                             .equals(SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT)))
                 approvalPosition = sewerageTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         sewerageApplicationDetails);
-            else if (wfmatrix.getNextDesignation() != null
+            /*else if (wfmatrix.getNextDesignation() != null
                     && (sewerageApplicationDetails.getStatus().getCode()
                             .equals(SewerageTaxConstants.APPLICATION_STATUS_VERIFIED)
                             || !workFlowAction.equals(SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT) || !sewerageApplicationDetails
@@ -511,7 +512,7 @@ public class SewerageApplicationDetailsService {
                         .getNextDesignation());
                 if (posobj != null)
                     approvalPosition = posobj.getId();
-            }
+            }*/
         if (wfmatrix.getNextDesignation() != null
                 && wfmatrix.getNextDesignation().equalsIgnoreCase(SewerageTaxConstants.DESIGNATION_DEPUTY_EXE_ENGINEER)) {
             final Position posobj = sewerageTaxUtils.getCityLevelDeputyEngineerPosition(wfmatrix.getNextDesignation());
@@ -525,16 +526,53 @@ public class SewerageApplicationDetailsService {
             if (posobj != null)
                 approvalPosition = posobj.getId();
         }
-        if (sewerageApplicationDetails.getStatus().getCode().equals(SewerageTaxConstants.APPLICATION_STATUS_APPROVED)
+      /*  if (sewerageApplicationDetails.getStatus().getCode().equals(SewerageTaxConstants.APPLICATION_STATUS_APPROVED)
                 || sewerageApplicationDetails.getStatus().getCode()
                         .equals(SewerageTaxConstants.APPLICATION_STATUS_CHECKED))
             approvalPosition = sewerageTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
-                    sewerageApplicationDetails);
+                    sewerageApplicationDetails);*/
         if (workFlowAction.equals(SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT)
-                && wfmatrix.getNextState().equals(SewerageTaxConstants.WF_STATE_CLERK_APPROVED))
+                && wfmatrix.getNextState().equals(SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED))
             approvalPosition = null;
 
         return approvalPosition;
+    }
+    
+    
+    public Map showApprovalDetailsByApplcationCurState(final SewerageApplicationDetails sewerageApplicationDetails){
+        final Map<String, Object> modelParams = new HashMap<String, Object>();
+        /*
+         *   public static final String WF_STATE_REJECTED = "Rejected";
+    public static final String WF_STATE_CLERK_APPROVED = "Clerk Approved";
+    public static final String WF_STATE_DEPUTY_EXE_APPROVED = "Deputy Executive Engineer Approved";
+    public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Engineer Approved";
+    public static final String WF_STATE_INSPECTIONFEE_PENDING = "Inspection Fee Pending";
+    public static final String WF_STATE_INSPECTIONFEE_COLLECTED = "Inspection Fee Collected";
+    public static final String WF_STATE_ESTIMATIONNOTICE_GENERATED = "Estimation Notice Generated";
+    public static final String WF_STATE_PAYMENTDONE = "Payment Done Against Estimation";
+    public static final String WF_STATE_EE_APPROVED = "Executive Engineer Approved";
+    public static final String WF_STATE_WO_GENERATED = "Work Order Generated";
+    
+         */
+        
+        if(sewerageApplicationDetails.getState()!=null){
+            String currentState= sewerageApplicationDetails.getState().getValue();
+            if(currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING) ||
+                currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED) ||
+                currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_DEPUTY_EXE_APPROVED) ||
+                currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_PAYMENTDONE)){
+                modelParams.put("showApprovalDtls", "no");
+            } else{
+                modelParams.put("showApprovalDtls", "yes");
+            }
+            if(currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_INSPECTIONFEE_COLLECTED) ||
+                    currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_CLERK_APPROVED) ||
+                    currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_REJECTED)){
+                modelParams.put("mode", "edit");
+            } else
+                modelParams.put("mode", "view");
+        }
+        return modelParams;
     }
 
     @Transactional
@@ -562,6 +600,7 @@ public class SewerageApplicationDetailsService {
         return updatedSewerageApplicationDetails;
     }
 
+    //TODO : commented out code as statuses are changed. Need to correct
     public void applicationStatusChange(final SewerageApplicationDetails sewerageApplicationDetails,
             final String workFlowAction, final String mode) {
         if (null != sewerageApplicationDetails && null != sewerageApplicationDetails.getStatus()
@@ -580,7 +619,7 @@ public class SewerageApplicationDetailsService {
                     .equals(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED))
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED, SewerageTaxConstants.MODULETYPE));
-            else if (sewerageApplicationDetails.getStatus().getCode()
+            /*else if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(SewerageTaxConstants.APPLICATION_STATUS_VERIFIED))
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN, SewerageTaxConstants.MODULETYPE));
@@ -614,7 +653,7 @@ public class SewerageApplicationDetailsService {
                         SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED, SewerageTaxConstants.MODULETYPE));
             else if (workFlowAction.equals("Reject"))
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                        SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));
+                        SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));*/
     }
 
     public List<Hashtable<String, Object>> getHistory(final SewerageApplicationDetails sewerageApplicationDetails) {
