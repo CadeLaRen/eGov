@@ -43,41 +43,51 @@ public class AssetCategoryController {
 	@Autowired
 	private MessageSource messageSource;
 	@Autowired
-	private AppConfigValueService appConfigValueService;	 
-	 
+	private AppConfigValueService appConfigValueService;
+
 	@Autowired
 	private ChartOfAccountsHibernateDAO chartOfAccountsService;
 	@Autowired
-    private UOMService uomService;
-	
-	
-	/*@Autowiredc
-	private UOMDao uOMService;*/
+	private UOMService uomService;
+
+	/*
+	 * @Autowiredc private UOMDao uOMService;
+	 */
 
 	private void prepareNewForm(Model model) {
-		model.addAttribute("assetTypes",Arrays.asList(AssetCategory.AssetType.values()));
+		model.addAttribute("assetTypes",
+				Arrays.asList(AssetCategory.AssetType.values()));
 		model.addAttribute("assetCategorys", assetCategoryService.findAll());
-		model.addAttribute("depreciationMethods",Arrays.asList(AssetCategory.DepreciationMethod.values()));
-		AppConfigValues accountCodePurposeId = appConfigValueService.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME, 
-				AssetConstants.ASSETACCCODEPURPOSEID).get(0);  
-		model.addAttribute("accountCodes",
-				chartOfAccountsService.getAccountCodeByPurpose(Integer.valueOf(accountCodePurposeId.getValue())));
-		
-		AppConfigValues accountDepPurposeId = appConfigValueService.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME, 
-				AssetConstants.ACCDEPPURPOSEID).get(0);
-		model.addAttribute("accountDeps",
-				chartOfAccountsService.getAccountCodeByPurpose(Integer.valueOf(accountDepPurposeId.getValue())));
-		
-		AppConfigValues accountDepExpPurposeId = appConfigValueService.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME, 
-				AssetConstants.DEPEXPACCPURPOSEID).get(0);
-		model.addAttribute("accountDepExps",
-				chartOfAccountsService.getAccountCodeByPurpose(Integer.valueOf(accountDepExpPurposeId.getValue())));
-		
-		AppConfigValues accountRevResPurposeId = appConfigValueService.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME, 
-				AssetConstants.REVRESACCPURPOSEID).get(0);
-		model.addAttribute("accountRevRess",
-				chartOfAccountsService.getAccountCodeByPurpose(Integer.valueOf(accountRevResPurposeId.getValue())));
-		model.addAttribute("uOMs",uomService.findAllOrderByCategory());
+		model.addAttribute("depreciationMethods",
+				Arrays.asList(AssetCategory.DepreciationMethod.values()));
+		AppConfigValues accountCodePurposeId = appConfigValueService
+				.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME,
+						AssetConstants.ASSETACCCODEPURPOSEID).get(0);
+		model.addAttribute("accountCodes", chartOfAccountsService
+				.getAccountCodeByPurpose(Integer.valueOf(accountCodePurposeId
+						.getValue())));
+
+		AppConfigValues accountDepPurposeId = appConfigValueService
+				.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME,
+						AssetConstants.ACCDEPPURPOSEID).get(0);
+		model.addAttribute("accountDeps", chartOfAccountsService
+				.getAccountCodeByPurpose(Integer.valueOf(accountDepPurposeId
+						.getValue())));
+
+		AppConfigValues accountDepExpPurposeId = appConfigValueService
+				.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME,
+						AssetConstants.DEPEXPACCPURPOSEID).get(0);
+		model.addAttribute("accountDepExps", chartOfAccountsService
+				.getAccountCodeByPurpose(Integer.valueOf(accountDepExpPurposeId
+						.getValue())));
+
+		AppConfigValues accountRevResPurposeId = appConfigValueService
+				.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME,
+						AssetConstants.REVRESACCPURPOSEID).get(0);
+		model.addAttribute("accountRevRess", chartOfAccountsService
+				.getAccountCodeByPurpose(Integer.valueOf(accountRevResPurposeId
+						.getValue())));
+		model.addAttribute("uOMs", uomService.findAllOrderByCategory());
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -158,6 +168,19 @@ public class AssetCategoryController {
 		String result = new StringBuilder("{ \"data\":")
 				.append(toSearchResultJson(searchResultList)).append("}")
 				.toString();
+		return result;
+	}
+
+	@RequestMapping(value = "/getParentAccounts/{parentId}", method = RequestMethod.GET)
+	public @ResponseBody String getParentAccounts(@PathVariable("parentId")  Long parentId) {
+		AssetCategory assetCategory = assetCategoryService.findOne(parentId);
+		
+		//Since some fields might not be mandatory in accountCategory check for null
+		String result = "assetAccountCode:" + ((assetCategory.getAssetAccountCode() == null) ? "" :(assetCategory.getAssetAccountCode().getId())) + 
+				",accDepAccountCode:" + ((assetCategory.getAccDepAccountCode() == null) ? "" : assetCategory.getAccDepAccountCode().getId()) +
+				",revAccountCode:" + ((assetCategory.getRevAccountCode() == null) ? "" :assetCategory.getRevAccountCode().getId()) +
+				",depExpAccountCode:" + ((assetCategory.getDepExpAccountCode() == null) ? "" :assetCategory.getDepExpAccountCode().getId()) +
+				",uom:" + ((assetCategory.getUom() == null) ? "" :  +assetCategory.getUom().getId());
 		return result;
 	}
 
