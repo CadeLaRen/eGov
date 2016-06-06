@@ -87,4 +87,33 @@
 </definition>
 
 
+
+
+<definition name="asset-new" extends="base_layout">
+	<put-attribute name="page-title" value="title.asset.new" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/asset/asset-new.jsp"/>
+</definition>
+
+<definition name="asset-view" extends="base_layout">
+	<put-attribute name="page-title" value="title.asset.view" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/asset/asset-view.jsp"/>
+</definition>
+
+<definition name="asset-edit" extends="base_layout">
+	<put-attribute name="page-title" value="title.asset.edit" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/asset/asset-edit.jsp"/>
+</definition>
+
+<definition name="asset-result" extends="base_layout">
+	<put-attribute name="page-title" value="title.asset.result" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/asset/asset-result.jsp"/>
+</definition>
+
+<definition name="asset-search" extends="base_layout">
+	<put-attribute name="page-title" value="title.asset.search" cascade="true"/>
+	<put-attribute name="body" value="/WEB-INF/views/asset/asset-search.jsp"/>
+</definition>
+<definition name="assetcategory-properties" template="/WEB-INF/views/assetcategory/assetcategory-properties.jsp"/>
+
+
 </tiles-definitions>

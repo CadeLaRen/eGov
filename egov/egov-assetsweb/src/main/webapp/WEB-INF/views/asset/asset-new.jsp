@@ -1,9 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<form:form role="form" action="/egassets/assetcategory/update" modelAttribute="assetCategory" id="assetCategoryform"
+<form:form role="form" action="create" modelAttribute="asset" id="assetform"
   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-  <%@ include file="assetcategory-form.jsp"%>
-  <input type="hidden" name="assetCategory" value="${assetCategory.id}" />
+  <%@ include file="asset-form.jsp"%>
   </div>
   </div>
   </div>
@@ -11,7 +10,7 @@
   <div class="form-group">
     <div class="text-center">
       <button type='submit' class='btn btn-primary' id="buttonSubmit">
-        <spring:message code='lbl.update' />
+        <spring:message code='lbl.create' />
       </button>
       <a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' /></a>
     </div>
@@ -25,3 +24,4 @@
 		}
 	});
 </script>
+<script type="text/javascript" src="<c:url value='/resources/app/js/assetHelper.js'/>"></script>

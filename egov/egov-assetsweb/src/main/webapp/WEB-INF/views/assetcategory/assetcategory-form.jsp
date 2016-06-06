@@ -1,3 +1,4 @@
+<div class="main-content">
   <div class="row">
     <div class="col-md-12">
       <div class="panel panel-primary" data-collapsed="0">
@@ -115,11 +116,10 @@
 								<option value="${accountDepExps.id}">
 									${accountDepExps.glcode} - ${accountDepExps.name}</option>
 							</c:forEach>
-                <!--<form:options items="${accountDepExps}" itemValue="id" itemLabel="name" />  -->
               </form:select>
               <form:errors path="depExpAccountCode" cssClass="error-msg" />
             </div>
-        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.uom" /> <span
+             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.uom" /> <span
               class="mandatory"></span> </label>
             <div class="col-sm-3 add-margin">
               <form:select path="uom" id="uom" cssClass="form-control" cssErrorClass="form-control error">
@@ -131,8 +131,11 @@
               <form:errors path="uom" cssClass="error-msg" />
             </div>  
           </div>
+          <script>
+          $('#assetAccountCode').val(${assetCategory.assetAccountCode.id}); 
+          $('#accDepAccountCode').val(${assetCategory.accDepAccountCode.id}); 
+          $('#revAccountCode').val(${assetCategory.revAccountCode.id}); 
+          $('#depExpAccountCode').val(${assetCategory.depExpAccountCode.id}); 
+          </script>
           <input type="hidden" name="assetCategory" value="${assetCategory.id}" />
-          </div>
-          </div>
-          </div>
-          </div>
+         <%@ include file="../categorypropertytype/categorypropertytype-form.jsp"%>

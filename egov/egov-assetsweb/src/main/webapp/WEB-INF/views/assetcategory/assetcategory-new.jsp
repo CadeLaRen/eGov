@@ -4,6 +4,7 @@
 <form:form role="form" action="create" modelAttribute="assetCategory" id="assetCategoryform"
   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
   <%@ include file="assetcategory-form.jsp"%>
+  </div></div></div></div> 
     <div class="form-group">
     <div class="text-center">
       <button type='submit' class='btn btn-primary' id="buttonSubmit">
@@ -21,3 +22,4 @@
 		}
 	});
 </script>
+<script type="text/javascript" src="<c:url value='/resources/app/js/assetCategoryHelper.js'/>"></script>

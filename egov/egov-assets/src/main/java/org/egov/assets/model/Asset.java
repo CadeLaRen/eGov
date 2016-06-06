@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -54,8 +53,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -71,43 +68,44 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.workflow.entity.State;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.validator.constraints.Length;
-
+import org.ja.annotation.SearchField;
+import org.ja.annotation.SearchResult;
 
 @Entity
-@Table(name="EGASSET_ASSET")
+@Table(name = "EGASSET_ASSET")
 @SequenceGenerator(name = Asset.SEQ, sequenceName = Asset.SEQ, allocationSize = 1)
-@Unique(fields = { "code" }, id = "id", tableName = "EGASSET_ASSET", columnName = {
-        "CODE" }, message = "asset.code.isunique")
+@Unique(fields = { "code" }, id = "id", tableName = "EGASSET_ASSET", columnName = { "CODE" }, message = "asset.code.isunique")
 public class Asset extends AbstractAuditable {
 
-    // Constructors
+	// Constructors
 
-    private static final long serialVersionUID = 730236511745178022L;
+	private static final long serialVersionUID = 730236511745178022L;
 
-   
-    public enum ModeOfAcquisition {
+	public enum ModeOfAcquisition {
 
-        ACQUIRED, CONSTRUCTION, PURCHASE, TENDER;
-    }
-    public static final String WORKFLOWTYPES_QRY = "ParentChildCategories";
-    
-    public static final String SEQ = "seq_egasset_asset"; 
-    
-    @Id
-    @GeneratedValue(generator = Asset.SEQ, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    
-    // Fields
-    @Required(message = "asset.code.null")
-    @Length(max = 50, message = "asset.code.length")
-    @NotNull
-    @OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "asset.code.alphaNumericwithspecialchar")
-    private String code;
+		ACQUIRED, CONSTRUCTION, PURCHASE, TENDER;
+	}
 
-    public Long getId() {
+	public static final String WORKFLOWTYPES_QRY = "ParentChildCategories";
+
+	public static final String SEQ = "seq_egasset_asset";
+
+	@Id
+	@GeneratedValue(generator = Asset.SEQ, strategy = GenerationType.SEQUENCE)
+	private Long id;
+
+	// Fields
+	@Required(message = "asset.code.null")
+	@Length(max = 50, message = "asset.code.length")
+	@NotNull
+	@OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "asset.code.alphaNumericwithspecialchar")
+	@SearchField
+	@SearchResult
+	private String code;
+
+	public Long getId() {
 		return id;
 	}
 
@@ -115,268 +113,259 @@ public class Asset extends AbstractAuditable {
 		this.id = id;
 	}
 
-	/*@Required(message = "asset.name.null")
-    @Length(max = 256, message = "asset.name.length")
-    @OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "asset.name.alphaNumericwithspecialchar")
-    @NotNull
-	private String name;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ASSETCATEGORY_ID")
-    @Required(message = "asset.category.null")
-	
-    private AssetCategory assetCategory;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name ="AREA_ID")
+	@Required(message = "asset.name.null")
+	@Length(max = 256, message = "asset.name.length")
+	@OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "asset.name.alphaNumericwithspecialchar")
 	@NotNull
-    private Boundary area;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name ="LOCATION_ID")
-    private Boundary location;
+	@SearchField
+	@SearchResult
+	private String name;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name ="STREET_ID")
-    private Boundary street;
-	
+	@JoinColumn(name = "ASSETCATEGORY_ID")
+	@Required(message = "asset.category.null")
+	@SearchField
+	@SearchResult
+	private AssetCategory assetCategory;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name ="WARD_ID")
-    private Boundary ward;
-	
+	@JoinColumn(name = "DEPARTMENTID")
+	@SearchField
+	@SearchResult
+	private Department department;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "AREA_ID")
+	@NotNull
+	private Boundary area;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "LOCATION_ID")
+	private Boundary location;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "STREET_ID")
+	private Boundary street;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "WARD_ID")
+	private Boundary ward;
+
 	@Transient
-    private String assetDetails;
-    
-    @Enumerated(EnumType.ORDINAL)
-    @Required(message = "asset.modeofacqui.null")
-    @NotNull
-    private ModeOfAcquisition modeOfAcquisition;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="STATUSID")
-    @Required(message = "asset.status.null")
-    
-    @NotNull
-    private EgwStatus status;
-    
-    @Length(max =256)
-    private String description;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="DEPARTMENTID")
-    private Department department;
-    
-    @Length(max =7)
-    private Date dateOfCreation;
-    
-    @Length(max =1024)
-    private String remarks;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="PREPAREDBY")
-    private PersonalInformation preparedBy;
-    
-    private BigDecimal grossValue;
-    private BigDecimal accDepreciation;
-    private BigDecimal length;
-    private BigDecimal width;
-    private BigDecimal totalArea;
-    
-    @Length(max =150)
-    private String sourcePath;
+	private String assetDetails;
 
-    
-    public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        if (dateOfCreation != null && !DateUtils.compareDates(new Date(), dateOfCreation))
-            validationErrors.add(new ValidationError("dateOfCreation", "asset.dateOfCreation.invalid"));
+	@Enumerated(EnumType.STRING)
+	@Required(message = "asset.modeofacqui.null")
+	@NotNull
+	private ModeOfAcquisition modeOfAcquisition;
 
-        return validationErrors;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "STATUSID")
+	@Required(message = "asset.status.null")
+	@SearchField
+	@SearchResult
+	private EgwStatus status;
 
-    public Boundary getWard() {
-        return ward;
-    }
+	@SearchResult
+	@Length(max = 256)
+	private String description;
 
-    public Asset(final String code) {
-        this.code = code;
-    }
+	private Date dateOfCreation;
 
-    *//** minimal constructor *//*
-    public Asset(final String code, final String name) {
-        this.code = code;
-        this.name = name;
-    }
+	@Length(max = 1024)
+	private String remarks;
 
-    public void setWard(final Boundary ward) {
-        this.ward = ward;
-    }
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PREPAREDBY")
+	private PersonalInformation preparedBy;
 
-    public String getCode() {
-        return code;
-    }
+	private BigDecimal grossValue;
+	private BigDecimal accDepreciation;
+	private BigDecimal length;
+	private BigDecimal width;
+	private BigDecimal totalArea;
 
-    public void setCode(final String code) {
-        this.code = code;
-    }
+	@Length(max = 150)
+	private String sourcePath;
 
-    public String getName() {
-        return name;
-    }
+	public List<ValidationError> validate() {
+		final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+		if (dateOfCreation != null
+				&& !DateUtils.compareDates(new Date(), dateOfCreation))
+			validationErrors.add(new ValidationError("dateOfCreation",
+					"asset.dateOfCreation.invalid"));
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    public ModeOfAcquisition getModeOfAcquisition() {
-        return modeOfAcquisition;
-    }
-
-    public void setModeOfAcquisition(final ModeOfAcquisition modeOfAcquisition) {
-        this.modeOfAcquisition = modeOfAcquisition;
-    }
-
-    public String getAssetDetails() {
-        return assetDetails;
-    }
-
-    public void setAssetDetails(final String assetDetails) {
-        this.assetDetails = assetDetails;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(final Department department) {
-        this.department = department;
-    }
-
-    public AssetCategory getAssetCategory() {
-        return assetCategory;
-    }
-
-    public void setAssetCategory(final AssetCategory assetCategory) {
-        this.assetCategory = assetCategory;
-    }
-
-    public Boundary getArea() {
-        return area;
-    }
-
-    public void setArea(final Boundary area) {
-        this.area = area;
-    }
-
-    public Boundary getLocation() {
-        return location;
-    }
-
-    public void setLocation(final Boundary location) {
-        this.location = location;
-    }
-
-    public Boundary getStreet() {
-        return street;
-    }
-
-    public void setStreet(final Boundary street) {
-        this.street = street;
-    }
-
-    public EgwStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(final EgwStatus status) {
-        this.status = status;
-    }
-
-    public Date getDateOfCreation() {
-        return dateOfCreation;
-    }
-
-    public void setDateOfCreation(final Date dateOfCreation) {
-        this.dateOfCreation = dateOfCreation;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public void setRemarks(final String remarks) {
-        this.remarks = remarks;
-    }
-
-    public PersonalInformation getPreparedBy() {
-        return preparedBy;
-    }
-
-    public void setPreparedBy(final PersonalInformation preparedBy) {
-        this.preparedBy = preparedBy;
-    }
-
-    public BigDecimal getGrossValue() {
-        return grossValue;
-    }
-
-    public void setGrossValue(final BigDecimal grossValue) {
-        this.grossValue = grossValue;
-    }
-
-    public BigDecimal getAccDepreciation() {
-        return accDepreciation;
-    }
-
-    public void setAccDepreciation(final BigDecimal accDepreciation) {
-        this.accDepreciation = accDepreciation;
-    }
-
-    public BigDecimal getLength() {
-        return length;
-    }
-
-    public BigDecimal getWidth() {
-        return width;
-    }
-
-    public BigDecimal getTotalArea() {
-        return totalArea;
-    }
-
-    public void setLength(final BigDecimal length) {
-        this.length = length;
-    }
-
-    public void setWidth(final BigDecimal width) {
-        this.width = width;
-    }
-
-    public void setTotalArea(final BigDecimal totalArea) {
-        this.totalArea = totalArea;
-    }
-
-    public String getSourcePath() {
-        return sourcePath;
-    }
-
-    public void setSourcePath(final String sourcePath) {
-        this.sourcePath = sourcePath;
-    }
-*/
-	 public String getCode() {
-	        return code;
-	    }
-
-	    public void setCode(final String code) {
-	        this.code = code;
-	    }
+		return validationErrors;
 	}
+
+	public Boundary getWard() {
+		return ward;
+	}
+
+	 
+
+	public void setWard(final Boundary ward) {
+		this.ward = ward;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(final String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(final String description) {
+		this.description = description;
+	}
+
+	public ModeOfAcquisition getModeOfAcquisition() {
+		return modeOfAcquisition;
+	}
+
+	public void setModeOfAcquisition(final ModeOfAcquisition modeOfAcquisition) {
+		this.modeOfAcquisition = modeOfAcquisition;
+	}
+
+	public String getAssetDetails() {
+		return assetDetails;
+	}
+
+	public void setAssetDetails(final String assetDetails) {
+		this.assetDetails = assetDetails;
+	}
+
+	public Department getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(final Department department) {
+		this.department = department;
+	}
+
+	public AssetCategory getAssetCategory() {
+		return assetCategory;
+	}
+
+	public void setAssetCategory(final AssetCategory assetCategory) {
+		this.assetCategory = assetCategory;
+	}
+
+	public Boundary getArea() {
+		return area;
+	}
+
+	public void setArea(final Boundary area) {
+		this.area = area;
+	}
+
+	public Boundary getLocation() {
+		return location;
+	}
+
+	public void setLocation(final Boundary location) {
+		this.location = location;
+	}
+
+	public Boundary getStreet() {
+		return street;
+	}
+
+	public void setStreet(final Boundary street) {
+		this.street = street;
+	}
+
+	public EgwStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(final EgwStatus status) {
+		this.status = status;
+	}
+
+	public Date getDateOfCreation() {
+		return dateOfCreation;
+	}
+
+	public void setDateOfCreation(final Date dateOfCreation) {
+		this.dateOfCreation = dateOfCreation;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(final String remarks) {
+		this.remarks = remarks;
+	}
+
+	public PersonalInformation getPreparedBy() {
+		return preparedBy;
+	}
+
+	public void setPreparedBy(final PersonalInformation preparedBy) {
+		this.preparedBy = preparedBy;
+	}
+
+	public BigDecimal getGrossValue() {
+		return grossValue;
+	}
+
+	public void setGrossValue(final BigDecimal grossValue) {
+		this.grossValue = grossValue;
+	}
+
+	public BigDecimal getAccDepreciation() {
+		return accDepreciation;
+	}
+
+	public void setAccDepreciation(final BigDecimal accDepreciation) {
+		this.accDepreciation = accDepreciation;
+	}
+
+	public BigDecimal getLength() {
+		return length;
+	}
+
+	public BigDecimal getWidth() {
+		return width;
+	}
+
+	public BigDecimal getTotalArea() {
+		return totalArea;
+	}
+
+	public void setLength(final BigDecimal length) {
+		this.length = length;
+	}
+
+	public void setWidth(final BigDecimal width) {
+		this.width = width;
+	}
+
+	public void setTotalArea(final BigDecimal totalArea) {
+		this.totalArea = totalArea;
+	}
+
+	public String getSourcePath() {
+		return sourcePath;
+	}
+
+	public void setSourcePath(final String sourcePath) {
+		this.sourcePath = sourcePath;
+	}
+
+}

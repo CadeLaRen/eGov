@@ -19,6 +19,10 @@ public class AssetCategoryJsonAdaptor implements JsonSerializer<AssetCategory> {
 				jsonObject.addProperty("name", assetCategory.getName());
 			else
 				jsonObject.addProperty("name", "");
+			if (assetCategory.getCode() != null)
+				jsonObject.addProperty("code", assetCategory.getCode());
+			else
+				jsonObject.addProperty("code", "");
 			if (assetCategory.getAssetType() != null)
 				jsonObject.addProperty("assetType", assetCategory
 						.getAssetType().name());
@@ -29,10 +33,10 @@ public class AssetCategoryJsonAdaptor implements JsonSerializer<AssetCategory> {
 						.getName());
 			else
 				jsonObject.addProperty("parent", "");
-			/*if (assetCategory.getUom() != null)
+			if (assetCategory.getUom() != null)
 				jsonObject.addProperty("uom", assetCategory.getUom().getUom());
 			else
-				jsonObject.addProperty("uom", "");*/
+				jsonObject.addProperty("uom", "");
 			jsonObject.addProperty("id", assetCategory.getId());
 		}
 		return jsonObject;

@@ -62,6 +62,7 @@ import javax.validation.Valid;
 import org.egov.assets.util.AssetConstants;
 import org.egov.common.entity.UOM;
 import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CGeneralLedger;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -145,10 +146,14 @@ public class AssetCategory extends AbstractAuditable {
     @JoinColumn(name ="PARENTID")
     private AssetCategory parent;
 
+    //not used as of now
     @OneToMany(orphanRemoval =true,cascade ={CascadeType.ALL,CascadeType.PERSIST})
     @JoinColumn(name ="DEPMD_AC_INDEX")
-    @Valid
     private List<DepreciationMetaData> depreciationMetaDataList = new LinkedList<DepreciationMetaData>();
+    
+    
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL , fetch=FetchType.LAZY,mappedBy="assetCategory",targetEntity=CategoryPropertyType.class )
+    private List<CategoryPropertyType> categoryProperties = new LinkedList<CategoryPropertyType>();
 
 
     public CChartOfAccounts getAssetAccountCode() {
@@ -282,4 +287,12 @@ public class AssetCategory extends AbstractAuditable {
                 errorList.addAll(depMetaData.validate());
         return errorList;
     }
+
+	public List<CategoryPropertyType> getCategoryProperties() {
+		return categoryProperties;
+	}
+
+	public void setCategoryProperties(List<CategoryPropertyType> categoryProperties) {
+		this.categoryProperties = categoryProperties;
+	}
 }

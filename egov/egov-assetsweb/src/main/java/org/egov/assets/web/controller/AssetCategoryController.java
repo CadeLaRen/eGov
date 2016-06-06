@@ -38,6 +38,7 @@ public class AssetCategoryController {
 	private final static String ASSETCATEGORY_EDIT = "assetcategory-edit";
 	private final static String ASSETCATEGORY_VIEW = "assetcategory-view";
 	private final static String ASSETCATEGORY_SEARCH = "assetcategory-search";
+	private static final String ASSETCATEGORY_PROPERTIES = null;
 	@Autowired
 	private AssetCategoryService assetCategoryService;
 	@Autowired
@@ -131,7 +132,7 @@ public class AssetCategoryController {
 		}
 		assetCategoryService.update(assetCategory);
 		redirectAttrs.addFlashAttribute("message", messageSource.getMessage(
-				"msg.assetCategory.success", null, null));
+				"msg.assetcategory.success", null, null));
 		return "redirect:/assetcategory/result/" + assetCategory.getId();
 	}
 
@@ -143,6 +144,15 @@ public class AssetCategoryController {
 		return ASSETCATEGORY_VIEW;
 	}
 
+	@RequestMapping(value = "/properties/{id}", method = RequestMethod.GET)
+	public String properties(@PathVariable("id") final Long id, Model model) {
+		AssetCategory assetCategory = assetCategoryService.findOne(id);
+		prepareNewForm(model);
+		model.addAttribute("assetCategory", assetCategory);
+		return "assetcategory-properties";
+	}
+
+	
 	@RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
 	public String result(@PathVariable("id") final Long id, Model model) {
 		AssetCategory assetCategory = assetCategoryService.findOne(id);

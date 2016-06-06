@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.egov.assets.model.AssetCategory;
+import org.egov.assets.model.CategoryPropertyType;
 import org.egov.assets.repository.AssetCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -28,11 +29,25 @@ public class AssetCategoryService {
 
 	@Transactional
 	public AssetCategory create(final AssetCategory assetCategory) {
+		for(CategoryPropertyType cp:assetCategory.getCategoryProperties())
+		{
+			if(cp.getAssetCategory()==null)
+			{
+				cp.setAssetCategory(assetCategory);
+			}
+		}
 		return assetCategoryRepository.save(assetCategory);
 	}
 
 	@Transactional
 	public AssetCategory update(final AssetCategory assetCategory) {
+		for(CategoryPropertyType cp:assetCategory.getCategoryProperties())
+		{
+		if(cp.getAssetCategory()==null)
+		{
+			cp.setAssetCategory(assetCategory);
+		}
+		}
 		return assetCategoryRepository.save(assetCategory);
 	}
 
