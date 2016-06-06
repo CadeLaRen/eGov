@@ -334,7 +334,7 @@ public class SewerageTaxCollection extends TaxCollection {
                         SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID, SewerageTaxConstants.MODULETYPE));
                 
                 sewerageApplicationDetailsService.updateStateTransition(sewerageApplicationDetails, sewerageApplicationDetails.getState().getOwnerPosition().getId() ,SewerageTaxConstants.COLLECTION_REMARKS, 
-                        sewerageApplicationDetails.getApplicationType().getCode(), SewerageTaxConstants.COLLECTION_WF_ACTION);
+                        sewerageApplicationDetails.getApplicationType().getCode(), SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD);
                 sewerageApplicationDetailsService.save(sewerageApplicationDetails); 
             } 
         }

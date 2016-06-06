@@ -79,7 +79,7 @@ public class SewerageTaxConstants {
     // current states
     public static final String WF_STATE_REJECTED = "Rejected";
     public static final String WF_STATE_CLERK_APPROVED = "Clerk Approved";
-    public static final String WF_STATE_DEPUTY_EXE_APPROVED = "Deputy Executive Engineer Approved";
+    public static final String WF_STATE_DEPUTY_EXE_APPROVED = "Deputy Exe Engineer Approved";
     public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Engineer Approved";
     public static final String WF_STATE_INSPECTIONFEE_PENDING = "Inspection Fee Pending";
     public static final String WF_STATE_INSPECTIONFEE_COLLECTED = "Inspection Fee Collected";
@@ -96,9 +96,9 @@ public class SewerageTaxConstants {
     public static final String WF_STATE_CONNECTION_EXECUTION_BUTTON = "Execute Connection";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final String WF_WORKORDER_BUTTON = "Generate Work Order";
-    public static final String WF_INSPECTIONFEE_COLLECTION= "Inspection Fee Collection";
     
     //Pendingactions
+    public static final String WF_INSPECTIONFEE_COLLECTION= "Inspection Fee Collection";
     public static final String WFPA_REJECTED_INSPECTIONFEE_COLLECTION= "Rejected Inspection Fee Collection";
     // workflow related - end
 

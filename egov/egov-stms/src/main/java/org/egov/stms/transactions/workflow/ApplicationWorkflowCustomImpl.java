@@ -303,8 +303,17 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
             } else {
+                 String pendingActions=null;
+                
+                if (sewerageApplicationDetails.getCurrentState().getValue().equalsIgnoreCase(SewerageTaxConstants.WF_STATE_REJECTED)){
+                    if(sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
+                        pendingActions = SewerageTaxConstants.WFPA_REJECTED_INSPECTIONFEE_COLLECTION ; 
+                    } else {
+                        pendingActions = SewerageTaxConstants.WF_STATE_REJECTED ; 
+                    } 
+                }   
                 wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
-                        null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), null);
+                        null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
                 sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())

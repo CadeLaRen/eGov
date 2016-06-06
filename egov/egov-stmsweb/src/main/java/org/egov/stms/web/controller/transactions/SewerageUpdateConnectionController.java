@@ -153,6 +153,11 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
         model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
         model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("currentState", sewerageApplicationDetails.getCurrentState().getValue());
+        if(sewerageApplicationDetails.getCurrentState().getValue().equalsIgnoreCase(SewerageTaxConstants.WF_STATE_REJECTED))
+            if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) 
+                model.addAttribute("pendingActions", SewerageTaxConstants.WFPA_REJECTED_INSPECTIONFEE_COLLECTION);
+            else
+                model.addAttribute("pendingActions", SewerageTaxConstants.WF_STATE_REJECTED); 
 
         prepareWorkflow(model, sewerageApplicationDetails, new WorkflowContainer());
 
