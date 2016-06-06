@@ -54,6 +54,13 @@
     <bean id="SewerageApplicationDetailsInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
          <constructor-arg index="0" ref="SewerageApplicationDetailsPersistenceService"/>
     </bean>
+    	<bean id="seweragePersistenceService" class="org.egov.infstr.services.PersistenceService">
+      <property name="type" value="org.egov.stms.transactions.entity.SewerageApplicationDetails" />
+    </bean>
+
+    <bean id="sewerageApplicationWorkflowService" class="org.egov.infra.workflow.service.SimpleWorkflowService">
+        <constructor-arg name="stateAwarePersistenceService" ref="seweragePersistenceService"/>
+    </bean>
     
     <bean id="seweargeApplicationWorkflowCustomDefaultImpl" class="org.egov.stms.transactions.workflow.ApplicationWorkflowCustomDefaultImpl" scope="prototype" />
 </beans>
