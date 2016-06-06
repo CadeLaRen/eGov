@@ -323,7 +323,8 @@ public interface PropertyTaxConstants {
 
         {
             put("VACANTLAND", "Private Land");
-            put("GOVTLAND", "Government Land");
+            put("STATE_GOVT", "State Government Land");
+            put("CENTRAL_GOVT", "Central Government Land");
         }
     };
 
@@ -353,8 +354,8 @@ public interface PropertyTaxConstants {
     };
     // Un authorized penalty percentages on property tax
     public static final BigDecimal BPA_DEVIATION_TAXPERC_1_10 = new BigDecimal(0.25);// 25%
-    public static final BigDecimal BPA_DEVIATION_TAXPERC_11_25 = new BigDecimal(0.5);// 50%
-    public static final BigDecimal BPA_DEVIATION_TAXPERC_26_100 = new BigDecimal(1);// 100%
+    public static final BigDecimal BPA_DEVIATION_TAXPERC_ABOVE_11 = new BigDecimal(0.5);// 50%
+    public static final BigDecimal BPA_DEVIATION_TAXPERC_NOT_DEFINED = new BigDecimal(1);// 100%
 
     // TreeMap for Guardian Relation
     public static final TreeMap<String, String> GUARDIAN_RELATION = new TreeMap<String, String>() {
@@ -1241,7 +1242,7 @@ public interface PropertyTaxConstants {
     public static final String PROPERTYTAX_WORKFLOWDEPARTEMENT = "PROPERTYTAXDEPARTMENTFORWORKFLOW";
     public static final String PROPERTYTAX_WORKFLOWDESIGNATION = "PROPERTYTAXDESIGNATIONFORWORKFLOW";
     public static final String PROPERTYTAX_ROLEFORNONEMPLOYEE = "PROPERTYTAXROLEFORNONEMPLOYEE";
-    public static final String APPLICATION_TYPE_REVISION_PETITION = "Revision Petition";
+    public static final String APPLICATION_TYPE_REVISION_PETITION = "Revision_Petition";
 
     // Action targets
     public static final String TARGET_WORKFLOW_ERROR = "workFlowError";
@@ -1390,6 +1391,6 @@ public interface PropertyTaxConstants {
 
     public static final String ARREAR_DEMANDRSN_GLCODE = "4311004";
     public static final String REVISIONPETITION_STATUS_CODE = "RP";
-    
+
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
 }

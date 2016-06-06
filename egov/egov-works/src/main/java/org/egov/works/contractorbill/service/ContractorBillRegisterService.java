@@ -76,17 +76,19 @@ import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.mb.service.MBHeaderService;
 import org.egov.works.models.measurementbook.MBHeader;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.models.workorder.WorkOrderEstimate;
 import org.egov.works.utils.WorksConstants;
 import org.egov.works.utils.WorksUtils;
-import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -112,6 +114,7 @@ public class ContractorBillRegisterService {
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<ContractorBillRegister> contractorBillRegisterWorkflowService;
 
     @Autowired
@@ -149,8 +152,8 @@ public class ContractorBillRegisterService {
         return contractorBillRegisterRepository.findOne(id);
     }
 
-    public Integer getMaxSequenceNumberByWorkOrder(final WorkOrder workOrder) {
-        return contractorBillRegisterRepository.findMaxBillSequenceNumberByWorkOrder(workOrder);
+    public Integer getMaxSequenceNumberByWorkOrder(final WorkOrderEstimate workOrderEstimate) {
+        return contractorBillRegisterRepository.findMaxBillSequenceNumberByWorkOrder(workOrderEstimate.getEstimate().getLineEstimateDetails().getProjectCode().getCode());
     }
 
     public ContractorBillRegister getContractorBillByBillNumber(final String billNumber) {

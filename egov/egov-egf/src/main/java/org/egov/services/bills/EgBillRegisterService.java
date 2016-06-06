@@ -59,7 +59,7 @@ import org.egov.pims.commons.Position;
 import org.egov.services.voucher.JournalVoucherActionHelper;
 import org.egov.utils.CheckListHelper;
 import org.egov.utils.FinancialConstants;
-import org.elasticsearch.common.joda.time.DateTime;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -81,6 +81,7 @@ public class EgBillRegisterService extends PersistenceService<EgBillregister, Lo
     @Autowired
     private AssignmentService assignmentService;
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<EgBillregister> billRegisterWorkflowService;
     @Autowired
     @Qualifier("persistenceService")

@@ -61,8 +61,8 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
-import org.elasticsearch.common.joda.time.DateTime;
 import org.hibernate.Session;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -131,6 +131,7 @@ public class DigitalSignatureWorkflowController {
     private PropertyService propertyService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
 
     @Autowired
@@ -140,9 +141,11 @@ public class DigitalSignatureWorkflowController {
     private RevisionPetitionService revisionPetitionService;
 
     @Autowired
+    @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
 
     @Autowired
+    @Qualifier("workflowService")
     protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
 
     @Autowired

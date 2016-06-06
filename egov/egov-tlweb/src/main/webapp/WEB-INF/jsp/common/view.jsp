@@ -64,7 +64,7 @@
 	<div class="row">
 		<div class="col-xs-3 add-margin"><s:text name='licensee.emailId' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{licensee.emailId}" /></div>
-		<div class="col-xs-3 add-margin"><s:text name='licensee.applicantAddress' /></div>
+		<div class="col-xs-3 add-margin"><s:text name='licensee.address' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{licensee.address}" /></div>
 	</div>
 
@@ -77,7 +77,7 @@
 
 	<div class="row add-border">
 		<div class="col-xs-3 add-margin"><s:text name='license.propertyNo.lbl' /></div>
-		<div class="col-xs-3 add-margin view-content"><s:property value="%{propertyNo}" /></div>
+		<div class="col-xs-3 add-margin view-content"><s:property value="%{assessmentNo}" /></div>
 		<div class="col-xs-3 add-margin"><s:text name='license.locality.lbl' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{boundary.name}" /></div>
 	</div>
@@ -90,7 +90,7 @@
 	<div class="row">
 		<div class="col-xs-3 add-margin"><s:text name='license.ownerShipType.lbl' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{ownershipType}" /></div>
-		<div class="col-xs-3 add-margin"><s:text name='license.address.lbl' /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.address' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{address}" /></div>
 	</div>
 	
@@ -104,7 +104,7 @@
 	<div class="row add-border">
 		<div class="col-xs-3 add-margin"><s:text name='license.licensenumber' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{licenseNumber}" /></div>
-		<div class="col-xs-3 add-margin"><s:text name='license.old.license.number' /></div>
+		<div class="col-xs-3 add-margin"><s:text name='license.oldlicensenum' /></div>
 		<div class="col-xs-3 add-margin view-content"><s:property value="%{oldLicenseNumber}" /></div>
 	</div>
 

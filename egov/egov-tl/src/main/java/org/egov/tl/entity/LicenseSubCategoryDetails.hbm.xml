@@ -43,8 +43,8 @@
 <hibernate-mapping>
 	<class name="org.egov.tl.entity.LicenseSubCategoryDetails" table="egtl_subcategory_details">
 		<id column="ID" name="id" type="long">
-			<generator class="native"> 
-				<param name="sequence">SEQ_egtl_subcategory_details</param>
+			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+				<param name="sequence_name">SEQ_egtl_subcategory_details</param>
 			</generator>
 		</id>
 				
@@ -62,7 +62,8 @@
 				
 		<property name="rateType" column="RATETYPE" not-null="true">
              <type name="org.hibernate.type.EnumType">       
-                     <param name="enumClass">org.egov.tl.entity.RateTypeEnum</param>    
+                     <param name="enumClass">org.egov.tl.entity.RateTypeEnum</param>
+                     <param name="useNamed">true</param>
              </type>  
         </property> 
 	</class>

@@ -242,8 +242,11 @@ public class PTBillServiceImpl extends BillServiceInterface {
         		currentInstDemand = currentInstDemand.add(dmdDet.getAmount());
         	}
         }
-        createAdvanceBillDetails(billDetails, currentInstDemand, orderMap, ptDemand,billable,
-        		advanceInstallments,currInstallments.get(CURRENTYEAR_SECOND_HALF));
+        //Advance Bill details only if current tax is greater than zero.
+        if (currentInstDemand.compareTo(BigDecimal.ZERO) > 0) {
+            createAdvanceBillDetails(billDetails, currentInstDemand, orderMap, ptDemand, billable,
+                    advanceInstallments, currInstallments.get(CURRENTYEAR_SECOND_HALF));
+        }
         
         LOGGER.debug("Exiting method getBilldetails : " + billDetails);
         return billDetails;
@@ -336,7 +339,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
     }
 
     private EgDemandDetails insertPenaltyDmdDetail(final Installment inst, final BigDecimal lpAmt) {
-        return insertPenalty(DEMANDRSN_CODE_PENALTY_FINES, lpAmt, inst);
+        return insertDemandDetails(DEMANDRSN_CODE_PENALTY_FINES, lpAmt, inst);
     }
 
     private EgDemandDetails getPenaltyDmdDtls(final Billable billObj, final Installment inst) {
@@ -377,7 +380,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
      * @param chqBouncePenalty
      * @return New EgDemandDetails Object
      */
-    public EgDemandDetails insertPenalty(final String demandReason, final BigDecimal penaltyAmount,
+    public EgDemandDetails insertDemandDetails(final String demandReason, final BigDecimal penaltyAmount,
             final Installment inst) {
         EgDemandDetails demandDetail = null;
         Module ptModule = null;
