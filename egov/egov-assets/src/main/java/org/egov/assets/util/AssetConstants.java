@@ -64,5 +64,7 @@ public class AssetConstants {
     public static final String DEPEXPACCPURPOSEID = "DEPRECIATION_EXPENSE_ACCOUNT_PURPOSEID";
     public static final String ACCDEPPURPOSEID = "ACCUMULATED_DEPRECIATION_PURPOSEID";
     
+    public static final String ASSET_CATEGORY_CODE_CREATION_MODE = "Asset_category_code_creation_mode";
+    
 
 }

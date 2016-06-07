@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.assets.autonumber.AssetCategoryCodeGenerator;
 import org.egov.assets.model.AssetCategory;
 import org.egov.assets.service.AssetCategoryService;
 import org.egov.assets.util.AssetConstants;
@@ -14,12 +15,14 @@ import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.service.UOMService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.utils.autonumber.BeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +41,7 @@ public class AssetCategoryController {
 	private final static String ASSETCATEGORY_EDIT = "assetcategory-edit";
 	private final static String ASSETCATEGORY_VIEW = "assetcategory-view";
 	private final static String ASSETCATEGORY_SEARCH = "assetcategory-search";
-	private static final String ASSETCATEGORY_PROPERTIES = null;
+	private static final String ASSETCATEGORY_PROPERTIES = "assetcategory_properties";
 	@Autowired
 	private AssetCategoryService assetCategoryService;
 	@Autowired
@@ -50,6 +53,9 @@ public class AssetCategoryController {
 	private ChartOfAccountsHibernateDAO chartOfAccountsService;
 	@Autowired
 	private UOMService uomService;
+	
+	@Autowired
+	private BeanResolver beanResolver;
 
 	/*
 	 * @Autowiredc private UOMDao uOMService;
@@ -89,6 +95,11 @@ public class AssetCategoryController {
 				.getAccountCodeByPurpose(Integer.valueOf(accountRevResPurposeId
 						.getValue())));
 		model.addAttribute("uOMs", uomService.findAllOrderByCategory());
+
+		AppConfigValues accountCategoryCreationCode = appConfigValueService
+				.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME, AssetConstants.ASSET_CATEGORY_CODE_CREATION_MODE).get(0);
+		model.addAttribute("codeGenerationMode", accountCategoryCreationCode.getValue());
+
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -103,10 +114,30 @@ public class AssetCategoryController {
 			@Valid @ModelAttribute final AssetCategory assetCategory,
 			final BindingResult errors, final Model model,
 			final RedirectAttributes redirectAttrs) {
+		AppConfigValues accountCategoryCreationCode = appConfigValueService
+				.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME, AssetConstants.ASSET_CATEGORY_CODE_CREATION_MODE).get(0);
+		if(!accountCategoryCreationCode.getValue().equalsIgnoreCase("Auto"))
+		{
+			if(assetCategory.getCode()==null || assetCategory.getCode().isEmpty())
+			{
+				errors.addError(new ObjectError("accountCodes", messageSource.getMessage("comment.not.null", null, null)));
+			}
+		}
+		
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
 			return ASSETCATEGORY_NEW;
 		}
+
+		//Fetch the mode in which the assetCategory is being created
+		//If it is Auto then populate it with the auto generated sequence number
+		if(accountCategoryCreationCode.getValue().equals("Auto"))
+		{
+			AssetCategoryCodeGenerator assetCategoryCodeGenerator = (AssetCategoryCodeGenerator)beanResolver.getBean(AssetCategoryCodeGenerator.class);
+			String assetCategoryNumber = assetCategoryCodeGenerator.getNextNumber(assetCategory);
+			assetCategory.setCode(assetCategoryNumber);
+		}
+
 		assetCategoryService.create(assetCategory);
 		redirectAttrs.addFlashAttribute("message", messageSource.getMessage(
 				"msg.assetcategory.success", null, null));
@@ -152,7 +183,7 @@ public class AssetCategoryController {
 		return "assetcategory-properties";
 	}
 
-	
+
 	@RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
 	public String result(@PathVariable("id") final Long id, Model model) {
 		AssetCategory assetCategory = assetCategoryService.findOne(id);
@@ -176,15 +207,15 @@ public class AssetCategoryController {
 		List<AssetCategory> searchResultList = assetCategoryService
 				.search(assetCategory);
 		String result = new StringBuilder("{ \"data\":")
-				.append(toSearchResultJson(searchResultList)).append("}")
-				.toString();
+		.append(toSearchResultJson(searchResultList)).append("}")
+		.toString();
 		return result;
 	}
 
 	@RequestMapping(value = "/getParentAccounts/{parentId}", method = RequestMethod.GET)
 	public @ResponseBody String getParentAccounts(@PathVariable("parentId")  Long parentId) {
 		AssetCategory assetCategory = assetCategoryService.findOne(parentId);
-		
+
 		//Since some fields might not be mandatory in accountCategory check for null
 		String result = "assetAccountCode:" + ((assetCategory.getAssetAccountCode() == null) ? "" :(assetCategory.getAssetAccountCode().getId())) + 
 				",accDepAccountCode:" + ((assetCategory.getAccDepAccountCode() == null) ? "" : assetCategory.getAccDepAccountCode().getId()) +

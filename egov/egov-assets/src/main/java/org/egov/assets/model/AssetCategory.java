@@ -121,7 +121,7 @@ public class AssetCategory extends AbstractAuditable {
     @JoinColumn(name ="depexp_accountcode")
     private CChartOfAccounts depExpAccountCode;
 
-    @Required(message = "assetcat.code.null")
+//    @Required(message = "assetcat.code.null")
     @Length(max = 50, message = "assetcat.code.length")
     @OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "assetcat.code.alphaNumericwithspecialchar")
     private String code;

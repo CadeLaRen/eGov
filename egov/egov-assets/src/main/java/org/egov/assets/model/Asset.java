@@ -70,8 +70,6 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.validator.constraints.Length;
-import org.ja.annotation.SearchField;
-import org.ja.annotation.SearchResult;
 
 @Entity
 @Table(name = "EGASSET_ASSET")
@@ -101,8 +99,6 @@ public class Asset extends AbstractAuditable {
 	@Length(max = 50, message = "asset.code.length")
 	@NotNull
 	@OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "asset.code.alphaNumericwithspecialchar")
-	@SearchField
-	@SearchResult
 	private String code;
 
 	public Long getId() {
@@ -117,21 +113,15 @@ public class Asset extends AbstractAuditable {
 	@Length(max = 256, message = "asset.name.length")
 	@OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "asset.name.alphaNumericwithspecialchar")
 	@NotNull
-	@SearchField
-	@SearchResult
 	private String name;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ASSETCATEGORY_ID")
 	@Required(message = "asset.category.null")
-	@SearchField
-	@SearchResult
 	private AssetCategory assetCategory;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DEPARTMENTID")
-	@SearchField
-	@SearchResult
 	private Department department;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -162,11 +152,8 @@ public class Asset extends AbstractAuditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "STATUSID")
 	@Required(message = "asset.status.null")
-	@SearchField
-	@SearchResult
 	private EgwStatus status;
 
-	@SearchResult
 	@Length(max = 256)
 	private String description;
 
@@ -201,8 +188,6 @@ public class Asset extends AbstractAuditable {
 	public Boundary getWard() {
 		return ward;
 	}
-
-	 
 
 	public void setWard(final Boundary ward) {
 		this.ward = ward;
