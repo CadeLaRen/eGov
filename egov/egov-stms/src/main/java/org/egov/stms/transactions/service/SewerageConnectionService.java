@@ -40,24 +40,45 @@
 package org.egov.stms.transactions.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.stms.masters.service.DocumentTypeMasterService;
+import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.entity.SewerageConnection;
 import org.egov.stms.transactions.repository.SewerageConnectionRepository;
+import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
 public class SewerageConnectionService {
 
     private final SewerageConnectionRepository sewerageConnectionRepository;
+
+    @Autowired
+    private DocumentTypeMasterService documentTypeMasterService;
+
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
 
     @Autowired
     public SewerageConnectionService(final SewerageConnectionRepository sewerageConnectionRepository) {
@@ -86,8 +107,10 @@ public class SewerageConnectionService {
     }
 
     public List<SewerageConnection> findByPropertyIdentifier(final String propertyIdentifier) {
-        //TODO : commented as part of design change. propertyIdentifier moved to connectiondetail
-        //return sewerageConnectionRepository.findByPropertyIdentifier(propertyIdentifier);
+        // TODO : commented as part of design change. propertyIdentifier moved
+        // to connectiondetail
+        // return
+        // sewerageConnectionRepository.findByPropertyIdentifier(propertyIdentifier);
         return null;
     }
 
@@ -96,11 +119,65 @@ public class SewerageConnectionService {
         BigDecimal balance = BigDecimal.ZERO;
         /*
          * if (currentDemand != null) { final List<Object> instVsAmt =
-         * connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand); for (final Object object : instVsAmt) { final
-         * Object[] ddObject = (Object[]) object; final BigDecimal dmdAmt = (BigDecimal) ddObject[2]; BigDecimal collAmt =
-         * BigDecimal.ZERO; if (ddObject[2] != null) collAmt = new BigDecimal((Double) ddObject[3]); balance =
+         * connectionDemandService.getDmdCollAmtInstallmentWise(currentDemand);
+         * for (final Object object : instVsAmt) { final Object[] ddObject =
+         * (Object[]) object; final BigDecimal dmdAmt = (BigDecimal)
+         * ddObject[2]; BigDecimal collAmt = BigDecimal.ZERO; if (ddObject[2] !=
+         * null) collAmt = new BigDecimal((Double) ddObject[3]); balance =
          * balance.add(dmdAmt.subtract(collAmt)); } }
          */
         return balance;
     }
+
+    public List<SewerageApplicationDetailsDocument> processAndStoreApplicationDocuments(
+            final SewerageApplicationDetails sewerageApplicationDetails) {
+        final List<SewerageApplicationDetailsDocument> applicationDocsList = new ArrayList<SewerageApplicationDetailsDocument>();
+        if (!sewerageApplicationDetails.getAppDetailsDocument().isEmpty())
+            for (final SewerageApplicationDetailsDocument applicationDocument : sewerageApplicationDetails
+                    .getAppDetailsDocument()) {
+                applicationDocument.setDocumentTypeMaster(documentTypeMasterService.load(applicationDocument
+                        .getDocumentTypeMaster().getId()));
+                applicationDocument.setApplicationDetails(sewerageApplicationDetails);
+                applicationDocument.setFileStore(addToFileStore(applicationDocument.getFiles()));
+                applicationDocsList.add(applicationDocument);
+            }
+        return applicationDocsList;
+    }
+
+    // TODO: PASS APPLICATION TYPE AND GET LIST OF DOCUMENTS. DO NOT HARDCODE
+    // NEWSEWERAGECONNECTION INTHIS API.
+    public List<SewerageApplicationDetailsDocument> getSewerageApplicationDoc(
+            final SewerageApplicationDetails sewerageApplicationDetails) {
+        final List<SewerageApplicationDetailsDocument> tempDocList = new ArrayList<SewerageApplicationDetailsDocument>(
+                0);
+        if (sewerageApplicationDetails != null) {
+            for (final SewerageApplicationDetailsDocument appDoc : sewerageApplicationDetails.getAppDetailsDocument()) {
+                if (appDoc.getDocumentTypeMaster() != null
+                        && (appDoc.getDocumentTypeMaster().getApplicationType().getCode()
+                                .equals(SewerageTaxConstants.NEWSEWERAGECONNECTION))) {
+                    tempDocList.add(appDoc);
+                }
+            }
+        }
+        return tempDocList;
+    }
+
+    public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+        if (ArrayUtils.isNotEmpty(files)) {
+            return Arrays
+                    .asList(files)
+                    .stream()
+                    .filter(file -> !file.isEmpty())
+                    .map(file -> {
+                        try {
+                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                                    file.getContentType(), SewerageTaxConstants.FILESTORE_MODULECODE);
+                        } catch (final Exception e) {
+                            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+                        }
+                    }).collect(Collectors.toSet());
+        } else
+            return null;
+    }
+
 }

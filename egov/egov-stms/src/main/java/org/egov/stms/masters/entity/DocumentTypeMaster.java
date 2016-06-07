@@ -48,10 +48,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.wtms.masters.entity.ApplicationType;
+import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -70,6 +71,8 @@ public class DocumentTypeMaster extends AbstractPersistable<Long> {
     @Id
     @GeneratedValue(generator = SEQ_DOCUMENTTYPEMASTER, strategy = GenerationType.SEQUENCE)
     private Long id;
+    
+   
 
     @NotNull
     @SafeHtml
@@ -79,11 +82,16 @@ public class DocumentTypeMaster extends AbstractPersistable<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "applicationtype", nullable = false)
-    private ApplicationType applicationType;
+    private SewerageApplicationType applicationType;
 
     private boolean isMandatory;
 
     private boolean isActive;
+    
+    @Transient
+    private String applicationTypeName;
+    
+    
 
     public Long getId() {
         return id;
@@ -101,15 +109,20 @@ public class DocumentTypeMaster extends AbstractPersistable<Long> {
         this.description = description;
     }
 
-    public ApplicationType getApplicationType() {
+
+    public SewerageApplicationType getApplicationType() {
         return applicationType;
     }
 
-    public void setApplicationType(final ApplicationType applicationType) {
+    public void setApplicationType(SewerageApplicationType applicationType) {
         this.applicationType = applicationType;
     }
 
     public boolean isMandatory() {
+        return isMandatory;
+    }
+    
+    public boolean getIsMandatory() {
         return isMandatory;
     }
 
@@ -124,5 +137,16 @@ public class DocumentTypeMaster extends AbstractPersistable<Long> {
     public void setActive(final boolean isActive) {
         this.isActive = isActive;
     }
+    
 
+    public String getApplicationTypeName() {
+        return applicationTypeName;
+    }
+
+    public void setApplicationTypeName(String applicationTypeName) {
+        this.applicationTypeName = applicationTypeName;
+    }
+
+    
+    
 }

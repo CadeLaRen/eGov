@@ -62,12 +62,12 @@
 				<tbody>
 					<tr>
 						<td><c:out value="${serialNo.count}"/></td>
-						<td><c:out value="${docs.documentNames.documentName}" /></td>
+						<td><c:out value="${docs.documentTypeMaster.description}" /></td>
 						<td><c:out value="${docs.documentNumber}" /></td>
 						<td><fmt:formatDate pattern="dd/MM/yyyy" value="${docs.documentDate}" var="docsDate"/><c:out value="${docsDate}" /></td>
 						<c:if test="${mode!='ack'}">
-						<td><c:forEach items="${docs.getSupportDocs()}" var="file">
-								<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=WTMS" target="_blank"> 
+						<td><c:forEach items="${docs.getFileStore()}" var="file">
+								<a href="/egi/downloadfile?fileStoreId=${file.fileStoreId}&moduleName=STMS" target="_blank"> 
 								<c:out value="${file.fileName}"/></a>
 							</c:forEach>
 						</td>

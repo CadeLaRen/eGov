@@ -39,11 +39,70 @@
  */
 package org.egov.stms.masters.service;
 
+import java.util.List;
+
+import org.egov.stms.masters.entity.DocumentTypeMaster;
+import org.egov.stms.masters.entity.SewerageApplicationType;
+import org.egov.stms.masters.repository.DocumentTypeMasterRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 public class DocumentTypeMasterService {
+  
+    @Autowired
+    private  DocumentTypeMasterRepository documentTypeMasterRepository;
+
+   
+    public DocumentTypeMaster findOne(final Long id) {
+        return documentTypeMasterRepository.findOne(id);
+    }
+
+    @Transactional
+    public DocumentTypeMaster createDocumentName(final DocumentTypeMaster DocumentTypeMaster) {
+        DocumentTypeMaster.setActive(true);
+        return documentTypeMasterRepository.save(DocumentTypeMaster);
+    }
+
+    @Transactional
+    public void updateDocumentName(final DocumentTypeMaster DocumentTypeMaster) {
+        documentTypeMasterRepository.save(DocumentTypeMaster);
+    }
+
+    public List<DocumentTypeMaster> findAll() {
+        return documentTypeMasterRepository.findAll(new Sort(Sort.Direction.DESC, "description"));
+    }
+
+    public DocumentTypeMaster findByDescription(final String description) {
+        return documentTypeMasterRepository.findByDescription(description);
+    }
+
+    public DocumentTypeMaster load(final Long id) {
+        return documentTypeMasterRepository.getOne(id);
+    }
+
+    public Page<DocumentTypeMaster> getListOfDocumentTypeMaster(final Integer pageNumber, final Integer pageSize) {
+        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "description");
+        return documentTypeMasterRepository.findAll(pageable);
+    }
+
+    public List<DocumentTypeMaster> findByApplicationType(final SewerageApplicationType applicationType) {
+        return documentTypeMasterRepository.findByApplicationType(applicationType);
+    }
+
+    public DocumentTypeMaster findByApplicationTypeAndDescription(final SewerageApplicationType applicationType,
+            final String description) {
+        return documentTypeMasterRepository.findByApplicationTypeAndDescription(applicationType, description);
+    }
+
+    public List<DocumentTypeMaster> getAllActiveDocumentTypeMasterByApplicationType(final SewerageApplicationType applicationType) {
+        return documentTypeMasterRepository.findByApplicationTypeOrderByIdAsc(applicationType);
+    }
 
 }

@@ -39,6 +39,9 @@
  */
 package org.egov.stms.transactions.entity;
 
+import java.util.Date;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -46,13 +49,21 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.stms.masters.entity.DocumentTypeMaster;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "egswtax_applicationdetails_documents")
@@ -75,9 +86,25 @@ public class SewerageApplicationDetailsDocument extends AbstractAuditable {
     @JoinColumn(name = "applicationdetails", nullable = false)
     private SewerageApplicationDetails applicationDetails;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "filestoreid")
-    private FileStoreMapper fileStore;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "egswtax_documents", joinColumns = @JoinColumn(name = "applicationDetailDocument") , inverseJoinColumns = @JoinColumn(name = "filestoreid") )
+    private Set<FileStoreMapper> fileStore;
+    
+    @ManyToOne
+    @NotNull
+    @JoinColumn(name = "documenttypemaster", nullable = false)  
+    private DocumentTypeMaster documentTypeMaster;
+    
+    
+    @SafeHtml
+    @Length(max = 50)
+    private String documentNumber;
+
+   
+    @Temporal(value = TemporalType.DATE)
+    private Date documentDate;
+    
+    private transient MultipartFile[] files;
 
     @Override
     public Long getId() {
@@ -97,12 +124,47 @@ public class SewerageApplicationDetailsDocument extends AbstractAuditable {
         this.applicationDetails = applicationDetails;
     }
 
-    public FileStoreMapper getFileStore() {
+
+    public Set<FileStoreMapper> getFileStore() {
         return fileStore;
     }
 
-    public void setFileStore(final FileStoreMapper fileStore) {
+    public void setFileStore(Set<FileStoreMapper> fileStore) {
         this.fileStore = fileStore;
     }
+
+    public DocumentTypeMaster getDocumentTypeMaster() {
+        return documentTypeMaster;
+    }
+
+    public void setDocumentTypeMaster(DocumentTypeMaster documentTypeMaster) {
+        this.documentTypeMaster = documentTypeMaster;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
+
+    public Date getDocumentDate() {
+        return documentDate;
+    }
+
+    public void setDocumentDate(Date documentDate) {
+        this.documentDate = documentDate;
+    }
+
+    public MultipartFile[] getFiles() {
+        return files;
+    }
+
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
+    }
+    
+    
 
 }

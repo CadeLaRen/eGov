@@ -67,19 +67,24 @@
 				<div class="panel-body custom-form ">
 					<jsp:include page="applicantdetails.jsp"></jsp:include>
 					<jsp:include page="connectiondetails.jsp"></jsp:include>
+					<jsp:include page="documentdetails.jsp"></jsp:include>	
 					
-						 
-					
-					<%-- <jsp:include page="documentdetails.jsp"></jsp:include>	 --%>
-					<div class="form-group">
+					<%-- <div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.attachdocument"/></label>
+					 
 						<div class="col-sm-3 add-margin">
-							<input type="file" id="fileStoreId" name="files" class="file-ellipsis upload-file">
+						<input  type="button" id="addFile" value="Add More File">
+							<table id="documentTable">
+								<tr>
+									<td><input type="file" id="fileStoreId" name="files" class="file-ellipsis upload-file"></td>
+								</tr>
+							</table>
+							
 							<div class="add-margin error-msg" ><font size="2">
 								<spring:message code="lbl.mesg.document"/>	
 								</font></div>
 						</div>
-				   </div>
+				   </div> --%>
 				</div>
 			</div>
 

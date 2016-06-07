@@ -45,38 +45,34 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.stms.masters.entity.DocumentTypeMaster;
 import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
+import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.masters.service.FeesDetailMasterService;
 import org.egov.stms.masters.service.SewerageApplicationTypeService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.entity.SewerageApplicationDetailsDocument;
 import org.egov.stms.transactions.entity.SewerageConnection;
 import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
@@ -138,7 +134,10 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
-    
+
+    @Autowired
+    private DocumentTypeMasterService documentTypeMasterService;
+
     @Autowired
     public SewerageConnectionController(final SewerageTaxUtils sewerageTaxUtils,
             final SewerageApplicationDetailsService sewerageApplicationDetailsService) {
@@ -146,11 +145,20 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         this.sewerageApplicationDetailsService = sewerageApplicationDetailsService;
     }
 
+    public @ModelAttribute("documentNamesList") List<DocumentTypeMaster> documentTypeMasterList(
+            @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails) {
+        sewerageApplicationDetails.setApplicationType(sewerageApplicationTypeService
+                .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION));
+        return documentTypeMasterService.getAllActiveDocumentTypeMasterByApplicationType(sewerageApplicationDetails
+                .getApplicationType());
+    }
+
     @RequestMapping(value = "/newConnection-newform", method = RequestMethod.GET)
     public String showNewApplicationForm(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
             final Model model, final HttpServletRequest request) {
         LOG.debug("Inside showNewApplicationForm method");
-        final SewerageApplicationType applicationType = sewerageApplicationTypeService.findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION);
+        final SewerageApplicationType applicationType = sewerageApplicationTypeService
+                .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION);
         sewerageApplicationDetails.setApplicationType(applicationType);
         sewerageApplicationDetails.setApplicationDate(new Date());
         final SewerageConnection connection = new SewerageConnection();
@@ -161,19 +169,20 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         model.addAttribute("propertyTypes", PropertyType.values());
 
         model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
-        WorkflowContainer workFlowContainer= new WorkflowContainer();
+        final WorkflowContainer workFlowContainer = new WorkflowContainer();
         workFlowContainer.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
         prepareWorkflow(model, sewerageApplicationDetails, workFlowContainer);
         model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
         model.addAttribute("typeOfConnection", SewerageTaxConstants.NEWSEWERAGECONNECTION);
-        boolean inspectionFeeCollectionRequired=  sewerageTaxUtils.isInspectionFeeCollectionRequired();
-        model.addAttribute("inspectionFeesCollectionRequired",inspectionFeeCollectionRequired);
-        if(inspectionFeeCollectionRequired)
-           model.addAttribute("inspectionFeeMasterList", feesDetailMasterService.findAllActiveFeesDetailByFeesCode(SewerageTaxConstants.FEE_INSPECTIONCHARGE));
-        
-        model.addAttribute("mode", null);    
-        return "newconnection-form";    
+        final boolean inspectionFeeCollectionRequired = sewerageTaxUtils.isInspectionFeeCollectionRequired();
+        model.addAttribute("inspectionFeesCollectionRequired", inspectionFeeCollectionRequired);
+        if (inspectionFeeCollectionRequired)
+            model.addAttribute("inspectionFeeMasterList", feesDetailMasterService
+                    .findAllActiveFeesDetailByFeesCode(SewerageTaxConstants.FEE_INSPECTIONCHARGE));
+
+        model.addAttribute("mode", null);
+        return "newconnection-form";
     }
 
     @RequestMapping(value = "/newConnection-create", method = RequestMethod.POST)
@@ -182,10 +191,11 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             final BindingResult errors, @RequestParam("files") final MultipartFile[] files) {
 
-        validatePropertyID(sewerageApplicationDetails, resultBinder);    
-       
+        validatePropertyID(sewerageApplicationDetails, resultBinder);
+
         /**
-         * If inspection fee required to be collected, then change status to fee collection pending.
+         * If inspection fee required to be collected, then change status to fee
+         * collection pending.
          */
         if (LOG.isDebugEnabled())
             LOG.error("Model Level Validation occurs = " + resultBinder);
@@ -195,7 +205,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             sewerageApplicationDetails.setApplicationDate(new Date());
             model.addAttribute("validateIfPTDueExists", sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent());
             model.addAttribute("propertyTypes", PropertyType.values());
-            
+
             prepareWorkflow(model, sewerageApplicationDetails, new WorkflowContainer());
             model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
             model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
@@ -203,26 +213,18 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
             return "newconnection-form";
         }
-       
-        if (sewerageApplicationDetails.getState() == null) {
-            if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
 
+        if (sewerageApplicationDetails.getState() == null)
+            if (sewerageTaxUtils.isInspectionFeeCollectionRequired())
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE, SewerageTaxConstants.MODULETYPE));
-            } else {
+            else
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));
 
-            }
-        }
-        
-
-        final Set<FileStoreMapper> fileStoreSet = addToFileStore(files);
-        Iterator<FileStoreMapper> fsIterator = null;
-        if (fileStoreSet != null && !fileStoreSet.isEmpty())
-            fsIterator = fileStoreSet.iterator();
-        if (fsIterator != null && fsIterator.hasNext())
-            sewerageApplicationDetails.setFileStore(fsIterator.next());
+        final List<SewerageApplicationDetailsDocument> applicationDocs = sewerageConnectionService
+                .processAndStoreApplicationDocuments(sewerageApplicationDetails);
+        sewerageApplicationDetails.setAppDetailsDocument(applicationDocs);
 
         Long approvalPosition = 0l;
         String approvalComment = "";
@@ -232,9 +234,9 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             workFlowAction = request.getParameter("workFlowAction");
         if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-     
+
         populateFeesDetails(sewerageApplicationDetails);
-        
+
         final SewerageApplicationDetails newSewerageApplicationDetails = sewerageApplicationDetailsService
                 .createNewSewerageConnection(sewerageApplicationDetails, approvalPosition, approvalComment,
                         sewerageApplicationDetails.getApplicationType().getCode(), workFlowAction);
@@ -250,7 +252,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         if (assignObj != null) {
             asignList = new ArrayList<Assignment>();
             asignList.add(assignObj);
-        } else if (assignObj == null && approvalPosition != null)  
+        } else if (assignObj == null && approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
 
         final String nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
@@ -262,14 +264,12 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
         return "redirect:/transactions/application-success?pathVars=" + pathVars;
     }
-    
+
     private void populateFeesDetails(final SewerageApplicationDetails sewerageApplicationDetails) {
-        if (sewerageApplicationDetails.getConnectionFees()!=null &&
-                !sewerageApplicationDetails.getConnectionFees().isEmpty()){
-            for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees()) {
-                    scf.setApplicationDetails(sewerageApplicationDetails); 
-            }
-        }
+        if (sewerageApplicationDetails.getConnectionFees() != null
+                && !sewerageApplicationDetails.getConnectionFees().isEmpty())
+            for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees())
+                scf.setApplicationDetails(sewerageApplicationDetails);
     }
 
     @RequestMapping(value = "/application-success", method = RequestMethod.GET)
@@ -304,11 +304,12 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
         model.addAttribute("mode", "ack");
         setCommonDetails(sewerageApplicationDetails, modelMap, request);
-        boolean inspectionFeeCollectionRequired=  sewerageTaxUtils.isInspectionFeeCollectionRequired();
+        final boolean inspectionFeeCollectionRequired = sewerageTaxUtils.isInspectionFeeCollectionRequired();
         model.addAttribute("inspectionFeesCollectionRequired", inspectionFeeCollectionRequired);
-        if(inspectionFeeCollectionRequired) 
-            model.addAttribute("inspectionDetails", sewerageApplicationDetails.getConnectionFees()); 
-        
+        if (inspectionFeeCollectionRequired)
+            model.addAttribute("inspectionDetails", sewerageApplicationDetails.getConnectionFees());
+        model.addAttribute("applicationDocList",
+                sewerageConnectionService.getSewerageApplicationDoc(sewerageApplicationDetails));
         return new ModelAndView("application-success", "sewerageApplicationDetails", sewerageApplicationDetails);
     }
 
@@ -317,17 +318,16 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             throws IOException {
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(request.getParameter("applicationNumber"));
-        ServletContext context = request.getServletContext();
-        File downloadFile = fileStoreService.fetch(sewerageApplicationDetails.getFileStore().getFileStoreId(),
+        final ServletContext context = request.getServletContext();
+        final File downloadFile = fileStoreService.fetch(sewerageApplicationDetails.getFileStore().getFileStoreId(),
                 SewerageTaxConstants.FILESTORE_MODULECODE);
-        FileInputStream inputStream = new FileInputStream(downloadFile);
+        final FileInputStream inputStream = new FileInputStream(downloadFile);
 
         // get MIME type of the file
         String mimeType = context.getMimeType(downloadFile.getAbsolutePath());
-        if (mimeType == null) {
+        if (mimeType == null)
             // set to binary type if MIME mapping not found
             mimeType = "application/octet-stream";
-        }
         System.out.println("MIME type: " + mimeType);
 
         // set content attributes for the response
@@ -335,38 +335,34 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         response.setContentLength((int) downloadFile.length());
 
         // set headers for the response
-        String headerKey = "Content-Disposition";
-        String headerValue = String.format("attachment; filename=\"%s\"", sewerageApplicationDetails.getFileStore()
-                .getFileName());
+        final String headerKey = "Content-Disposition";
+        final String headerValue = String.format("attachment; filename=\"%s\"", sewerageApplicationDetails
+                .getFileStore().getFileName());
         response.setHeader(headerKey, headerValue);
 
         // get output stream of the response
-        OutputStream outStream = response.getOutputStream();
+        final OutputStream outStream = response.getOutputStream();
 
-        byte[] buffer = new byte[BUFFER_SIZE];
+        final byte[] buffer = new byte[BUFFER_SIZE];
         int bytesRead = -1;
 
         // write bytes read from the input stream into the output stream
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
+        while ((bytesRead = inputStream.read(buffer)) != -1)
             outStream.write(buffer, 0, bytesRead);
-        }
 
         inputStream.close();
         outStream.close();
     }
-    
-  
 
     private void setCommonDetails(final SewerageApplicationDetails sewerageApplicationDetails, final ModelMap modelMap,
             final HttpServletRequest request) {
-        String assessmentNumber = sewerageApplicationDetails.getConnection().getConnectionDetail()
+        final String assessmentNumber = sewerageApplicationDetails.getConnection().getConnectionDetail()
                 .getPropertyIdentifier();
 
-        AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(sewerageApplicationDetails,
-                assessmentNumber, request);
-        if (propertyOwnerDetails != null) {
+        final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices.getPropertyDetails(
+                sewerageApplicationDetails, assessmentNumber, request);
+        if (propertyOwnerDetails != null)
             modelMap.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
-        }
         final PropertyTaxDetails propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNumber);
         modelMap.addAttribute("propertyTax", propertyTaxDetails.getTotalTaxAmt());
 
@@ -395,22 +391,4 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         }
     }
 
-    private Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-        if (ArrayUtils.isNotEmpty(files))
-            return Arrays
-                    .asList(files)
-                    .stream()
-                    .filter(file -> !file.isEmpty())
-                    .map(file -> {
-                        try {
-                            return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                                    file.getContentType(), SewerageTaxConstants.FILESTORE_MODULECODE);
-                        } catch (final Exception e) {
-                            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
-                        }
-                    }).collect(Collectors.toSet());
-        else
-            return null;
-    }
-    
 }

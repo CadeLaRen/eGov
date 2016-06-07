@@ -55,12 +55,25 @@
 			<jsp:include page="fieldInspectionDetails.jsp"/>
 		</div>
 		<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-heading">
+						<div class="panel-heading">
+							<div class="panel-title">
+								<spring:message code="lbl.title.documentview" />
+							</div>
+						</div>
+						<div class="panel-body">
+							<jsp:include page="documentdetails-view.jsp"></jsp:include>
+
+						</div>
+					</div>
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
 				<div class="panel-title">
 					<spring:message code="title.seweragecharges"/>
 				</div>
 			</div>
-			<jsp:include page="seweragechargesdetails.jsp"/>
+			<div class="panel-body">
+				<jsp:include page="seweragechargesdetails.jsp"/>
+			</div>
 		</div>
 		
 		</form:form>
