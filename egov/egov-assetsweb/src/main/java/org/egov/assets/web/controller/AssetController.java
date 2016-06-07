@@ -79,7 +79,7 @@ public class AssetController {
 		}
 		assetService.create(asset);
 		redirectAttrs.addFlashAttribute("message",
-				messageSource.getMessage("msg.asset.success", null, null));
+				messageSource.getMessage("msg.assetcategory.success", null, null));
 		return "redirect:/asset/result/" + asset.getId();
 	}
 
@@ -101,7 +101,7 @@ public class AssetController {
 		}
 		assetService.update(asset);
 		redirectAttrs.addFlashAttribute("message",
-				messageSource.getMessage("msg.asset.success", null, null));
+				messageSource.getMessage("msg.assetcategory.success", null, null));
 		return "redirect:/asset/result/" + asset.getId();
 	}
 

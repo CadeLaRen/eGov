@@ -94,7 +94,7 @@
           <div class="form-group">
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.status" /> <span
               class="mandatory"></span> </label>
-            <div class="col-sm-3 add-margin">
+       <%--      <div class="col-sm-3 add-margin">
               <form:select path="status" id="status" cssClass="form-control"  
                 cssErrorClass="form-control error">
                 <form:option value="">
@@ -103,7 +103,7 @@
                 <form:options items="${egwStatuss}" itemValue="id" itemLabel="code" />
               </form:select>
               <form:errors path="status" cssClass="error-msg" />
-            </div>
+            </div> --%>
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.description" /> </label>
             <div class="col-sm-3 add-margin">
               <form:input path="description" class="form-control text-left patternvalidation"

@@ -76,7 +76,7 @@ public class DBMigrationConfiguration {
                 flyway.setLocations("classpath:/db/migration/main/", "classpath:/db/migration/" + schema + "/");
             flyway.setDataSource(dataSource);
             flyway.setSchemas(schema);
-            flyway.migrate();
+          //  flyway.migrate();
         });
         if (applicationProperties.statewideMigrationRequired())
             runStatewideMigration(dataSource);

@@ -273,7 +273,7 @@ public class AssetCategory extends AbstractAuditable {
         objString.append(" Code: " + code + NEW_LINE);
         objString.append(" Asset Type: " + (assetType == null ? NULL_STRING : assetType.toString()) + NEW_LINE);
         objString.append(" Parent: " + (parent == null ? NULL_STRING : parent.getId()) + NEW_LINE);
-     //  objString.append(" UOM: " + (uom == null ? NULL_STRING : uom.getId()) + NEW_LINE);
+        objString.append(" UOM: " + (uom == null ? NULL_STRING : uom.getId()) + NEW_LINE);
         objString.append("}");
 
         return objString.toString();

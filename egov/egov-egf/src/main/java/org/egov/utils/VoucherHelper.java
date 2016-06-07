@@ -275,6 +275,7 @@ public class VoucherHelper {
 
     }
 
+    @Deprecated
     public String getGeneratedVoucherNumber(final Integer fundId, String voucherType, final Date voucherDate, String vNumGenMode,
             String voucherNumber) throws Exception {
         if (LOGGER.isDebugEnabled())

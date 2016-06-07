@@ -163,7 +163,7 @@
 					value="%{approverDepartment}"
 					onchange="loadDesignationFromMatrix();" cssClass="dropDownCss" />
 				<egov:ajaxdropdown fields="['Text','Value']"
-					url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action"
+					url="workflow/ajaxWorkFlow-getHODDesignationsByDept.action"
 					id="approverDesignation" dropdownId="approverDesignation"
 					contextToBeUsed="/eis" afterSuccess="setDesignation();" /></td>
 			<td class="${approverOddCSS}" width="14%"><s:text

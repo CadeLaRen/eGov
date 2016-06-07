@@ -37,7 +37,7 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		<dependency> 
+		<!-- <dependency> 
 			<groupId>org.egov</groupId> 
 			<artifactId>egov-worksweb</artifactId> 
 			<version>${project.parent.version}</version> 
@@ -66,14 +66,14 @@
 			<artifactId>egov-pgrweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-portalweb</artifactId>
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-dashboardweb</artifactId>
 			<version>${project.parent.version}</version>
@@ -97,7 +97,7 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-
+ -->
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-egi</artifactId>
@@ -134,7 +134,7 @@
 			<artifactId>egov-assets</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency> 
+	<!-- 	<dependency> 
 			<groupId>org.egov</groupId> 
 			<artifactId>egov-works</artifactId> 
 			<version>${project.parent.version}</version> 
@@ -159,12 +159,12 @@
 			<artifactId>egov-wtms</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
+	 -->	<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-portal</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-pgr</artifactId>
 			<version>${project.parent.version}</version>
@@ -185,7 +185,7 @@
 			<version>${project.parent.version}</version>
 			<type>war</type>
 		</dependency>
-		<!-- Following dependencies are included in ear as these are used only 
+		 --><!-- Following dependencies are included in ear as these are used only 
 			in war modules and we have configured war modules to be archived as skinny 
 			wars (no libraries will be packaged in WEB-INF/lib in wars). Hence we have 
 			to explicitly add dependencies of all the war modules which are part of this 
@@ -233,12 +233,12 @@
 							<artifactId>egov-egiweb</artifactId>
 							<contextRoot>/egi</contextRoot>
 						</webModule>
-						<webModule>
+			<!-- 			<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-dashboardweb</artifactId>
 							<contextRoot>/dashboard</contextRoot>
 						</webModule>
-						<webModule>
+			 -->			<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-eisweb</artifactId>
 							<contextRoot>/eis</contextRoot>
@@ -253,7 +253,7 @@
 							<artifactId>egov-assetsweb</artifactId>
 							<contextRoot>/egassets</contextRoot>
 						</webModule>
-						<webModule> 
+				<!-- 		<webModule> 
 							<groupId>org.egov</groupId> 
 							<artifactId>egov-worksweb</artifactId> 
 							<contextRoot>/egworks</contextRoot> 
@@ -283,12 +283,12 @@
 							<artifactId>egov-api</artifactId>
 							<contextRoot>/api</contextRoot>
 						</webModule>
-						<webModule>
+				 -->		<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-portalweb</artifactId>
 							<contextRoot>/portal</contextRoot>
 						</webModule>
-						<webModule>
+					<!-- 	<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-adtaxweb</artifactId>
 							<contextRoot>/adtax</contextRoot>
@@ -303,7 +303,7 @@
 							<artifactId>egov-restapi</artifactId>
 							<contextRoot>/restapi</contextRoot>
 						</webModule>
-					</modules>
+ -->					</modules>
 
 					<defaultLibBundleDir>lib</defaultLibBundleDir>
 					<skinnyWars>true</skinnyWars>

@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -58,6 +59,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.egov.assets.model.bean.AssetCustomPropertyBean;
+import org.egov.assets.persistence.StringJsonUserType;
 import org.egov.assets.util.AssetConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -69,8 +72,13 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.pims.model.PersonalInformation;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 import org.hibernate.validator.constraints.Length;
-
+ 
+@TypeDefs({ @TypeDef(name = "StringJsonObject", typeClass = StringJsonUserType.class) })
+ 
 @Entity
 @Table(name = "EGASSET_ASSET")
 @SequenceGenerator(name = Asset.SEQ, sequenceName = Asset.SEQ, allocationSize = 1)
@@ -126,7 +134,7 @@ public class Asset extends AbstractAuditable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "AREA_ID")
-	@NotNull
+	//@NotNull
 	private Boundary area;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -141,7 +149,7 @@ public class Asset extends AbstractAuditable {
 	@JoinColumn(name = "WARD_ID")
 	private Boundary ward;
 
-	@Transient
+	@Column(name="asset_details")
 	private String assetDetails;
 
 	@Enumerated(EnumType.STRING)
@@ -151,12 +159,13 @@ public class Asset extends AbstractAuditable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "STATUSID")
-	@Required(message = "asset.status.null")
+	//@Required(message = "asset.status.null")
 	private EgwStatus status;
 
 	@Length(max = 256)
 	private String description;
 
+	@Column(name="date_of_creation")
 	private Date dateOfCreation;
 
 	@Length(max = 1024)
@@ -170,10 +179,18 @@ public class Asset extends AbstractAuditable {
 	private BigDecimal accDepreciation;
 	private BigDecimal length;
 	private BigDecimal width;
+	
+	@Column(name="total_area")
 	private BigDecimal totalArea;
 
 	@Length(max = 150)
 	private String sourcePath;
+
+	@Type(type="StringJsonObject")
+	private String properties;
+	
+	@Transient
+	private List<AssetCustomPropertyBean> categoryProperties;
 
 	public List<ValidationError> validate() {
 		final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
@@ -353,4 +370,22 @@ public class Asset extends AbstractAuditable {
 		this.sourcePath = sourcePath;
 	}
 
+	public String getProperties() {
+		return properties;
+	}
+
+	public void setProperties(String properties) {
+		this.properties = properties;
+	}
+
+	public List<AssetCustomPropertyBean> getCategoryProperties() {
+		return categoryProperties;
+	}
+
+	public void setCategoryProperties(
+			List<AssetCustomPropertyBean> categoryProperties) {
+		this.categoryProperties = categoryProperties;
+	}
+
+	
 }

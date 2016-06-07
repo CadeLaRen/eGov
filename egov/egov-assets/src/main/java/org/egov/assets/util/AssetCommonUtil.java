@@ -40,6 +40,10 @@
 package org.egov.assets.util;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.annotate.JsonMethod;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.egov.assets.model.AssetCategoryType;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
@@ -51,14 +55,16 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-
+@Service
 public class AssetCommonUtil {
 
     private static final Logger LOGGER = Logger.getLogger(AssetCommonUtil.class);
@@ -164,5 +170,20 @@ public class AssetCommonUtil {
     public void setBoundaryTypeService(final BoundaryTypeService boundaryTypeService) {
         this.boundaryTypeService = boundaryTypeService;
     }
+    
+	public String serialize(Object obj)
+	{
+		ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+        String jsonResponse="";
+		try {
+			jsonResponse = objectMapper.writeValueAsString(obj);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ApplicationRuntimeException("Exception while converting to json"+obj.getClass().getCanonicalName());
+		}
+        return jsonResponse;
+	}
+	
 
 }

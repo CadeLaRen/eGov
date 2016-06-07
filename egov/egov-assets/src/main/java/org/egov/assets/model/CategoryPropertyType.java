@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
@@ -56,6 +57,9 @@ public class CategoryPropertyType extends AbstractAuditable  {
 	 
 	@Length(max = 300)
 	private String enumValues;
+	
+	@Transient
+	private String value;
 
 	public Long getId() {
 		return id;
@@ -119,6 +123,14 @@ public class CategoryPropertyType extends AbstractAuditable  {
 
 	public void setDataType(CategoryPropertyDataType dataType) {
 		this.dataType = dataType;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 }

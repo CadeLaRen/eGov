@@ -11,16 +11,17 @@
       </c:if>
       <label class="col-sm-3 control-label text-right"> ${categoryProperties.name} ${mandatoryLable} </label>
       <div class="col-sm-3 add-margin">
+        <input type="hidden" name="categoryProperties[${vs.index}].id" value="${categoryProperties.id}" >
         <c:if test="${categoryProperties.dataType=='String'}">
-          <input type="text" name="${categoryProperties.name}" id="${categoryProperties.name}"
+          <input type="text" name="categoryProperties[${vs.index}].value" id="${categoryProperties.name}"
             class="form-control text-left" ${required} />
         </c:if>
         <c:if test="${categoryProperties.dataType=='Number'}">
-          <input type="text" name="${categoryProperties.name}" id="${categoryProperties.name}"
+          <input type="text" name="categoryProperties[${vs.index}].value" id="${categoryProperties.name}"
             class="form-control text-right patternvalidation" data-pattern="number" ${required} />
         </c:if>
         <c:if test="${categoryProperties.dataType=='Enumeration'}">
-          <select name="${categoryProperties.name}" id="${categoryProperties.name}"
+          <select name="categoryProperties[${vs.index}].value" id="${categoryProperties.name}"
             class="form-control" data-pattern="number" ${required}>
             <option value="">
               <spring:message code="lbl.select" />
@@ -31,7 +32,7 @@
           </select>
         </c:if>
          <c:if test="${categoryProperties.dataType=='Date'}">
-          <input type="text"  name="${categoryProperties.name}" id="${categoryProperties.name}"
+          <input type="text"  name="categoryProperties[${vs.index}].${categoryProperties.name}" id="${categoryProperties.name}"
             class="form-control datepicker" data-date-end-date="0d"
                 data-inputmask="'mask': 'd/m/y'" ${required}/>
            

@@ -117,7 +117,7 @@ public class GeneralLedgerReportAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     public void prepareNewForm() {
         super.prepare();
-
+//TODO : List all classification 4 glcodes
         allChartOfAccounts = persistenceService
                 .findAllBy(
                         "select ca from CChartOfAccounts ca where"
