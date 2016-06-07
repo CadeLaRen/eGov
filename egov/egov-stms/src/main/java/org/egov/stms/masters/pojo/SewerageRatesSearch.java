@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
-    Copyright (C) <2015>  eGovernments Foundation
+    Copyright (C) <2016>  eGovernments Foundation
 
     The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
@@ -37,36 +37,60 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.stms.web.controller.masters;
+package org.egov.stms.masters.pojo;
 
 import java.util.Date;
-import org.egov.stms.masters.entity.SewerageRatesMaster;
-import org.egov.stms.masters.entity.enums.PropertyType;
-import org.egov.stms.masters.service.SewerageRatesMasterService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-@Controller
-@RequestMapping(value = "/masters")
-public class AjaxSewerageRateMasterController {
-
-    @Autowired
-    private SewerageRatesMasterService sewerageRatesMasterService;
-
-    @RequestMapping(value = "/ajaxexistingseweragevalidate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double geWaterRatesByAllCombinatons(@RequestParam("propertyType") final PropertyType propertyType,
-            @RequestParam("fromDate") Date fromDate) {
-        SewerageRatesMaster sewerageRatesMasterExist = null;
-        sewerageRatesMasterExist = sewerageRatesMasterService
-                .findByPropertyTypeAndFromDateAndActive(propertyType, fromDate, true);
-        if (sewerageRatesMasterExist != null)
-            return sewerageRatesMasterExist.getMonthlyRate();
-        else
-            return 0;
+public class SewerageRatesSearch {
+    
+    private Long id;
+    private String propertyType;
+    private double monthlyRate;
+    private String fromDate;
+    private String status;
+    private String modifiedDate;
+    private boolean isActive;
+    
+    public String getPropertyType() {
+        return propertyType;
+    }
+    public void setPropertyType(String propertyType) {
+        this.propertyType = propertyType;
+    }
+    public double getMonthlyRate() {
+        return monthlyRate;
+    }
+    public void setMonthlyRate(double monthlyRate) {
+        this.monthlyRate = monthlyRate;
+    }
+    public String getFromDate() {
+        return fromDate;
+    }
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    public String getModifiedDate() {
+        return modifiedDate;
+    }
+    public void setModifiedDate(String modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
+    public boolean isActive() {
+        return isActive;
+    }
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
     }
 }

@@ -2,7 +2,7 @@
 	eGov suite of products aim to improve the internal efficiency,transparency, 
     accountability and the service delivery of the government  organizations.
  
-    Copyright (C) <2015>  eGovernments Foundation
+    Copyright (C) <2016>  eGovernments Foundation
  
 	The updated version of eGov suite of products as by eGovernments Foundation 
     is available at http://www.egovernments.org
@@ -37,71 +37,70 @@
  
    	In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 -->
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<form:form method="get" action=""
-	class="form-horizontal form-groups-bordered"
-	modelAttribute="sewerageRatesMaster" id="sewerageRatesMasterform">
-	<div class="row">
-		<div class="col-md-12">
-			<c:if test="${not empty message}">
-				<div class="alert alert-success" role="alert">
-					<spring:message code="${message}" />
-				</div>
-			</c:if>
+<div class="row">
+	<div class="col-md-12">
+		<form:form method="post" action="" modelAttribute="sewerageRatesMaster" id="sewerageRatesMasterform" cssClass="form-horizontal form-groups-bordered">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
 						<strong><spring:message code="lbl.sewerage.rates.details"></spring:message></strong>
 					</div>
 				</div>
-				<div class="panel-body">
+                 <div class="panel-body">
 					<div class="row add-border">
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.propertytype" />
 						</div>
-						<div id="propertyType"
-							class="col-md-3 col-xs-6 add-margin view-content">
+						<div class="col-md-3 col-xs-6 add-margin view-content">
 							<c:out value="${sewerageRatesMaster.propertyType}" />
 						</div>
 					</div>
 				</div>
 				<div class="panel-body">
 					<div class="row add-border">
-
 						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.monthlyrate" />
+							<spring:message code="lbl.effective.fromdate" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content">
-							<fmt:formatNumber type="number" minFractionDigits="2"
-								maxFractionDigits="2" value="${sewerageRatesMaster.monthlyRate}" />
-						</div>
+							<fmt:formatDate var="effectiveFormattedFromDate" pattern="dd/MM/yyyy" value="${sewerageRatesMaster.fromDate}" />							
+							 <c:out value="${effectiveFormattedFromDate}" /> 
 						</div>
 					</div>
-					<div class="panel-body">
-						<div class="row add-border">
-	
-							<div class="col-md-3 col-xs-6 add-margin">
-								<spring:message code="lbl.effective.fromdate" />
-							</div>
-							<div class="col-md-3 col-xs-6 add-margin view-content">
-								<fmt:formatDate pattern="dd/MM/yyyy"
-									value="${sewerageRatesMaster.fromDate}" />
-							</div>
+				</div>
+				<form:hidden path="id" id="id" value="${sewerageRatesMaster.id}" />
+				<div class="panel-body">
+					<div class="row add-border">
+						<div class="col-md-3 col-xs-6 add-margin">
+							<spring:message code="lbl.monthlyrate" /><span class="mandatory"></span>
+						</div>
+						<div class="col-sm-3 add-margin">
+							<form:input path="monthlyRate" type="text" class="form-control patternvalidation"
+								data-pattern="decimalvalue" maxlength="8" 
+								id="monthlyRate" style="text-align: right" required="required" />
+						</div>
+					</div>
+				</div>
+				<div class="panel-body">
+					<div class="row add-border">
+						<div class="form-group text-center">
+							<input type="submit" class="btn btn-primary" id="submitSewerageRates"/>
+							<a onclick="self.close()" class="btn btn-default"
+							href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	<div class="row text-center">
-		<div class="row">
-			<a href="javascript:void(0)" class="btn btn-default"
-				onclick="self.close()"><spring:message code="lbl.close" /></a>
-		</div>
+		</form:form>
 	</div>
-</form:form>
+</div>
 <script
-	src="<c:url value='/resources/js/masters/sewerageRatesSuccess.js?rnd=${app_release_no}'/>"></script>
+	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script
+	src="<c:url value='/resources/js/masters/sewerageRates.js?rnd=${app_release_no}'/>"></script>

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
-    Copyright (C) <2015>  eGovernments Foundation
+    Copyright (C) <2016>  eGovernments Foundation
 
     The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
@@ -37,32 +37,15 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.stms.web.controller.masters;
+package org.egov.stms.masters.entity.enums;
 
-import java.util.List;
-import org.egov.stms.masters.entity.SewerageRatesMaster;
-import org.egov.stms.masters.service.SewerageRatesMasterService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.apache.commons.lang.StringUtils;
 
-@Controller
-@RequestMapping(value = "/seweragerates")
-public class ViewSewerageRateMasterController {
-
-    private final SewerageRatesMasterService sewerageRatesMasterService;
-
-    @Autowired
-    public ViewSewerageRateMasterController(final SewerageRatesMasterService sewerageRatesMasterService) {
-        this.sewerageRatesMasterService = sewerageRatesMasterService;
-    }
-
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public String view(final Model model) {
-        List<SewerageRatesMaster> sewerageRatesMasterList = sewerageRatesMasterService.findAll();
-        model.addAttribute("sewerageRatesMasterList", sewerageRatesMasterList);
-        return "sewerageRates-view";
+public enum SewerageRateStatus {
+    ACTIVE, INACTIVE;
+    
+    @Override
+    public String toString(){
+        return StringUtils.capitalize(name());
     }
 }

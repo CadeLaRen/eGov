@@ -41,7 +41,19 @@ package org.egov.stms.masters.service;
 
 import java.util.Date;
 import java.util.List;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import org.egov.commons.Installment;
+import org.egov.stms.masters.entity.DonationDetailMaster;
+import org.egov.stms.masters.entity.DonationMaster;
+import org.egov.stms.masters.pojo.DonationMasterSearch;
+import org.egov.stms.masters.pojo.SewerageRatesSearch;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.egov.stms.masters.entity.SewerageRatesMaster;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.repository.SewerageRatesMasterRepository;
@@ -54,12 +66,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SewerageRatesMasterService {
 
-    private final SewerageRatesMasterRepository sewerageRatesMasterRepository;
+    
 
+    @PersistenceContext
+    private EntityManager entityManager;
+    
     @Autowired
-    public SewerageRatesMasterService(final SewerageRatesMasterRepository sewerageRatesMasterRepository) {
-        this.sewerageRatesMasterRepository = sewerageRatesMasterRepository;
-    }
+    private SewerageRatesMasterRepository sewerageRatesMasterRepository;
 
     public SewerageRatesMaster findBy(final Long id) {
         return sewerageRatesMasterRepository.findOne(id);
@@ -99,6 +112,72 @@ public class SewerageRatesMasterService {
 
     public Double getSewerageMonthlyRatesByPropertytype(PropertyType propertyType) {
         return sewerageRatesMasterRepository.getSewerageMonthlyRatesByPropertytype(propertyType);
+    }
+    
+public List<SewerageRatesMaster> getLatestActiveRecord(final PropertyType propertyType, final boolean active){
+        
+        return sewerageRatesMasterRepository.getLatestActiveRecord(propertyType, true, new Date());
+    }
+    
+    public List<Date> findFromDateByPropertyType(final PropertyType propertyType){
+        return sewerageRatesMasterRepository.findFromDateByPropertyType(propertyType);
+    }
+    
+    public List<SewerageRatesSearch> getSewerageMasters(final PropertyType propertyType, final String date, final String status){
+        List<SewerageRatesSearch> sewerageMasterSearchRecords = new ArrayList<SewerageRatesSearch>();
+        final List<SewerageRatesMaster> sewerageMasterRecords = searchConnectionRecordsBySearchParams(propertyType, date, status);
+        for(SewerageRatesMaster sewerageMasterRecord : sewerageMasterRecords){
+            SewerageRatesSearch swsearch = new SewerageRatesSearch();
+            swsearch.setPropertyType(sewerageMasterRecord.getPropertyType().toString());
+            swsearch.setMonthlyRate(sewerageMasterRecord.getMonthlyRate());
+            swsearch.setFromDate(sewerageMasterRecord.getFromDate().toString());
+            swsearch.setModifiedDate(sewerageMasterRecord.getLastModifiedDate().toString());
+            swsearch.setId(sewerageMasterRecord.getId());
+            swsearch.setActive(sewerageMasterRecord.isActive());
+            sewerageMasterSearchRecords.add(swsearch);
+        }
+      
+        return sewerageMasterSearchRecords;
+    } 
+    
+    //TODO : Clean code.. 
+    public List<SewerageRatesMaster> searchConnectionRecordsBySearchParams (final PropertyType propertyType, final String date, final String status){
+        
+        final Criteria connectionCriteria = entityManager.unwrap(Session.class)
+                .createCriteria(SewerageRatesMaster.class,"donation");
+        
+        if(null!=propertyType){
+            connectionCriteria.add(Restrictions.eq("propertyType", propertyType));
+        }
+        if(null!=date){
+            SimpleDateFormat myFormat=new SimpleDateFormat("dd-MM-yyyy");
+            SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate=null;
+            Date fDate = null;
+           try {
+               formattedDate=formatter.format(myFormat.parse(date));
+               fDate =formatter.parse(formattedDate);
+               
+           } catch (ParseException e) {
+               e.printStackTrace();
+           }
+            connectionCriteria.add(Restrictions.eq("fromDate",fDate));
+        }
+        if(null!=status){
+            if(status.equals("ACTIVE")){
+                boolean var = true;
+                connectionCriteria.add(Restrictions.eq("active",var));
+            }
+            else{
+                boolean var = false;
+                connectionCriteria.add(Restrictions.eq("active", var));
+            }
+        }
+        else{
+            boolean a=true;
+            connectionCriteria.add(Restrictions.eq("active",a));
+        }
+        return connectionCriteria.list();
     }
 
 }

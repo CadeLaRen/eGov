@@ -81,7 +81,7 @@ public class SewerageRatesMaster extends AbstractAuditable {
     @Temporal(value = TemporalType.DATE)
     private Date fromDate;
 
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date toDate;
 
     private boolean active;
