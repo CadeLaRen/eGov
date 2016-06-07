@@ -42,24 +42,29 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<form:form method="post" action=""
-	class="form-horizontal form-groups-bordered"
-	modelAttribute="donationMaster" id="donationMaster"
-	cssClass="form-horizontal form-groups-bordered">
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<link rel="stylesheet" href="<c:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+<script type="text/javascript" src="<c:url value='/resources/js/app/appconfig.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/egov/patternvalidation.js' context='/egi'/>"></script>    
+
+<form:form role="form" action="/stms/masters/donationmaster" class="form-horizontal form-groups-bordered"
+	modelAttribute="donationMaster" id="donationRatesSearchForm" commandName="donationMaster">
+	<c:if test="${not empty message}">
+         <div class="alert alert-danger" role="alert" id="activeDateValidateMsg">
+         	<spring:message code="${message}"></spring:message>
+         	<fmt:formatDate pattern="dd-MM-yyyy" value="${existingActiveDate}"/>
+         </div>
+    </c:if>
 	<div class="panel panel-primary" data-collapsed="0">
-		<span id="err-validate-effective-date" style="display: none"> <spring:message
-				code='err.validate.effective.date' />
-		</span> 
-		<span id="err-validate-donationoverwritevalidate"
-			style="display: none"> <spring:message
-				code='err.validate.donationoverwrite.validate' />
-		</span> <span id="err-validate-amount" style="display: none"> <spring:message
-				code='err.validate.amount' />
-		</span>
-		<div class="panel-heading"></div>
-		<div class="psanel-body custom-form">
+		<div class="panel-heading">
+			<div class="panel-title">
+				<strong><spring:message code="title.create.donation.master"/></strong>			
+			</div>
+		</div>
+		<div class="panel-body custom-form">
 			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"> <spring:message
+				<label class="col-sm-3 control-label text-right"><spring:message
 						code="lbl.propertytype" /> <span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
@@ -68,62 +73,93 @@
 						<form:option value="">
 							<spring:message code="lbl.select" />
 						</form:option>
-						<form:options items="${propertyType}" />
+						<form:options items="${propertyTypes}" />
 					</form:select>
 					<form:errors path="propertyType" cssClass="add-margin error-msg" />
 				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message
-						code="lbl.noofclosets" /><span class="mandatory"></span></label>
-				<div class="col-sm-3 add-margin">
-					<form:select path="noOfClosets" id="noOfClosets"
-						cssClass="form-control" required="required">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<c:forEach var="i" begin="1" end="50">
-							<form:option value="${i}" />
-						</c:forEach>
-					</form:select>
-				</div>
+				
+			    <fmt:formatDate var="formattedEndDate" pattern="dd-MM-yyyy"  value="${endDate}" />
+				<input type="hidden" id="effectiveEndDate" value='${formattedEndDate}'/>
+				
 				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.donation.amount" /><span class="mandatory"></span></label>
-				<div class="col-sm-3 add-margin">
-					<form:input class="form-control patternvalidation"
-						data-pattern="decimalValue" maxlength="8" id="amount" value=""
-						path="amount" style="text-align: right" required="required" />
-					<form:errors path="amount" cssClass="add-margin error-msg" />
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label text-right"><spring:message
 						code="lbl.effective.fromdate" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
-					<form:input path="fromDate" class="form-control datepicker"
+					<form:input path="fromDate" class="form-control datepicker" 
 						id="effectiveDate" data-inputmask="'mask': 'd/m/y'"
 						required="required" />
 					<form:errors path="fromDate" cssClass="add-margin error-msg" />
 				</div>
 			</div>
+			<br/>
+			<div class="panel-body custom-form">
+				<table  class="table table-bordered" role="grid" id="donationMasterTable" >
+					<thead>
+						<tr>
+							<th><spring:message code="lbl.noofclosets"/></th>
+							<th><spring:message code="lbl.donation.amount"/></th>	
+							<th><spring:message code="lbl.actions"/></th>		
+						</tr>	
+					</thead>
+					<tbody><form:hidden path="id" id="id" value="${id}"/> 
+						<c:choose>
+							<c:when test="${empty donationDetail}">
+								<tr>
+									<td>
+										<input type="text" class="form-control patternvalidation donationRatesNoOfClosets" 
+										style="text-align: left; font-size: 12px;" data-pattern="number" 
+										id="donationDetail[0].noOfClosets" 
+									    name="donationDetail[0].noOfClosets" 
+										maxlength="8" required="required" />
+									</td>
+									<td>
+										<input type="text" class="form-control patternvalidation donationRatesAmount" 
+										id="donationDetail[0].amount"  
+										style="text-align: right; font-size: 12px;" data-pattern="decimalvalue" 
+										name="donationDetail[0].amount"  maxlength="8" required="required"/>
+									</td>
+									<td>
+									</td>
+								</tr>
+							</c:when>
+							<c:otherwise>
+								 <c:forEach var="rates" items="${donationMaster.donationDetail}" varStatus="status">
+									<tr>
+										<td>
+											<input type="text" class="form-control patternvalidation donationRatesNoOfClosets" 
+											style="text-align: left; font-size: 12px;" data-pattern="number" 
+											id="donationDetail[${status.index}].noOfClosets" 
+											value="${rates.noOfClosets}"  name="donationDetail[${status.index}].noOfClosets" 
+											maxlength="8" required="required" />
+										</td>
+										<td>
+											<input type="text" class="form-control patternvalidation donationRatesAmount" 
+											id="donationDetail[${status.index}].amount"  
+											style="text-align: right; font-size: 12px;" value="${rates.amount}" data-pattern="decimalvalue" 
+											name="donationDetail[${status.index}].amount"  maxlength="8" required="required"/>
+										</td>
+										<td>
+											<button type="button" onclick="deleteRow(this)" id="Add" 
+											class="btn btn-primary display-hide delete-button"><spring:message code="lbl.swtax.deleteRow" /></button>
+											
+										</td>
+									</tr>
+									<script type="text/javascript">
+										$( "#donationMasterTable tr:last .delete-button").show();
+									</script>
+				 				</c:forEach>
+				 			</c:otherwise>
+				 		</c:choose>
+					</tbody>
+				</table>
+			</div>
 		</div>
-
 		<div class="form-group text-center">
-			<button type="button" class="btn btn-primary" id="submitform">
-				<spring:message code="lbl.submit" />
-			</button>
-			<button type="button" class="btn btn-primary" id="view">
-				<spring:message code="lbl.view" />
-			</button>
+			<button type="button" id="btn-addRow" class="btn btn-primary btn-addRow"><spring:message code="lbl.swtax.addRow"></spring:message></button>
+			<input type="submit" class="btn btn-primary" id="submitformvalue" />
 			<a onclick="self.close()" class="btn btn-default"
 				href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 		</div>
 	</div>
 </form:form>
 
-<script
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
-	type="text/javascript"></script>
-
-<script
-	src="<c:url value='/resources/js/masters/donationMaster.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/js/masters/donationMaster.js?rnd=${app_release_no}'/>"></script>

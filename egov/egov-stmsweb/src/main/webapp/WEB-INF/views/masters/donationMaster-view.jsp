@@ -43,74 +43,75 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-
-<body>
-<div class="row" id="page-content">
+<div class="row">
 	<div class="col-md-12">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel-group">
-					<div class="panel panel-primary">
-						<div class="panel-heading slide-history-menu">
-							<div class="panel-title"></div>
-							<div class="history-icon"></div>
-						</div>
-						<div class="panel-body history-slide">
-							<form:errors cssClass="add-margin error-msg" />
-							<div class="form-group">
-								<div class="form-group col-sm-6 col-sm-offset-3">
-								<table class="table table-bordered "  >
-										<thead>
-											<tr>
-												<th style="width:10%"><label><spring:message code="lbl.slno" /></label></th>
-												<th style="width:30%"><label><spring:message
-															code="lbl.propertytype" /></label></th>
-												<th style="width:10%"><label><spring:message
-															code="lbl.noofclosets" /></label></th>
-												<th style="width:20%"><label><spring:message
-															code="lbl.effective.fromdate" /></label></th>
-												<th style="width:10%"><label><spring:message
-															code="lbl.donation.amount" /></label></th>
-												<th style="width:10%"><label><spring:message
-															code="lbl.active"></spring:message> </label></th>
-											</tr>
-										</thead>
-										<tbody id="tblBody" class="table table-bordered">
-										<c:forEach var="donationMasterList"
-											items="${donationMasterList}" varStatus="index">
-											<tr>
-												<td ><c:out value="${index.index + 1}" /></td>
-												<td id="propertyType"><c:out
-														value="${donationMasterList.propertyType}" /></td>
-												<td  class="text-right"><c:out
-														value="${donationMasterList.noOfClosets}" /></td>
-												<td ><fmt:formatDate pattern="dd/MM/yyyy"
-														value="${donationMasterList.fromDate}" /></td>
-													<td class="text-right"><fmt:formatNumber type="number"
-															minFractionDigits="2" maxFractionDigits="2"
-															value="${donationMasterList.amount}" /></td>
-													<td  id="active" class="text-right"><c:out
-														value="${donationMasterList.active}" /></td>
-												</tr>
-										</c:forEach>
-									</tbody>
-								</table>
-								<div class="row">
-									<div class="text-center">
-										<a href="javascript:void(0)" class="btn btn-default"
-											onclick="self.close()"><spring:message code="lbl.close" /></a>
-									</div>
-								</div>
+		<form:form method="post" action=""
+			class="form-horizontal form-groups-bordered"
+			modelAttribute="donationMasterSearch" id="donationMasterViewForm"
+			cssClass="form-horizontal form-groups-bordered">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading"></div>
+					<div class="panel-body custom-form">
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right"> <spring:message
+									code="lbl.propertytype" />
+							</label>
+							<div class="col-sm-3 add-margin">
+								<form:select path="propertyType" data-first-option="false"
+									id="propertyType" cssClass="form-control">
+									<form:option value="">
+										<spring:message code="lbl.select" />
+									</form:option>
+									<form:options items="${propertyType}" />
+								</form:select>
+								<form:errors path="propertyType" cssClass="add-margin error-msg" />
+							</div>
+							<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.effective.fromdate" /></label>
+							<div class="col-sm-3 add-margin">
+								<form:select path="fromDate" id="effectiveFromDate"
+									cssClass="form-control">
+									<form:option value="">
+										<spring:message code="lbl.select" />
+									</form:option>
+									<c:forEach var="i" items="${fromDate}">
+										<fmt:formatDate var="date" value="${i}" pattern="dd-MM-yyyy" />
+										<form:options value="${date}"/>
+									</c:forEach>
+								</form:select>
 							</div>
 						</div>
-					</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label text-right"> <spring:message
+									code="lbl.status" />
+							</label>
+							<div class="col-sm-3 add-margin">
+			                   	<form:select path="status" id="connectionstatus" cssClass="form-control" 
+									cssErrorClass="form-control error">
+									<form:option value=""><spring:message code="lbl.select" /></form:option>
+									<form:options items="${statusValues}" />
+								</form:select>
+								<form:errors path="status" cssClass="error-msg"/> 
+			                </div> 
+						</div>
+						<div class="row">
+							<div class="text-center">
+								<button type="button" id="search" class="btn btn-primary" > <spring:message code="lbl.search" /></button>
+			 					<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
+							</div>
+						</div>
+					</div>	
 				</div>
-			</div>
-		</div>
+		</form:form>
+		<table class="table table-bordered datatable dt-responsive" id="donation_master_search"></table>
 	</div>
 </div>
-</div>
-<script
-	src="<c:url value='/resources/js/masters/view.js?rnd=${app_release_no}'/>"></script>
 
-
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
+<script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
+<script  src="<c:url value='/resources/js/masters/donationMaster.js?rnd=${app_release_no}' /> " ></script>

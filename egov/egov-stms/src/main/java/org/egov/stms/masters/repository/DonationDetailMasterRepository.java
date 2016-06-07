@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
-    Copyright (C) <2015>  eGovernments Foundation
+    Copyright (C) <2016>  eGovernments Foundation
 
     The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
@@ -37,36 +37,21 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.stms.web.controller.masters;
+package org.egov.stms.masters.repository;
 
 import java.util.List;
 
-import org.egov.stms.masters.entity.DonationMaster;
-import org.egov.stms.masters.entity.enums.PropertyType;
-import org.egov.stms.masters.service.DonationMasterService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.egov.stms.masters.entity.DonationDetailMaster;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-@Controller
-@RequestMapping(value = "/donationmaster")
-public class ViewDonationMasterController {
+@Repository
+public interface DonationDetailMasterRepository extends JpaRepository<DonationDetailMaster, Long> {
 
-    private final DonationMasterService donationMasterService;
-
-    @Autowired
-    public ViewDonationMasterController(final DonationMasterService donationMasterService) {
-        this.donationMasterService = donationMasterService;
-    }
-
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public String view(final Model model) {
-        List<DonationMaster> donationMasterList = donationMasterService.findAll();
-        model.addAttribute("donationMasterList", donationMasterList);
-        model.addAttribute("propertyTypes", PropertyType.values());
-        return "donationMaster-view";
-    }
+   List<DonationDetailMaster> findByDonation_Id(final Long donation);
+   
+   @Query("select D from DonationDetailMaster D where D.donation=:donation order by D.noOfClosets")
+   List<DonationDetailMaster> findDonationDetailsOrderByNumberOfClosets(@Param("donation") final Long donation);
 }
-

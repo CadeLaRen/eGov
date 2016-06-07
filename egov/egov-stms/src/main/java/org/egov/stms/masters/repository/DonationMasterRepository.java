@@ -64,7 +64,15 @@ public interface DonationMasterRepository extends JpaRepository<DonationMaster, 
     BigDecimal getDonationAmountByNoOfClosetsAndPropertytypeForCurrentDate(@Param("noofclosets") Integer noofclosets,
             @Param("propertyType") PropertyType propertyType);
 
+    @Query("select D from DonationMaster D where D.propertyType=:propertyType and D.active=:active and ( D.fromDate<=:date or (D.toDate is null or D.toDate<=:date)) order by D.fromDate desc")
+    List<DonationMaster> getLatestActiveRecordByPropertyTypeAndActive(@Param("propertyType") PropertyType propertyType,
+            @Param("active") boolean active, @Param("date") Date date);
+
+    @Query("select distinct(D.fromDate) from DonationMaster D where D.propertyType=:propertyType order by D.fromDate asc")
+    List<Date> findFromDateByPropertyType(@Param("propertyType") PropertyType propertyType);
+
     @Query("select ddm from DonationDetailMaster ddm where ddm.donation.propertyType =:propertyType and ddm.noOfClosets =:noofclosets and ddm.donation.active = true and ddm.donation.fromDate <=current_date and (ddm.donation.toDate >= current_date or ddm.donation.toDate is null)")
     DonationDetailMaster getDonationDetailMasterByNoOfClosetsAndPropertytypeForCurrentDate(
             @Param("propertyType") PropertyType propertyType, @Param("noofclosets") Integer noofclosets);
+
 }

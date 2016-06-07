@@ -38,25 +38,120 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function() {
-	document.getElementById('amount').value = "";
-	$('#propertyType option').each(function() {              // remove  propety type mixed option and underscore
+	$('#propertyType option').each(function() {            
 		var $this = $(this);
 		$this.text($this.text().replace(/_/g, ' '));
 		if ($this.text() == "MIXED")
 			$(this).remove();
 	});
 	
-	$("#submitform").click(function() {
-		if ($("#donationMaster").valid())
-			 if(!validateEffectiveDate())
-				{
-				return false;
-				}
-			  else{
-				  if($('#effectiveDate').val() !=undefined)
-					  donationMasterCombination();
-			  }
+	var isSubmitForm=false;
+
+	$("#submitformvalue").click(function() {
+		
+		if(isSubmitForm){
+			return true;
+		}
+		
+		if ($("#donationRatesSearchForm").valid())
+		{
+		    if(!validateEffectiveDate())
+			{
+			  return false;
+			}
+		    else if(!fromDateAndNoOfClosetsAndCombinationValidation()){
+		    	return false;
+		    }
+		    return true;
+		    
+		}
+		else{
+			return false;
+		}
+		
 	});
+	
+	
+	function checkUniqueNumberOfClosets(){
+		var donationCollection=[];
+		var isValidation=true;
+		
+		$('.donationRatesNoOfClosets').each(function(i,obj){
+			if($(this).val()==0){
+				var textbox=$(this);
+				bootbox.alert('Number of closets should be more than 0',function(){
+				setTimeout(function(){ textbox.focus(); }, 400);
+				});
+				isValidation=false;
+				return false;
+			}
+			else{
+			
+					if(i==0){
+						donationCollection.push($(this).val());
+					}
+					else
+					{
+						if(donationCollection.indexOf($(this).val())==-1)
+						{
+							donationCollection.push($(this).val());
+						}
+						else
+						{
+							isValidation=false;
+							var textbox=$(this);
+							bootbox.alert('Entered Number Of Closets '+$(this).val()+' is a duplicate value. Please enter different value.', function(){
+								
+								setTimeout(function(){ textbox.focus(); }, 400);
+							});
+							return false;
+						}
+					}
+			}
+		});
+		return isValidation;
+	}
+	
+	function fromDateAndNoOfClosetsAndCombinationValidation(){
+		$.ajax({
+			url:'/stms/masters/fromDateValidationWithActiveRecord',
+		
+		type:"GET",
+		data :{
+			propertyType : $('#propertyType').val(),
+			fromDate : $('#effectiveDate').val(),
+		},
+		dataType : 'json',
+		success: function(response){
+			console.log(" response -> "+response);
+			if(response!="true"){
+				bootbox.alert(" The effecive from date should not be less than "+response);
+				return false;
+			}
+			else{
+				 if(!checkUniqueNumberOfClosets()){
+				    	
+			    		return false;
+			    	}	
+				 else{
+					 if(!donationMasterCombination()){
+					    	return false;
+					    }
+					 else{
+					 isSubmitForm=true;
+						$('#submitformvalue').trigger('click');
+					 }
+				 }
+			}
+		},
+		error: function (response) {
+			console.log("failed");
+		}
+		
+		});
+		
+	}
+	
 	
 	function donationMasterCombination() {
 		$.ajax({
@@ -64,9 +159,7 @@ $(document).ready(function() {
 				type : "GET",
 				data : {
 					propertyType : $('#propertyType').val(),
-					noOfClosets : $('#noOfClosets').val(),
 					fromDate : $('#effectiveDate').val(),
-					monthlyRate : $('#amount').val()
 					},
 					dataType : 'json',
 					success : function(response) {
@@ -75,8 +168,8 @@ $(document).ready(function() {
 					if (!overwriteDonationMasterRate(response))
 						return false;
 					} else {
-					document.forms[0].submit();
-					return true;
+						isSubmitForm=true;
+						$('#submitformvalue').trigger('click');
 					}
 				},
 				error : function(response) {
@@ -86,19 +179,20 @@ $(document).ready(function() {
 	}
 	
 	function overwriteDonationMasterRate(res) {
-		var r = confirm($("#err-validate-donationoverwritevalidate").text().replace('{0}',res))
-		if (r == true) {
-			document.forms[0].submit();
-		} else {
-			return false;
-		}
+		bootbox.confirm(" With entered combination donation rate is present. Do you want to overwrite it?",function(result){
+			if(result){
+				isSubmitForm=true;
+				$('#submitformvalue').trigger('click');
+		    }
+		});
+		return false;
 	}
 	
 	function validateEffectiveDate() {
 		var fromdate = $('#effectiveDate').val();
 		var todaysDate = getTodayDate();
 		if (compareDate(fromdate, todaysDate) == 1) {
-			bootbox.alert($("#err-validate-effective-date").text());
+			bootbox.alert("The effective from date should not be less than today's date");
 			$(this).val("");
 			return false;
 		} else {
@@ -164,7 +258,208 @@ $(document).ready(function() {
 		}
 		return num;
 	}
-	$("#view" ).click(function() {                               // url to view button          
-		 window.location = "/stms/donationmaster/view";
+	
+	
+	
+	$('#effectiveDate').datepicker('setEndDate', $('#effectiveEndDate').val());
+	
+	
+	
+	$('#tblBody tr').each(function() {                            
+		var $this = $(this).find('#propertyType');
+		$this.text($this.text().replace(/_/g, ' '));
+		var $this = $(this).find('#active');
+		$this.text($this.text().toUpperCase());
 	});
+	
+	$('#propertyType option').each(function(){
+		var $this=$(this);
+		$this.text($this.text().replace(/_/g,' '));
+		if($this.text()=="MIXED")
+			$(this).remove();
+	});
+	
+	var datatbl = $('#donation_master_search');
+	$('#search').click(function(e){
+		datatbl.dataTable({
+			"ajax": {url:"/stms/masters/search-donation-master?"+$("#donationMasterViewForm").serialize(),
+				type:"GET"
+			},
+			"sPaginationType": "bootstrap",
+			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-xs-12 col-md-3 col-right' <'export-data'T>><'col-md-3 col-xs-6 text-right' p>>",
+			"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+			"bDestroy": true,
+			"autoWidth": false,
+			"oTableTools": {
+				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+				"aButtons": [
+								{
+								"sExtends": "xls",
+								"mColumns": [1,2,3]
+								},
+								{
+								"sExtends": "pdf",
+								"mColumns": [1,2,3]
+								},
+								{
+								"sExtends": "print"
+								}]
+			},
+			"columns" : [
+			            
+						 { "title" : "S.No"},
+						 { "data" : "id", "visible": false},
+						 { "data" : "propertyType", "title":"Property Type"},
+						 { "data" : "size", "title": "Total Number Of Closets"},
+						 { "data" : "fromDate", "title": "Effective From Date"},
+						 { "data" : "isActive",
+						   "title": "Connection Status",
+							"render" : function(data, type, row, meta){
+								return (data?"ACTIVE":"INACTIVE");
+							}	 
+						 
+						 },
+						 { "data" : "modifiedDate", "title": "ModifiedDate"},
+						 { "data" : "amount", "title": "Donation Amount", "className" : "text-right", "visible":false},
+						 { "data" : "","title":"Actions", 
+						   "render" : function(data, type, row, meta){
+							     var editAction = '<span class="add-padding"><i class="fa fa-edit history-size" class="tooltip-secondary" data-toggle="tooltip" title="Edit"></i></span>';
+							     var viewAction = '<span class="add-padding"><i class="fa fa-eye history-size" class="tooltip-secondary" data-toggle="tooltip" title="View"></i></span>';
+								 return (row.isActive?editAction+viewAction:viewAction);
+							}
+						 }
+						
+						 ],
+						 "fnRowCallback" : function(nRow, aData, iDisplayIndex){ $("td:first", nRow).html(iDisplayIndex +1); return nRow; },
+						});
+						e.stopPropagation();
+	});
+	
+	
+	$("#propertyType").change(function(){
+		$.ajax({
+			url:"/stms/masters/fromDate-by-propertyType",
+			type:"GET",
+			data:{
+				propertyType : $('#propertyType').val()
+			},
+			dataType: "json",
+			success:function(response){
+				console.log("success"+response);
+				$('#effectiveFromDate').empty();
+				$('#effectiveFromDate').append($("<option value=''>Select from below</option>"));
+				$.each(response,function(index, value){
+					console.log("index "+index + "    value "+value);
+					var date = new Date(value);
+					var day = date.getDate();
+					var month = date.getMonth() + 1;
+					if(day < 10 ){
+						day = '0'+day;
+					}
+					if(month < 10 ){
+						month = '0'+month;
+					}
+					date = day+ '/' + month + '/' +  date.getFullYear();
+					$('#effectiveFromDate').append($('<option>').text(date).attr('value', date));
+				});
+			},
+			error: function (response) {
+				console.log("failed");
+			}
+			
+		});
+	});
+	
+	var datatbl = $('#donation_master_search');
+	$("#donation_master_search").on('click','tbody tr td i.fa-eye',function(e) {
+		var donationMasterId = datatbl.fnGetData($(this).parent().parent().parent(),1);
+		window.open("viewDonation/"+donationMasterId, ''+donationMasterId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+	});
+	
+	$("#donation_master_search").on('click','tbody tr td i.fa-edit',function(e) {
+		var donationMasterId = datatbl.fnGetData($(this).parent().parent().parent(),1);
+		window.open("updateDonation/"+donationMasterId, ''+donationMasterId+'', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+	});
+	
+	$(".btn-addRow").click(function(){
+		if($('#donationRatesSearchForm').valid()){
+			if(checkUniqueNumberOfClosets()){
+				var currentIndex=$("#donationMasterTable tr").length;
+				addRowToTable(currentIndex);
+			}
+		}
+	});
+	
+	function addRowToTable(currentIndex){
+		$("#donationMasterTable tr:last .delete-button").hide();
+		$("#donationMasterTable tbody")
+		.append(
+				'<tr> <td> <input id="id'+(currentIndex)+'" type="hidden"> <input type="text" class="form-control patternvalidation donationRatesNoOfClosets" maxlength="8" style="text-align: left; font-size: 12px;" id="donationMasterNoOfClosets'+(currentIndex - 1)+'" name="donationDetail[' + (currentIndex -1) + '].noOfClosets" data-pattern="number" required="required"/></td><td><input class="form-control patternvalidation donationRatesAmount" data-pattern="decimalvalue" maxlength="8" style="text-align: right; font-size: 12px;" id="donationMasterAmount'+(currentIndex - 1)+'" name="donationDetail[' + (currentIndex-1) + '].amount" type="text" required="required"/></td>  <td> <button type="button" onclick="deleteRow(this)" id="Add" class="btn btn-primary display-hide delete-button">Delete Row </button> </td></tr>');
+		patternvalidation(); 
+		$("#donationMasterTable tr:last .delete-button").show();
+	}
+	
+	$(".btn-addNewRow").click(function(){
+		if($('#donationMasterUpdateform').valid()){
+			
+			if(checkUniqueNumberOfClosets())
+			{
+				var currentIndex=$("#donationMasterViewTable tr").length;
+				addNewRowToTable(currentIndex);
+			}
+		}
+	});
+	
+	function addNewRowToTable(currentIndex){
+		$("#donationMasterViewTable tr:last .delete-button").hide();
+		$("#donationMasterViewTable tbody")
+		.append(
+				'<tr> <td> <input id="id'+(currentIndex)+'" type="hidden"> <input type="text" class="form-control patternvalidation donationRatesNoOfClosets" maxlength="8" style="text-align: center; font-size: 12px;" id="donationMasterNoOfClosets'+(currentIndex - 1)+'" name="donationDetail[' + (currentIndex -1) + '].noOfClosets" data-pattern="number" required="required"/></td><td><input class="form-control patternvalidation donationRatesAmount" data-pattern="decimalvalue" maxlength="8" style="text-align: right; font-size: 12px;" id="donationMasterAmount'+(currentIndex - 1)+'" name="donationDetail[' + (currentIndex-1) + '].amount" type="text" required="required"/></td>  <td> <button type="button" onclick="deleteCurrentRow(this)" id="Add" class="btn btn-primary display-hide delete-button">Delete Row </button> </td></tr>');
+		patternvalidation(); 
+		$("#donationMasterViewTable tr:last .delete-button").show();
+	}
+	
+	$("#submitDonationValues").click(function(){
+		if($('#donationMasterUpdateform').valid()){
+			return checkUniqueNumberOfClosets();
+		}
+		return false;
+	});
+	
 });
+
+
+
+
+
+function deleteRow(obj){
+	var curRow=obj.parentNode.parentNode.rowIndex;
+		if(curRow!=1){
+		document.getElementById("donationMasterTable").deleteRow(curRow);
+				if(curRow==2){
+					$("#donationMasterTable tr:last .delete-button").hide();
+				}
+				else{
+				$("#donationMasterTable tr:last .delete-button").show();
+				}
+				return true;
+		}
+	}
+
+
+
+function deleteCurrentRow(obj){
+
+		var curRow=obj.parentNode.parentNode.rowIndex;
+		if(curRow!=1){
+		document.getElementById("donationMasterViewTable").deleteRow(curRow);
+				if(curRow==2){
+					$("#donationMasterViewTable tr:last .delete-button").hide();
+				}
+				else{
+				$("#donationMasterViewTable tr:last .delete-button").show();
+				}
+				return true;
+		}
+	}
+

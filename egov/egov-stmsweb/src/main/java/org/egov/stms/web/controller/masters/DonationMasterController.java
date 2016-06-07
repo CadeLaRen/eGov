@@ -38,87 +38,247 @@
  */
 package org.egov.stms.web.controller.masters;
 
-import javax.validation.Valid;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.service.FinancialYearService;
+import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.utils.DateUtils;
+import org.egov.stms.masters.entity.DonationDetailMaster;
 import org.egov.stms.masters.entity.DonationMaster;
 import org.egov.stms.masters.entity.enums.PropertyType;
+import org.egov.stms.masters.entity.enums.SewerageRateStatus;
+import org.egov.stms.masters.pojo.DonationMasterSearch;
 import org.egov.stms.masters.service.DonationMasterService;
+import org.egov.stms.utils.DonationRateComparatorOrderById;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/masters")
 public class DonationMasterController {
-
-    private final DonationMasterService donationMasterService;
-
+    
     @Autowired
-    public DonationMasterController(final DonationMasterService donationMasterService) {
-        this.donationMasterService = donationMasterService;
-    }
-
+    private DonationMasterService donationMasterService;
+    
+    @Autowired
+    private FinancialYearService financialYearService;
+    
+    @Autowired
+    private ApplicationProperties applicationProperties;
+    
     @RequestMapping(value = "/donationmaster", method = RequestMethod.GET)
-    public String showForm(
-            @ModelAttribute DonationMaster donationMaster,
-            final Model model) {
+    public String showForm(@ModelAttribute DonationMaster donationMaster, final Model model) {
         donationMaster = new DonationMaster();
+        CFinancialYear financialYear = financialYearService.getCurrentFinancialYear();
+        if(financialYear!=null)
+        model.addAttribute("endDate", financialYear.getEndingDate());
         model.addAttribute("donationmaster", donationMaster);
         model.addAttribute("propertyTypes", PropertyType.values());
         return "donation-master";
     }
 
-    @RequestMapping(value = "/donationmaster ", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final DonationMaster donationMaster,
-            final RedirectAttributes redirectAttrs, final Model model,
-            final BindingResult resultBinder) {
-        if (resultBinder.hasErrors()) {
-            model.addAttribute("donationmaster", donationMaster);
-            model.addAttribute("propertyTypes", PropertyType.values());
-            return "donation-master";
-        }
-
-        DonationMaster donationMasterExist = new DonationMaster();
-     // TODO : noofclosets removed as part of entity change - need to read from donationdetail
-        donationMasterExist = donationMasterService.findByPropertyTypeAndFromDateAndActive
-                (donationMaster.getPropertyType(), donationMaster.getFromDate(), true);
+    @RequestMapping(value = "/donationmaster", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String createDonationMaster(@ModelAttribute DonationMaster donationMaster,
+            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
+        List<DonationDetailMaster> donationMasterDetailList = new ArrayList<DonationDetailMaster>();
+     
+        List<DonationMaster> existingdonationMaster = donationMasterService
+                .getLatestActiveRecordByPropertyTypeAndActive(donationMaster.getPropertyType(), true);
+     
+        DonationMaster donationMasterExist = donationMasterService.findByPropertyTypeAndFromDateAndActive(donationMaster.getPropertyType(),
+                donationMaster.getFromDate(), true);
+      //TODO: ADD COMMENTS ABOUT THIS LOGIC.
         if (donationMasterExist != null) {
+            DateTime dateTime = DateUtils.endOfGivenDate(new DateTime(donationMaster.getFromDate()));
+            Date dateformat = dateTime.toDate();
             donationMasterExist.setActive(false);
-            donationMasterExist.setToDate(donationMaster.getFromDate());
-            donationMasterService.update(donationMasterExist);
-
+            donationMasterExist.setToDate(dateformat);
             donationMaster.setActive(true);
-            donationMasterService.create(donationMaster);
+            for (DonationDetailMaster donationDetailMaster : donationMaster.getDonationDetail()) {
+                donationDetailMaster.setDonation(donationMaster);
+                donationMasterDetailList.add(donationDetailMaster);
+            }
+            
+            donationMaster.getDonationDetail().addAll(donationMasterDetailList);
+            donationMaster = donationMasterService.createDonationRate(donationMaster);
+
         } else {
             DonationMaster donationMasterOld = null;
-         // TODO : amount removed as part of entity change - need to read from donationdetail
-            donationMasterOld = donationMasterService.findByPropertyTypeAndActive(donationMaster.getPropertyType(),
-             true);
+            if (!existingdonationMaster.isEmpty()) {
+                donationMasterOld = existingdonationMaster.get(0);
+            }
             if (donationMasterOld != null) {
-                donationMasterOld.setActive(false);
-                donationMasterOld.setToDate(new DateTime(donationMaster.getFromDate()).minusDays(1).toDate());
+                if (donationMaster.getFromDate().compareTo(new Date()) < 0) {
+                    donationMasterOld.setActive(false);
+                }
+                DateTime dateTime = DateUtils.endOfGivenDate(new DateTime(donationMaster.getFromDate()).minusDays(1));
+                Date  dateformat = dateTime.toDate();
+                donationMasterOld.setToDate(dateformat);
                 donationMasterService.update(donationMasterOld);
             }
             donationMaster.setActive(true);
-            donationMasterService.create(donationMaster);
-            redirectAttrs.addAttribute("donationMaster", donationMaster);
+            for (DonationDetailMaster donationDetailMaster : donationMaster.getDonationDetail()) {
+                donationDetailMaster.setDonation(donationMaster);
+                donationMasterDetailList.add(donationDetailMaster);
+            }
+            donationMaster.getDonationDetail().clear();
+            donationMaster.getDonationDetail().addAll(donationMasterDetailList);
+            donationMaster = donationMasterService.createDonationRate(donationMaster);
         }
-        redirectAttrs.addAttribute("donationMaster", donationMaster);
-        return "redirect:/masters/donationmastersuccess?id=" + donationMaster.getId();
+        redirectAttrs.addFlashAttribute("message", "msg.donationrate.creation.success");
+        return "redirect:/masters/donationmastersuccess/" +donationMaster.getId();
     }
 
-    @RequestMapping(value = "/donationmastersuccess", method = RequestMethod.GET)
-    public String getSeweragerates(@RequestParam("id") Long id, Model model) {
-        DonationMaster donationMaster = donationMasterService.findById(id);
-        model.addAttribute("donationMaster", donationMaster);
-        model.addAttribute("message", "msg.donationrate.creation.success");
+    @RequestMapping(value = "/donationmastersuccess/{id}", method = RequestMethod.GET)
+    public String getSeweragerates(@ModelAttribute DonationMaster donationMaster, @PathVariable("id") Long id,
+            final RedirectAttributes redirectAttrs, Model model) {
+        DonationMaster donationMaster1 = donationMasterService.findById(id);
+        for (DonationDetailMaster ddm : donationMaster1.getDonationDetail()) {
+            ddm.setAmount(BigDecimal.valueOf(ddm.getAmount()).setScale(2, BigDecimal.ROUND_HALF_EVEN).doubleValue());
+        }
+        Collections.sort(donationMaster1.getDonationDetail(), new DonationRateComparatorOrderById());
+        model.addAttribute("donationMaster", donationMaster1);
         return "donation-master-success";
+    }
+
+    @RequestMapping(value="/fromDateValidationWithActiveRecord", method=RequestMethod.GET)
+    public @ResponseBody String validateFromDateWithActiveDate(@RequestParam("propertyType") PropertyType propertyType ,@RequestParam("fromDate") Date date, final Model model){
+        List<DonationMaster> donationList = donationMasterService.getLatestActiveRecordByPropertyTypeAndActive(propertyType, true);
+        if(!donationList.isEmpty()){
+        DonationMaster existingActiveDonationObject = donationList.get(0);
+            if(date.compareTo(existingActiveDonationObject.getFromDate())<0){
+           SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+           String activeDate=formatter.format(existingActiveDonationObject.getFromDate());
+           return activeDate;
+            }
+        }
+        return "true";
+    }
+    
+    @RequestMapping(value = "/ajaxexistingdonationvalidate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody double geWaterRatesByAllCombinatons(@RequestParam("propertyType") final PropertyType propertyType,
+            @RequestParam("fromDate") Date fromDate) {
+        DonationMaster donationMasterMaster = null;
+        donationMasterMaster = donationMasterService
+                .findByPropertyTypeAndFromDateAndActive(propertyType, fromDate, true);
+        if (donationMasterMaster != null) {
+            return 1;
+        } else
+            return 0;
+    }
+    
+    
+    @RequestMapping(value="/view" , method = RequestMethod.GET)
+    public String viewDonationMaster(final Model model, @ModelAttribute final DonationMasterSearch donationMasterSearch){
+        model.addAttribute("propertyType", PropertyType.values());
+        model.addAttribute("statusValues",SewerageRateStatus.values());
+        return "donationMaster-view";
+    }
+    
+    @RequestMapping(value="/search-donation-master",method = GET, produces = APPLICATION_JSON_VALUE)
+    public @ResponseBody void searchDonationMaster(@ModelAttribute final DonationMasterSearch donationMasterSearch, final HttpServletResponse response) throws IOException, ParseException{
+        PropertyType type =null;
+        String effectivefromDate=null;
+        if(donationMasterSearch.getPropertyType()!=null){
+        type = PropertyType.valueOf(donationMasterSearch.getPropertyType());
+       }
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+        if(donationMasterSearch.getFromDate()!=null){
+        effectivefromDate=myFormat.format(formatter.parse(donationMasterSearch.getFromDate()));
+        }
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+                .toJson(donationMasterService.getDonationMasters(type,effectivefromDate, donationMasterSearch.getStatus()))
+                + "}", response.getWriter());
+    }
+    
+    @RequestMapping(value="/fromDate-by-propertyType", method=GET, produces=APPLICATION_JSON_VALUE)
+    public @ResponseBody List<Date> effectiveFromDates(@RequestParam final PropertyType propertyType){
+        return donationMasterService.findFromDateByPropertyType(propertyType);
+    }
+    
+    @RequestMapping(value="/viewDonation/{id}", method=GET)
+    public String ViewDonation( @PathVariable final Long id, final Model model, final RedirectAttributes redirectAttrs){
+       return "redirect:/masters/donationmastersuccess/"+id;
+    }
+    
+    @RequestMapping(value="/updateDonation/{id}", method=GET)
+    public String UpdateDonation(@PathVariable final Long id, final Model model){
+        DonationMaster dm = donationMasterService.findById(id);
+        Collections.sort(dm.getDonationDetail(), new DonationRateComparatorOrderById());
+        model.addAttribute("donationMaster",dm);
+        model.addAttribute("donationDetail", dm.getDonationDetail());
+        return "donation-master-update";
+    }
+    
+    @RequestMapping(value="/updateDonation/{id}", method=POST)
+    public String updateDonationValues(@ModelAttribute DonationMaster donationMaster, @PathVariable final Long id, final Model model,
+            final RedirectAttributes redirectAttrs){
+        
+        DonationMaster donationMstr = donationMasterService.findById(id);
+        List<DonationDetailMaster> existingdonationDetailList=new ArrayList<DonationDetailMaster>();
+        if(!donationMaster.getDonationDetail().isEmpty()){
+        existingdonationDetailList.addAll(donationMstr.getDonationDetail());
+        }
+        if(donationMaster!=null && donationMaster.getDonationDetail()!=null){
+            if(!existingdonationDetailList.isEmpty()){
+                
+                for(DonationDetailMaster dtlObject : existingdonationDetailList){
+                    if(!donationMaster.getDonationDetail().contains(dtlObject)){
+                        donationMstr.deleteDonationDetail(dtlObject);
+                    }
+                 }
+                for(DonationDetailMaster dtlMaster : donationMaster.getDonationDetail()){
+                    if(dtlMaster.getId()==null){
+                    DonationDetailMaster donationDetailObject = new DonationDetailMaster();
+                    donationDetailObject.setNoOfClosets(dtlMaster.getNoOfClosets());
+                    donationDetailObject.setAmount(dtlMaster.getAmount());
+                    donationDetailObject.setDonation(donationMstr);
+                    donationMstr.addDonationDetail(donationDetailObject);
+                    }else if(dtlMaster.getId()!=null && existingdonationDetailList.contains(dtlMaster))
+                    {
+                        for(DonationDetailMaster dtlObject : donationMstr.getDonationDetail()){
+                        
+                             if(dtlObject.getId().equals(dtlMaster.getId()))
+                             {
+                                 dtlObject.setAmount(dtlMaster.getAmount());
+                                 dtlObject.setNoOfClosets(dtlMaster.getNoOfClosets());
+                             }
+                        }
+                    }
+                }
+            }
+            donationMasterService.update(donationMstr);  
+        }
+        redirectAttrs.addFlashAttribute("message", "msg.donationrate.update.success");
+        return "redirect:/masters/donationmastersuccess/" +id;
     }
 }

@@ -89,7 +89,7 @@
         <put-attribute name="body" value="/WEB-INF/views/transactions/application-view.jsp"/>
     </definition>
 	<definition name="sewerageRates-master" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.rates"
+		<put-attribute name="page-title" value="title.sewerage.master"
 			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/masters/sewerageRates-master.jsp" />
@@ -119,7 +119,7 @@
 			value="/WEB-INF/views/masters/sewerageRates-view.jsp" />
 	</definition>
 	<definition name="donationMaster-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.donation.master.view"
+		<put-attribute name="page-title" value="title.donation.master.search"
 			cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/masters/donationMaster-view.jsp" />
@@ -144,5 +144,42 @@
         <put-attribute name="page-title" value="title.collect.SWtTax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/collectSwtTax-error.jsp"/>
     </definition>
-  
+   <definition name="donation-master-view-success" extends="base_layout">
+		<put-attribute name="page-title" value="title.donation.master.view"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/masters/donation-master-view-success.jsp" />
+	</definition>
+	<definition name="donation-master-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.donation.master.modify"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/masters/donation-master-update.jsp" />
+	</definition>
+	<definition name="donation-master-update-success" extends="base_layout">
+		<put-attribute name="page-title" value="title.donation.master.modify"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/masters/donation-master-update-success.jsp" />
+	</definition>
+	<definition name="sewerageRates-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerage.rates.modify"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/masters/sewerageRates-update.jsp" />
+	</definition>
+	<definition name="sewerageRates-update-success" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerage.rates.modify"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/masters/sewerageRates-update-success.jsp" />
+	</definition>
+	<definition name="sewerageRates-view-success" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerage.master.view"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/masters/sewerageRates-view-success.jsp" />
+	</definition>
+	
+	
 </tiles-definitions>

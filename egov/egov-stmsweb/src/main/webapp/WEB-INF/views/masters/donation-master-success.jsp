@@ -47,13 +47,15 @@
 	<div class="row">
 		<div class="col-md-12">
 			<c:if test="${not empty message}">
-				<div class="alert alert-info" role="alert">
+				<div class="alert alert-success" role="alert">
 					<spring:message code="${message}" />
 				</div>
 			</c:if>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title"></div>
+					<div class="panel-title">
+					<strong><spring:message code="lbl.swtax.donationDetails"></spring:message></strong>
+					</div>
 				</div>
 				<div class="panel-body">
 					<div class="row add-border">
@@ -68,30 +70,7 @@
 				</div>
 				<div class="panel-body">
 					<div class="row add-border">
-
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.donation.amount" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content">
-							<fmt:formatNumber type="number" 
-            minFractionDigits="2" maxFractionDigits="2" value="${donationMaster.amount}" />
-						</div>
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="row add-border">
-
-						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.noofclosets" />
-						</div>
-						<div class="col-md-3 col-xs-6 add-margin view-content">
-							<c:out value="${donationMaster.noOfClosets}" />
-						</div>
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="row add-border">
-						<div class="col-md-3 col-xs-6 add-margin">
+						<div  class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.effective.fromdate" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content">
@@ -100,6 +79,35 @@
 						</div>
 					</div>
 				</div>
+			</div>
+			<div>
+				<table class="table table-bordered" id="donationMasterViewTable" style="width:50%; margin:0 auto;">
+					<thead>
+						<tr>
+							<th class="text-center"><spring:message code="lbl.noofclosets"/></th>
+							<th class="text-right"><spring:message code="lbl.donation.amount" /></th>	
+						</tr>	
+					</thead>
+					<tbody>
+						<c:forEach var="donationRates" items="${donationMaster.donationDetail}" varStatus="status" >
+							<tr>
+								<td>
+									<input type="text" class="form-control patternvalidation donationRatesNoOfClosets" 
+									style="text-align: center; font-size: 12px;" data-pattern="number" 
+									id="donationDetail[${status.index}].noOfClosets" 
+									value="${donationRates.noOfClosets}"  name="donationDetail[${status.index}].noOfClosets" 
+									maxlength="8" required="required" readonly="readonly"/>
+								</td>
+								<td>
+									<input type="text" class="form-control patternvalidation donationRatesAmount" 
+									id="donationDetail[${status.index}].amount"  
+									style="text-align: right; font-size: 12px;" value="${donationRates.amount}" data-pattern="decimalvalue" 
+									name="donationDetail[${status.index}].amount"  maxlength="8" required="required"  readonly="readonly"/>
+								</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
@@ -110,8 +118,3 @@
 		</div>
 	</div>
 </form:form>
-<script>
-	$(document).ready(function() {
-		$('#propertyType').text($('#propertyType').text().replace(/_/g, ' '))
-	});
-</script>

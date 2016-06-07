@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
-    Copyright (C) <2015>  eGovernments Foundation
+    Copyright (C) <2016>  eGovernments Foundation
 
     The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
@@ -37,39 +37,73 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.stms.web.controller.masters;
+package org.egov.stms.masters.pojo;
 
-import java.util.Date;
-import org.egov.stms.masters.entity.DonationMaster;
-import org.egov.stms.masters.entity.enums.PropertyType;
-import org.egov.stms.masters.service.DonationMasterService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-@Controller
-@RequestMapping(value = "/masters")
-public class AjaxDonationMasterController {
-
-    @Autowired
-    private DonationMasterService donationMasterService;
-
-    @RequestMapping(value = "/ajaxexistingdonationvalidate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody double geWaterRatesByAllCombinatons(@RequestParam("propertyType") final PropertyType propertyType,
-            @RequestParam("noOfClosets") Integer noOfClosets, @RequestParam("fromDate") Date fromDate) {
-        DonationMaster donationMasterMaster = null;
-     // TODO : noofcloset removed as part of entity change - need to read from donationdetail
-        donationMasterMaster = donationMasterService
-                .findByPropertyTypeAndFromDateAndActive(propertyType, fromDate, true);
-     // TODO : amount removed as part of entity change - need to read from donationdetail
-        if (donationMasterMaster != null)
-            return 0;  
-            //return donationMasterMaster.getAmount();
-        else
-            return 0;
+public class DonationMasterSearch {
+    
+    private Long id;
+    private String propertyType;
+    private Integer noOfClosets;
+    private String fromDate;
+    private double amount;
+    private int size;
+    private String status;
+    private String modifiedDate;
+    private boolean isActive;
+    
+    public String getPropertyType() {
+        return propertyType;
     }
+    public void setPropertyType(String propertyType) {
+        this.propertyType = propertyType;
+    }
+    public Integer getNoOfClosets() {
+        return noOfClosets;
+    }
+    public void setNoOfClosets(Integer noOfClosets) {
+        this.noOfClosets = noOfClosets;
+    }
+    public double getAmount() {
+        return amount;
+    }
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    public String getFromDate() {
+        return fromDate;
+    }
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public int getSize() {
+        return size;
+    }
+    public void setSize(int size) {
+        this.size = size;
+    }
+    public String getModifiedDate() {
+        return modifiedDate;
+    }
+    public void setModifiedDate(String modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
+    public boolean isActive() {
+        return isActive;
+    }
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+    
 }

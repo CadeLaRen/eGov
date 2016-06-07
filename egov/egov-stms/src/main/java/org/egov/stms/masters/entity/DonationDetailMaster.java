@@ -51,16 +51,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-
 @Entity
 @Table(name = "egswtax_donationdetail_master")
 @SequenceGenerator(name = DonationDetailMaster.SEQ_DONATIONDETAILMASTER, sequenceName = DonationDetailMaster.SEQ_DONATIONDETAILMASTER, allocationSize = 1)
-public class DonationDetailMaster extends AbstractPersistable<Long> {
+public class DonationDetailMaster {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 5166101267666134411L;
 
     public static final String SEQ_DONATIONDETAILMASTER = "SEQ_EGSWTAX_DONATIONDETAIL_MASTER";
@@ -82,12 +77,12 @@ public class DonationDetailMaster extends AbstractPersistable<Long> {
     @JoinColumn(name = "donation", nullable = false)
     private DonationMaster donation;
 
-    @Override
+  
     public Long getId() {
         return id;
     }
 
-    @Override
+    
     public void setId(final Long id) {
         this.id = id;
     }
@@ -114,6 +109,23 @@ public class DonationDetailMaster extends AbstractPersistable<Long> {
 
     public void setDonation(final DonationMaster donation) {
         this.donation = donation;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DonationDetailMaster other = (DonationDetailMaster) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
     }
 
 }

@@ -83,12 +83,12 @@ public class DonationMaster extends AbstractAuditable {
     @Temporal(value = TemporalType.DATE)
     private Date fromDate;
 
-    @Temporal(value = TemporalType.DATE)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date toDate;
 
     private boolean active;
 
-    @OneToMany(mappedBy = "donation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "donation", cascade = CascadeType.ALL, fetch = FetchType.LAZY , orphanRemoval = true)
     private List<DonationDetailMaster> donationDetail = new ArrayList<DonationDetailMaster>(0);
 
     @Override
@@ -140,5 +140,13 @@ public class DonationMaster extends AbstractAuditable {
     public void setDonationDetail(final List<DonationDetailMaster> donationDetail) {
         this.donationDetail = donationDetail;
     }
-
+    
+    public void deleteDonationDetail(final  DonationDetailMaster donationDetail) {
+        if(this.donationDetail!=null)
+                this.donationDetail.remove(donationDetail) ;
+    }
+    public void addDonationDetail(final  DonationDetailMaster donationDetail) {
+        if(this.donationDetail!=null)
+        this.donationDetail.add(donationDetail) ;
+    }
 }
