@@ -1,11 +1,11 @@
 insert into EG_MODULE (ID,NAME,ENABLED,CONTEXTROOT,PARENTMODULE,DISPLAYNAME,ORDERNUMBER)
 VALUES (NEXTVAL('SEQ_EG_MODULE'),'Asset Masters','true',null,
-(select id from eg_module where name='Asset Mangement' and parentmodule is null),
+(select id from eg_module where name='Asset Management' and parentmodule is null),
 'Masters', 1);
 
 insert into EG_MODULE (ID,NAME,ENABLED,CONTEXTROOT,PARENTMODULE,DISPLAYNAME,ORDERNUMBER)
 VALUES (NEXTVAL('SEQ_EG_MODULE'),'Asset Masters Category','true',null,
-(select id from eg_module where name='Asset Masters' and parentmodule=(select id from eg_module where name='Asset Mangement' and parentmodule is null)),
+(select id from eg_module where name='Asset Masters' and parentmodule=(select id from eg_module where name='Asset Management' and parentmodule is null)),
 'Category', 1);
 
 Insert into eg_action(id,name,url,parentmodule,ordernumber,displayname,enabled,contextroot,application) values(nextval('SEQ_EG_ACTION'),
