@@ -539,21 +539,7 @@ public class SewerageApplicationDetailsService {
     
     
     public Map showApprovalDetailsByApplcationCurState(final SewerageApplicationDetails sewerageApplicationDetails){
-        final Map<String, Object> modelParams = new HashMap<String, Object>();
-        /*
-         *   public static final String WF_STATE_REJECTED = "Rejected";
-    public static final String WF_STATE_CLERK_APPROVED = "Clerk Approved";
-    public static final String WF_STATE_DEPUTY_EXE_APPROVED = "Deputy Executive Engineer Approved";
-    public static final String WF_STATE_ASSISTANT_APPROVED = "Assistant Engineer Approved";
-    public static final String WF_STATE_INSPECTIONFEE_PENDING = "Inspection Fee Pending";
-    public static final String WF_STATE_INSPECTIONFEE_COLLECTED = "Inspection Fee Collected";
-    public static final String WF_STATE_ESTIMATIONNOTICE_GENERATED = "Estimation Notice Generated";
-    public static final String WF_STATE_PAYMENTDONE = "Payment Done Against Estimation";
-    public static final String WF_STATE_EE_APPROVED = "Executive Engineer Approved";
-    public static final String WF_STATE_WO_GENERATED = "Work Order Generated";
-    
-         */
-        
+        final Map<String, String> modelParams = new HashMap<String, String>();
         if(sewerageApplicationDetails.getState()!=null){
             String currentState= sewerageApplicationDetails.getState().getValue();
             if(currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING) ||
@@ -565,9 +551,10 @@ public class SewerageApplicationDetailsService {
                 modelParams.put("showApprovalDtls", "yes");
             }
             if(currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_INSPECTIONFEE_COLLECTED) ||
-                    currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_CLERK_APPROVED) ||
-                    currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_REJECTED)){
-                modelParams.put("mode", "edit");
+                    currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_CLERK_APPROVED)){
+                        modelParams.put("mode", "edit");
+            } else  if(currentState.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_REJECTED)){
+                    modelParams.put("mode", "editOnReject");
             } else
                 modelParams.put("mode", "view");
         }

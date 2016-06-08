@@ -64,14 +64,17 @@
 		</div>
 	</div>	
 	 </c:if>
-	<%-- <div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-heading">
-			<div class="panel-title">
-				<spring:message  code="lbl.basicdetails"/>
-			</div>
-		</div>
-		<jsp:include page="commonappdetails-view.jsp"></jsp:include>
-	</div> --%>
+	
+	<c:choose>
+	<c:when test="${mode =='editOnReject'}">
+	 	<div class="panel-body custom-form ">
+				<jsp:include page="applicantdetails.jsp"></jsp:include>
+				<jsp:include page="connectiondetails.jsp"></jsp:include>
+				<jsp:include page="documentdetails.jsp"></jsp:include> 
+		 </div>
+	</c:when>
+	<c:otherwise>
+	
 	<div class="panel panel-primary" data-collapsed="0">
 		<div class="panel-heading">
 			<div class="panel-title">
@@ -79,12 +82,7 @@
 			</div>
 		</div>
 		<div class="panel-body custom-form ">
-			<%-- <c:if test="${sewerageApplicationDetails.status.code =='CREATED' && mode=='fieldInspection'}">
-				<%-- <jsp:include page="applicantdetails.jsp"></jsp:include> --%>
 				<jsp:include page="commonApplicationDetails-view.jsp"></jsp:include>
-			<%-- </c:if> --%>
-			<%-- <jsp:include page="connectiondetails.jsp"></jsp:include> --%>	
-			<%-- <jsp:include page="documentdetails.jsp"></jsp:include>	 --%>
 		</div>
 	</div>
 	<c:if test="${sewerageApplicationDetails.status.code != 'CREATED'}">
@@ -118,18 +116,12 @@
 			</div>
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div>	
-		<%-- <c:if test="${sewerageApplicationDetails.status.code == 'ESTIMATIONAMOUNTPAID'}">
-		<jsp:include page="sanctiondetails.jsp"></jsp:include>
-		</c:if>	 --%>
 		<c:if test="${sewerageApplicationDetails.status.code == 'WORKORDERGENERATED'}">
 			<jsp:include page="connectionexecutiondetails-form.jsp"></jsp:include>
 		</c:if>
+	</c:otherwise>
+	</c:choose>	
 		
-		<c:if test="${(sewerageApplicationDetails.status.code =='CLOSERINITIATED'  ||   sewerageApplicationDetails.status.code =='CLOSERINPROGRESS'||sewerageApplicationDetails.status.code =='CLOSERSANCTIONED') }">
-		<%-- 	<jsp:include page="closerForm-details.jsp"></jsp:include> --%>
-			<%-- <jsp:include page="closuredocumentdetails-view.jsp"></jsp:include> --%>
-		</c:if>
-			
 	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
 </div>	

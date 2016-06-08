@@ -65,9 +65,12 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.stms.masters.entity.DocumentTypeMaster;
 import org.egov.stms.masters.entity.enums.OwnerOfTheRoad;
 import org.egov.stms.masters.entity.enums.PropertyType;
+import org.egov.stms.masters.service.DocumentTypeMasterService;
 import org.egov.stms.masters.service.FeesDetailMasterService;
+import org.egov.stms.masters.service.SewerageApplicationTypeService;
 import org.egov.stms.transactions.charges.SewerageChargeCalculationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.entity.SewerageConnectionEstimationDetails;
@@ -123,6 +126,13 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     
     @Autowired
     private SewerageChargeCalculationService sewerageChargeCalculationService;
+    
+    @Autowired
+    private SewerageApplicationTypeService sewerageApplicationTypeService;
+    
+    @Autowired
+    private DocumentTypeMasterService documentTypeMasterService;
+
 
     @Autowired
     public SewerageUpdateConnectionController(
@@ -166,22 +176,29 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                 sewerageApplicationDetailsService.getHistory(sewerageApplicationDetails));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
 
-        model.addAttribute("pipeSize", SewerageTaxConstants.PIPE_SCREW_SIZE);
+        model.addAttribute("pipeSize", SewerageTaxConstants.PIPE_SCREW_SIZE); 
         model.addAttribute("roadOwner", OwnerOfTheRoad.values());
         model.addAttribute("feesDetails",
                 feesDetailMasterService.findAllFeesDetailByFeesCode(SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE));
         model.addAttribute("uomList", uOMService.findAllOrderByCategory());
        // appendModeBasedOnApplicationCreator(model, request, sewerageApplicationDetails);
         
-        Map<String, Object> modelParams = sewerageApplicationDetailsService.showApprovalDetailsByApplcationCurState(sewerageApplicationDetails);
+        Map<String, String> modelParams = sewerageApplicationDetailsService.showApprovalDetailsByApplcationCurState(sewerageApplicationDetails);
         model.addAttribute("mode", modelParams.get("mode"));
         model.addAttribute("showApprovalDtls", modelParams.get("showApprovalDtls"));
+        
+        model.addAttribute("documentNamesList", documentTypeMasterList(sewerageApplicationDetails));
         
         final BigDecimal sewerageTaxDue = sewerageApplicationDetailsService.getTotalAmount(sewerageApplicationDetails);
         model.addAttribute("sewerageTaxDue", sewerageTaxDue);
         model.addAttribute("propertyTypes", PropertyType.values());
         return "newconnection-edit";
-    }
+    } 
+    
+   public List<DocumentTypeMaster> documentTypeMasterList(final SewerageApplicationDetails sewerageApplicationDetails) {
+        return documentTypeMasterService.getAllActiveDocumentTypeMasterByApplicationType(sewerageApplicationDetails
+                .getApplicationType());
+    }  
 
     private void appendModeBasedOnApplicationCreator(final Model model, final HttpServletRequest request,
             final SewerageApplicationDetails sewerageApplicationDetails) {
