@@ -33,7 +33,7 @@ ${asset.ward.name}
 ${asset.assetDetails}
 </div><div class="col-xs-3 add-margin"><spring:message code="lbl.modeofacquisition" />
 </div><div class="col-sm-3 add-margin view-content">
-${asset.modeOfAcquisition.name}
+${asset.modeOfAcquisition}
 </div></div>
 <div class="row add-border"><div class="col-xs-3 add-margin"><spring:message code="lbl.status" />
 </div><div class="col-sm-3 add-margin view-content">
