@@ -80,6 +80,8 @@ import com.google.gson.GsonBuilder;
 @Controller
 @RequestMapping(value = "/masters")
 public class SewerageRateMasterController {
+    SimpleDateFormat formatter=new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
 
     @Autowired
     private SewerageRatesMasterService sewerageRatesMasterService;
@@ -98,6 +100,7 @@ public class SewerageRateMasterController {
         
         //TODO : check for null condition
         CFinancialYear financialYear = financialYearService.getCurrentFinancialYear();
+       if(financialYear!=null)
         model.addAttribute("endDate",financialYear.getEndingDate());
         model.addAttribute("propertyTypes", PropertyType.values());
 
@@ -120,7 +123,7 @@ public class SewerageRateMasterController {
         if (sewerageRatesMasterExisting != null) {
             model.addAttribute("existingMonthlyRate",sewerageRatesMasterExisting.getMonthlyRate());
             sewerageRatesMasterExisting.setActive(false);
-            //TODO : add comment
+            /* append the end time of given date as 23:59:59  */
             DateTime dateValue = DateUtils.endOfGivenDate(new DateTime(sewerageRatesMaster.getFromDate()));
             Date formattedToDate=dateValue.toDate();
             sewerageRatesMasterExisting.setToDate(formattedToDate);
@@ -212,8 +215,7 @@ public class SewerageRateMasterController {
         if(sewerageRatesSearch.getPropertyType()!=null){
             type=PropertyType.valueOf(sewerageRatesSearch.getPropertyType());
         }
-        SimpleDateFormat formatter=new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+       
         if(sewerageRatesSearch.getFromDate()!=null){
             effectivefromDate=myFormat.format(formatter.parse(sewerageRatesSearch.getFromDate()));
         }
@@ -231,9 +233,18 @@ public class SewerageRateMasterController {
     }
     
     @RequestMapping(value="update/{id}", method=POST)
-    public String update(@ModelAttribute SewerageRatesMaster sewerageRatesMaster, @PathVariable final Long id, final Model model, final RedirectAttributes redirectAttrs){
+    public String update(@ModelAttribute SewerageRatesMaster sewerageRatesMaster, @PathVariable final Long id, final Model model, final RedirectAttributes redirectAttrs) throws ParseException{
         SewerageRatesMaster ratesMaster = sewerageRatesMasterService.findBy(id);
-        ratesMaster.setId(id);
+       
+        String todaysdate=myFormat.format(new Date());
+        String effectiveFromDate=myFormat.format(ratesMaster.getFromDate());
+        Date currentDate=myFormat.parse(todaysdate);
+        Date effectiveDate=myFormat.parse(effectiveFromDate);
+        
+        if(effectiveDate.compareTo(currentDate)<0){
+            model.addAttribute("message","msg.seweragerate.modification.rejected");
+            return "sewerageRates-update";
+        }
         ratesMaster.setMonthlyRate(sewerageRatesMaster.getMonthlyRate());
         sewerageRatesMasterService.update(ratesMaster);
         redirectAttrs.addFlashAttribute("message","msg.seweragemonthlyrate.update.success");

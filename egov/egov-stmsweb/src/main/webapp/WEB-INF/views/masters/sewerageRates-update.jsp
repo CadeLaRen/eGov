@@ -46,6 +46,11 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form method="post" action="" modelAttribute="sewerageRatesMaster" id="sewerageRatesMasterform" cssClass="form-horizontal form-groups-bordered">
+			<c:if test="${not empty message}">
+				<div class="alert alert-danger" role="alert">
+					<spring:message code="${message}" />
+				</div>
+			</c:if>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -104,3 +109,4 @@
 	type="text/javascript"></script>
 <script
 	src="<c:url value='/resources/js/masters/sewerageRates.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/javascript/helper.js' context='/stms'/>"></script>

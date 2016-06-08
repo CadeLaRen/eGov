@@ -106,9 +106,6 @@
 		</div>
 		<div class="form-group text-center">
 			<input type="submit" class="btn btn-primary" id="submitform" />
-			<button type="button" class="btn btn-primary" id="view">
-				<spring:message code="lbl.view" />
-			</button>
 			<a onclick="self.close()" class="btn btn-default"
 				href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 		</div>
@@ -119,3 +116,4 @@
 	type="text/javascript"></script>
 <script
 	src="<c:url value='/resources/js/masters/sewerageRates.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/javascript/helper.js' context='/stms'/>"></script>

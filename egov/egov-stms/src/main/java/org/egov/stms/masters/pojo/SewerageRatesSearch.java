@@ -39,8 +39,6 @@
  */
 package org.egov.stms.masters.pojo;
 
-import java.util.Date;
-
 public class SewerageRatesSearch {
     
     private Long id;
@@ -50,6 +48,7 @@ public class SewerageRatesSearch {
     private String status;
     private String modifiedDate;
     private boolean isActive;
+    private boolean isEditable;
     
     public String getPropertyType() {
         return propertyType;
@@ -92,5 +91,11 @@ public class SewerageRatesSearch {
     }
     public void setActive(boolean isActive) {
         this.isActive = isActive;
+    }
+    public boolean isEditable() {
+        return isEditable;
+    }
+    public void setEditable(boolean isEditable) {
+        this.isEditable = isEditable;
     }
 }

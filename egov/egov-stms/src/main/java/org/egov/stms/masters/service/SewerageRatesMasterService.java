@@ -39,24 +39,23 @@
  */
 package org.egov.stms.masters.service;
 
-import java.util.Date;
-import java.util.List;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.egov.commons.Installment;
-import org.egov.stms.masters.entity.DonationDetailMaster;
-import org.egov.stms.masters.entity.DonationMaster;
-import org.egov.stms.masters.pojo.DonationMasterSearch;
-import org.egov.stms.masters.pojo.SewerageRatesSearch;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
+
 import org.egov.stms.masters.entity.SewerageRatesMaster;
 import org.egov.stms.masters.entity.enums.PropertyType;
+import org.egov.stms.masters.pojo.SewerageRatesSearch;
 import org.egov.stms.masters.repository.SewerageRatesMasterRepository;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -65,8 +64,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class SewerageRatesMasterService {
-
-    
+    SimpleDateFormat myFormat=new SimpleDateFormat("dd-MM-yyyy");
+    SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -135,6 +134,17 @@ public List<SewerageRatesMaster> getLatestActiveRecord(final PropertyType proper
             swsearch.setId(sewerageMasterRecord.getId());
             swsearch.setActive(sewerageMasterRecord.isActive());
             sewerageMasterSearchRecords.add(swsearch);
+            
+            String todaysdate = myFormat.format(new Date());
+            String effectiveFromDate=myFormat.format(sewerageMasterRecord.getFromDate());
+            
+            if(effectiveFromDate.compareTo(todaysdate)<0){
+                swsearch.setEditable(false);
+            }
+            else{
+                swsearch.setEditable(true);
+            }
+            
         }
       
         return sewerageMasterSearchRecords;
@@ -150,8 +160,6 @@ public List<SewerageRatesMaster> getLatestActiveRecord(final PropertyType proper
             connectionCriteria.add(Restrictions.eq("propertyType", propertyType));
         }
         if(null!=date){
-            SimpleDateFormat myFormat=new SimpleDateFormat("dd-MM-yyyy");
-            SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
             String formattedDate=null;
             Date fDate = null;
            try {
@@ -177,7 +185,7 @@ public List<SewerageRatesMaster> getLatestActiveRecord(final PropertyType proper
             boolean a=true;
             connectionCriteria.add(Restrictions.eq("active",a));
         }
+        connectionCriteria.addOrder(Order.desc("fromDate"));
         return connectionCriteria.list();
     }
-
 }
