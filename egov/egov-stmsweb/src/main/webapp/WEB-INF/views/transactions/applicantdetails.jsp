@@ -112,4 +112,13 @@
 		<input type="text" class="form-control text-right" id="propertytax"  disabled value="0.00"> 
 	</div>	
 	
-</div>					
+</div>	
+<div class="form-group">
+	<label class="col-sm-3 control-label text-right"><spring:message
+			code="lbl.waterTax" /></label>
+	<div class="col-sm-3 add-margin">
+		<input type="text" class="form-control" id="watercharges" disabled value="0.00">
+	</div>
+	
+	
+</div>						

@@ -137,7 +137,7 @@ $(document).ready(function(){
 function loadPropertyDetails() {
 	propertyID=$('#propertyIdentifier').val()
 	allowIfPTDueExists = $('#allowIfPTDueExists').val() 
-	
+	var errorMessage=""; 
 	if(propertyID != '') {
 		$.ajax({
 			url: "/ptis/rest/property/"+propertyID,      
@@ -145,6 +145,7 @@ function loadPropertyDetails() {
 			dataType: "json",
 			success: function (response) { 
 				var waterTaxDue = getWaterTaxDue(propertyID);
+				//console.log(waterTaxDue['CURRENTWATERCHARGE']);  
 				if(response.errorDetails.errorCode != null && response.errorDetails.errorCode != '') {
 					if($('#legacy'))
 					{
@@ -157,10 +158,10 @@ function loadPropertyDetails() {
 						resetPropertyDetails();
 						errorMessage = "Property tax is due with Rs. "+response.propertyDetails.taxDue+"/- for the assessment no "+propertyID+", please pay the due amount to create new Sewerage connection";
 					}
-					else if(waterTaxDue > 0) {
-						errorMessage += "Water tax is due with Rs. "+waterTaxDue+"/- for the assessment no "+propertyID+", please pay the due amount to create new Sewerage connection";
+					if(waterTaxDue['WATERTAXDUE'] > 0) {
+						errorMessage += "Water tax is due with Rs. "+waterTaxDue['WATERTAXDUE']+"/- for the assessment no "+propertyID+", please pay the due amount to create new Sewerage connection";
 					}
-					if((allowIfPTDueExists=='false' && response.propertyDetails.taxDue > 0) || waterTaxDue > 0) {
+					if((allowIfPTDueExists=='false' && response.propertyDetails.taxDue > 0) || waterTaxDue['WATERTAXDUE'] > 0) {
 						bootbox.alert(errorMessage);
 					}
 					else {					
@@ -198,6 +199,7 @@ function loadPropertyDetails() {
 						$("#locality").val(response.boundaryDetails.localityName);
 						$("#zonewardblock").val(boundaryData);
 						$("#propertytax").val(response.propertyDetails.currentTax);
+						$('#watercharges').val(waterTaxDue['CURRENTWATERCHARGE']);
 					}
 				}					
 			}, 
@@ -213,24 +215,31 @@ function resetPropertyDetails() {
 	$('#applicantname').val('');
 	$('#mobileNumber').val('');
 	$('#email').val('');
+	$('#aadhaar').val('');	
 	$('#propertyaddress').val('');
 	$('#locality').val('');
 	$('#zonewardblock').val('');
+	$('#nooffloors').val('');
 	$('#propertytax').val('0.00');
+	$('#watercharges').val('0.00');
+
 }
 
 function getWaterTaxDue(propertyID) {
+	var result;
 	if(propertyID != "") {
 		$.ajax({
 			url: "/stms/ajaxconnection/check-watertax-due",
 				type: "GET",
+				'async':false,
 				cache: true,
 				data: {
 					assessmentNo : propertyID
 				},
 				dataType: "json",
 		}).done(function(value) {
-			 return value;
+				result = value; 
 		});
+		return result;
 	}
 }

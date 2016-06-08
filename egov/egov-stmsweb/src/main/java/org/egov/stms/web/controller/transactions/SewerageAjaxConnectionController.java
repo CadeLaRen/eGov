@@ -41,13 +41,14 @@
 package org.egov.stms.web.controller.transactions;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.service.DonationMasterService;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
+import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -64,22 +65,23 @@ public class SewerageAjaxConnectionController {
 
     @Autowired
     private DonationMasterService donationMasterService;
-
+   
     @Autowired
-    private PropertyService propertyservice;
+    private SewerageThirdPartyServices sewerageThirdPartyServices;
 
+  
     @RequestMapping(value = "/ajaxconnection/check-connection-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String isConnectionPresentForProperty(@RequestParam final String propertyID) {
         return sewerageApplicationDetailsService.checkConnectionPresentForProperty(propertyID);
     }
 
     @RequestMapping(value = "/ajaxconnection/check-watertax-due", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody BigDecimal getWaterTaxDue(@RequestParam("assessmentNo") final String assessmentNo,
+    public @ResponseBody HashMap<String,BigDecimal> getWaterTaxDueAndCurrentTax(@RequestParam("assessmentNo") final String assessmentNo,
             final HttpServletRequest request) {
-        final BigDecimal waterTaxDue = propertyservice.getWaterTaxDues(assessmentNo, request);
-        return waterTaxDue;
+        return sewerageThirdPartyServices.getWaterTaxDueAndCurrentTax(assessmentNo, request);
     }
-
+   
+    
     @RequestMapping(value = "/ajaxconnection/check-closets-exists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String isClosetsPresent(@RequestParam final PropertyType propertyType,
             @RequestParam final Integer noOfClosets, @RequestParam final Boolean flag) {
