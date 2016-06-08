@@ -96,9 +96,9 @@ public class AssetCategoryController {
 						.getValue())));
 		model.addAttribute("uOMs", uomService.findAllOrderByCategory());
 
-		AppConfigValues accountCategoryCreationCode = appConfigValueService
+		AppConfigValues assetCategoryCreationCode = appConfigValueService
 				.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME, AssetConstants.ASSET_CATEGORY_CODE_CREATION_MODE).get(0);
-		model.addAttribute("codeGenerationMode", accountCategoryCreationCode.getValue());
+		model.addAttribute("codeGenerationMode", assetCategoryCreationCode.getValue());
 
 	}
 
@@ -114,9 +114,9 @@ public class AssetCategoryController {
 			@Valid @ModelAttribute final AssetCategory assetCategory,
 			final BindingResult errors, final Model model,
 			final RedirectAttributes redirectAttrs) {
-		AppConfigValues accountCategoryCreationCode = appConfigValueService
+		AppConfigValues assetCategoryCreationCode = appConfigValueService
 				.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME, AssetConstants.ASSET_CATEGORY_CODE_CREATION_MODE).get(0);
-		if(!accountCategoryCreationCode.getValue().equalsIgnoreCase("Auto"))
+		if(!assetCategoryCreationCode.getValue().equalsIgnoreCase("Auto"))
 		{
 			if(assetCategory.getCode()==null || assetCategory.getCode().isEmpty())
 			{
@@ -131,7 +131,7 @@ public class AssetCategoryController {
 
 		//Fetch the mode in which the assetCategory is being created
 		//If it is Auto then populate it with the auto generated sequence number
-		if(accountCategoryCreationCode.getValue().equals("Auto"))
+		if(assetCategoryCreationCode.getValue().equals("Auto"))
 		{
 			AssetCategoryCodeGenerator assetCategoryCodeGenerator = (AssetCategoryCodeGenerator)beanResolver.getBean(AssetCategoryCodeGenerator.class);
 			String assetCategoryNumber = assetCategoryCodeGenerator.getNextNumber(assetCategory);

@@ -103,9 +103,9 @@ public class Asset extends AbstractAuditable {
 	private Long id;
 
 	// Fields
-	@Required(message = "asset.code.null")
+//	@Required(message = "asset.code.null")
 	@Length(max = 50, message = "asset.code.length")
-	@NotNull
+//	@NotNull
 	@OptionalPattern(regex = AssetConstants.alphaNumericwithspecialchar, message = "asset.code.alphaNumericwithspecialchar")
 	private String code;
 

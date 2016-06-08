@@ -4,21 +4,27 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.egov.assets.autonumber.AssetCodeGenerator;
 import org.egov.assets.model.Asset;
 import org.egov.assets.model.Asset.ModeOfAcquisition;
 import org.egov.assets.service.AssetCategoryService;
 import org.egov.assets.service.AssetService;
+import org.egov.assets.util.AssetConstants;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.egassets.web.adaptor.AssetJsonAdaptor;
 import org.egov.eis.service.PersonalInformationService;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.utils.autonumber.BeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +53,10 @@ public class AssetController {
 	private DepartmentService departmentService;
 	@Autowired
 	private BoundaryService boundaryService;
+	@Autowired
+	private AppConfigValueService appConfigValueService;
+	@Autowired
+	private BeanResolver beanResolver;
 
 	@Autowired
 	private EgwStatusHibernateDAO egwStatusService;
@@ -57,9 +67,12 @@ public class AssetController {
 		model.addAttribute("assetCategorys", assetCategoryService.findAll());
 		model.addAttribute("departments", departmentService.getAllDepartments());
 		//model.addAttribute("boundarys", boundaryService.findAll());
-	 
+
 		model.addAttribute("modeOfAcquisitions",ModeOfAcquisition.values());
 		model.addAttribute("egwStatuss", egwStatusService.getStatusByModule("asset"));
+		AppConfigValues assetCodeCreation = appConfigValueService
+				.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME, AssetConstants.ASSET_CATEGORY_CODE_CREATION_MODE).get(0);
+		model.addAttribute("codeGenerationMode", assetCodeCreation.getValue());
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -73,9 +86,28 @@ public class AssetController {
 	public String create(@Valid @ModelAttribute final Asset asset,
 			final BindingResult errors, final Model model,
 			final RedirectAttributes redirectAttrs) {
+
+		AppConfigValues assetCodeCreation = appConfigValueService
+				.getConfigValuesByModuleAndKey(AssetConstants.MODULE_NAME, AssetConstants.ASSET_CATEGORY_CODE_CREATION_MODE).get(0);
+		if(!assetCodeCreation.getValue().equalsIgnoreCase("Auto"))
+		{
+			if(asset.getCode()==null || asset.getCode().isEmpty())
+			{
+				errors.addError(new ObjectError("assetCode", messageSource.getMessage("comment.not.null", null, null)));
+			}
+		}
 		if (errors.hasErrors()) {
 			prepareNewForm(model);
 			return ASSET_NEW;
+		}
+
+		//Fetch the mode in which the assetCategory is being created
+		//If it is Auto then populate it with the auto generated sequence number
+		if(assetCodeCreation.getValue().equals("Auto"))
+		{
+			AssetCodeGenerator assetCodeGenerator = (AssetCodeGenerator)beanResolver.getBean(AssetCodeGenerator.class);
+			String assetNumber = assetCodeGenerator.getNextNumber(asset);
+			asset.setCode(assetNumber);
 		}
 		assetService.create(asset);
 		redirectAttrs.addFlashAttribute("message",
@@ -135,8 +167,8 @@ public class AssetController {
 			@ModelAttribute final Asset asset) {
 		List<Asset> searchResultList = assetService.search(asset);
 		String result = new StringBuilder("{ \"data\":")
-				.append(toSearchResultJson(searchResultList)).append("}")
-				.toString();
+		.append(toSearchResultJson(searchResultList)).append("}")
+		.toString();
 		return result;
 	}
 
