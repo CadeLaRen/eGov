@@ -91,8 +91,8 @@
 				</div>
 			</div>
 			<br/>
-			<div class="panel-body custom-form">
-				<table  class="table table-bordered" role="grid" id="donationMasterTable" >
+			<div class="panel-body">
+				<table  class="table table-bordered" role="grid" id="donationMasterTable" style="width:65%; margin:0 auto">
 					<thead>
 						<tr>
 							<th><spring:message code="lbl.noofclosets"/></th>
@@ -153,13 +153,17 @@
 				</table>
 			</div>
 		</div>
-		<div class="form-group text-center">
+		<div class="text-center">
 			<button type="button" id="btn-addRow" class="btn btn-primary btn-addRow"><spring:message code="lbl.swtax.addRow"></spring:message></button>
+		</div>
+	</div>
+	<div class="form-group text-center">
 			<input type="submit" class="btn btn-primary" id="submitformvalue" />
 			<a onclick="self.close()" class="btn btn-default"
 				href="javascript:void(0)"><spring:message code="lbl.close" /></a>
 		</div>
-	</div>
 </form:form>
 
+<script src="<c:url value='/resources/javascript/helper.js' context='/stms'/>"></script>
 <script src="<c:url value='/resources/js/masters/donationMaster.js?rnd=${app_release_no}'/>"></script>
+

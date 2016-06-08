@@ -179,7 +179,7 @@ $(document).ready(function() {
 	}
 	
 	function overwriteDonationMasterRate(res) {
-		bootbox.confirm(" With entered combination donation rate is present. Do you want to overwrite it?",function(result){
+		bootbox.confirm(" With entered combination donation rates are present. Do you want to overwrite it?",function(result){
 			if(result){
 				isSubmitForm=true;
 				$('#submitformvalue').trigger('click');
@@ -203,32 +203,7 @@ $(document).ready(function() {
 	function clearField() {
 		input.value = "";
 	};
-	function getTodayDate() {
-		if (!validateAmmount())
-			return false;
-		var date;
-		var d = new Date();
-		var curr_date = d.getDate();
-		var curr_month = d.getMonth();
-		curr_month++;
-		var curr_year = d.getFullYear();
-		date = curr_date + "/" + curr_month + "/" + curr_year;
-		return date;
-	}
 
-	function compareDate(dt1, dt2) {
-		var d1, m1, y1, d2, m2, y2, ret;
-		dt1 = dt1.split('/');
-		dt2 = dt2.split('/');
-		ret = (eval(dt2[2]) > eval(dt1[2])) ? 1
-				: (eval(dt2[2]) < eval(dt1[2])) ? -1
-						: (eval(dt2[1]) > eval(dt1[1])) ? 1
-								: (eval(dt2[1]) < eval(dt1[1])) ? -1															// decimal points
-										: (eval(dt2[0]) > eval(dt1[0])) ? 1
-												: (eval(dt2[0]) < eval(dt1[0])) ? -1
-														: 0;
-		return ret;
-	}
 	function validateAmmount() {
 		var val = $('#amount').val();
 		if (val < 1) {
@@ -325,7 +300,7 @@ $(document).ready(function() {
 						   "render" : function(data, type, row, meta){
 							     var editAction = '<span class="add-padding"><i class="fa fa-edit history-size" class="tooltip-secondary" data-toggle="tooltip" title="Edit"></i></span>';
 							     var viewAction = '<span class="add-padding"><i class="fa fa-eye history-size" class="tooltip-secondary" data-toggle="tooltip" title="View"></i></span>';
-								 return (row.isActive?editAction+viewAction:viewAction);
+								 return ((row.isActive && row.isEditable)?editAction+viewAction:viewAction);
 							}
 						 }
 						

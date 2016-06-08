@@ -115,7 +115,7 @@ public class DonationMasterController {
      
         DonationMaster donationMasterExist = donationMasterService.findByPropertyTypeAndFromDateAndActive(donationMaster.getPropertyType(),
                 donationMaster.getFromDate(), true);
-      //TODO: ADD COMMENTS ABOUT THIS LOGIC.
+      //overwrite existing combination with propertyType, fromDate, isActive = true 
         if (donationMasterExist != null) {
             DateTime dateTime = DateUtils.endOfGivenDate(new DateTime(donationMaster.getFromDate()));
             Date dateformat = dateTime.toDate();
@@ -131,6 +131,7 @@ public class DonationMasterController {
             donationMaster = donationMasterService.createDonationRate(donationMaster);
 
         } else {
+            // set todate for the record with same propertyType and isActive = true and create new record
             DonationMaster donationMasterOld = null;
             if (!existingdonationMaster.isEmpty()) {
                 donationMasterOld = existingdonationMaster.get(0);
@@ -139,6 +140,7 @@ public class DonationMasterController {
                 if (donationMaster.getFromDate().compareTo(new Date()) < 0) {
                     donationMasterOld.setActive(false);
                 }
+                //sets the endofGiven date as 23:59:59
                 DateTime dateTime = DateUtils.endOfGivenDate(new DateTime(donationMaster.getFromDate()).minusDays(1));
                 Date  dateformat = dateTime.toDate();
                 donationMasterOld.setToDate(dateformat);
@@ -241,10 +243,23 @@ public class DonationMasterController {
     
     @RequestMapping(value="/updateDonation/{id}", method=POST)
     public String updateDonationValues(@ModelAttribute DonationMaster donationMaster, @PathVariable final Long id, final Model model,
-            final RedirectAttributes redirectAttrs){
-        
+            final RedirectAttributes redirectAttrs) throws ParseException{
+      
         DonationMaster donationMstr = donationMasterService.findById(id);
-        List<DonationDetailMaster> existingdonationDetailList=new ArrayList<DonationDetailMaster>();
+      if(donationMstr!=null) { 
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String todaysdate=myFormat.format(new Date());
+        String effectiveFromDate=myFormat.format(donationMstr.getFromDate());
+        
+        Date effectiveDate= myFormat.parse(effectiveFromDate);
+        Date currentDate=myFormat.parse(todaysdate);
+  
+        if(effectiveDate.compareTo(currentDate)<0){
+            model.addAttribute("message","msg.donationrate.modification.rejected");
+            return "donation-master-update";
+          }
+        donationMstr.setLastModifiedDate(new Date());
+         List<DonationDetailMaster> existingdonationDetailList=new ArrayList<DonationDetailMaster>();
         if(!donationMaster.getDonationDetail().isEmpty()){
         existingdonationDetailList.addAll(donationMstr.getDonationDetail());
         }
@@ -277,7 +292,12 @@ public class DonationMasterController {
                 }
             }
             donationMasterService.update(donationMstr);  
+            } 
         }
+      else{
+          model.addAttribute("message","msg.donationrate.notfound");
+          return "donation-master-update";
+      }
         redirectAttrs.addFlashAttribute("message", "msg.donationrate.update.success");
         return "redirect:/masters/donationmastersuccess/" +id;
     }

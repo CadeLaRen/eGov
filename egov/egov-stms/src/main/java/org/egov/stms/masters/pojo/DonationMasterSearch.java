@@ -50,6 +50,7 @@ public class DonationMasterSearch {
     private String status;
     private String modifiedDate;
     private boolean isActive;
+    private boolean isEditable;
     
     public String getPropertyType() {
         return propertyType;
@@ -104,6 +105,12 @@ public class DonationMasterSearch {
     }
     public void setActive(boolean isActive) {
         this.isActive = isActive;
+    }
+    public boolean isEditable() {
+        return isEditable;
+    }
+    public void setEditable(boolean isEditable) {
+        this.isEditable = isEditable;
     }
     
 }

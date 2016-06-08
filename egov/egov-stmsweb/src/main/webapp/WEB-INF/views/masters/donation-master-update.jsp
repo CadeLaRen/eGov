@@ -41,13 +41,14 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <form:form method="post" action=""
 	class="form-horizontal form-groups-bordered"
 	modelAttribute="donationMaster" id="donationMasterUpdateform">
 	<div class="row">
 		<div class="col-md-12">
 			<c:if test="${not empty message}">
-				<div class="alert alert-success" role="alert">
+				<div class="alert alert-danger" role="alert">
 					<spring:message code="${message}" />
 				</div>
 			</c:if>
@@ -58,29 +59,22 @@
 					</div>
 				</div>
 				<div class="panel-body">
-					<div class="row add-border">
+					<div class="row">
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.propertytype" />
 						</div>
 						<div id="propertyType" class="col-md-3 col-xs-6 add-margin view-content">
 							<c:out value="${donationMaster.propertyType}" />
 						</div>
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="row add-border">
 						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.effective.fromdate" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content">
 							<fmt:formatDate pattern="dd/MM/yyyy" value="${donationMaster.fromDate}" />
 						</div>
-							
 					</div>
-				</div>
-			</div>
-			<div>
-				<table class="table table-bordered" id="donationMasterViewTable">
+					<br>
+					<table class="table table-bordered" id="donationMasterViewTable" style="width:65%; margin:0 auto">
 					<thead>
 						<tr>
 							<th class="text-center"><spring:message code="lbl.noofclosets"/></th>
@@ -112,15 +106,21 @@
 							</tr>
 						</c:forEach>
 						<script type="text/javascript">
+						var curRow = $('#donationMasterViewTable tbody').children('tr').length;
+						if(curRow!=1)
 								$( "#donationMasterViewTable tr:last .delete-button").show();
 						</script>
 					</tbody>
 				</table>
+				<br>
+				<div class=" text-center">
+					<button type="button" id="btn-addNewRow" class="btn btn-primary btn-addNewRow"><spring:message code="lbl.swtax.addRow"></spring:message></button>
+				</div>
+			</div>
 			</div>
 		</div>
 	</div>
 	<div class=" text-center">
-			<button type="button" id="btn-addNewRow" class="btn btn-primary btn-addNewRow"><spring:message code="lbl.swtax.addRow"></spring:message></button>
 			<input type="submit" class="btn btn-primary" id="submitDonationValues" />
 			<a href="javascript:void(0)" class="btn btn-default"
 				onclick="self.close()"><spring:message code="lbl.close" /></a>
@@ -135,3 +135,4 @@
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script src="<c:url value='/resources/js/masters/donationMaster.js?rnd=${app_release_no}'/>"></script>
+<script src="<c:url value='/resources/javascript/helper.js' context='/stms'/>"></script>

@@ -66,10 +66,6 @@
 							class="col-md-3 col-xs-6 add-margin view-content">
 							<c:out value="${donationMaster.propertyType}" />
 						</div>
-					</div>
-				</div>
-				<div class="panel-body">
-					<div class="row add-border">
 						<div  class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.effective.fromdate" />
 						</div>
@@ -111,10 +107,9 @@
 			</div>
 		</div>
 	</div>
-	<div class="row text-center">
-		<div class="row">
+	<br>
+	<div class="text-center">
 			<a href="javascript:void(0)" class="btn btn-default"
 				onclick="self.close()"><spring:message code="lbl.close" /></a>
-		</div>
 	</div>
 </form:form>

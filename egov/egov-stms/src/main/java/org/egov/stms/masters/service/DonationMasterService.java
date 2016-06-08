@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
-    Copyright (C) <2015>  eGovernments Foundation
+    Copyright (C) <2016>  eGovernments Foundation
 
     The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
@@ -130,8 +130,9 @@ public class DonationMasterService {
     }
   
     //TODO : add comments 
-    public List<DonationMasterSearch> getDonationMasters(final PropertyType propertyType, final String date,
-            final String status) {
+    // search record as per search parameters and set the values to variables of helper class
+    public List<DonationMasterSearch> getDonationMasters (final PropertyType propertyType, final String date,
+            final String status) throws ParseException{
         List<DonationMasterSearch> donationMasterSearchRecords = new ArrayList<DonationMasterSearch>();
         final List<DonationMaster> donationMasterRecords = searchConnectionRecordsBySearchParams(propertyType, date, status);
         for (DonationMaster donationMasterRecord : donationMasterRecords) {
@@ -142,6 +143,19 @@ public class DonationMasterService {
             dmsearch.setModifiedDate(donationMasterRecord.getLastModifiedDate().toString());
             dmsearch.setId(donationMasterRecord.getId());
             dmsearch.setActive(donationMasterRecord.isActive());
+            
+            String todaysdate = myFormat.format(new Date());
+            String effectiveFromDate=myFormat.format(donationMasterRecord.getFromDate());
+            
+            Date effectivedate = myFormat.parse(effectiveFromDate);
+            Date currentDate = myFormat.parse(todaysdate);
+            if(effectivedate!=null && effectivedate.compareTo(currentDate)>=0){
+                dmsearch.setEditable(true);
+            }
+            else{
+                dmsearch.setEditable(false);
+            }
+            
             donationMasterSearchRecords.add(dmsearch);
         }
         return donationMasterSearchRecords;
@@ -186,6 +200,7 @@ public class DonationMasterService {
         }
 
         connectionCriteria.addOrder(Order.asc("propertyType"));
+        connectionCriteria.addOrder(Order.desc("fromDate"));
         connectionCriteria.addOrder(Order.desc("lastModifiedDate"));
 
         return connectionCriteria.list();
