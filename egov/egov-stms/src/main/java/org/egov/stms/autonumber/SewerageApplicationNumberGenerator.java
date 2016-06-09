@@ -37,17 +37,12 @@
 
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.stms.utils;
+package org.egov.stms.autonumber;
 
-import java.util.Comparator;
+import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.springframework.stereotype.Service;
 
-import org.egov.stms.masters.entity.DonationDetailMaster;
-
-public class DonationRateComparatorOrderById implements Comparator<DonationDetailMaster>{
-    
-    @Override
-    public int compare(final DonationDetailMaster dtl1, final DonationDetailMaster dtl2){
-        return dtl1.getId().compareTo(dtl2.getId());
-    }
-
+@Service
+public interface SewerageApplicationNumberGenerator {
+    public String generateNextApplicationNumber(SewerageApplicationDetails sewerageApplicationDetails);
 }

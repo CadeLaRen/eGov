@@ -59,7 +59,7 @@ import org.egov.infra.search.elastic.entity.ApplicationIndexBuilder;
 import org.egov.infra.search.elastic.entity.enums.ApprovalStatus;
 import org.egov.infra.search.elastic.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -68,6 +68,7 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.stms.autonumber.SewerageApplicationNumberGenerator;
 import org.egov.stms.elasticSearch.service.SewerageIndexService;
 import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
@@ -75,7 +76,6 @@ import org.egov.stms.masters.repository.SewerageApplicationTypeRepository;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.repository.SewerageApplicationDetailsRepository;
 import org.egov.stms.transactions.workflow.ApplicationWorkflowCustomDefaultImpl;
-import org.egov.stms.utils.SewerageTaxNumberGenerator;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.hibernate.Session;
@@ -106,9 +106,6 @@ public class SewerageApplicationDetailsService {
     private SewerageApplicationTypeRepository sewerageApplicationTypeRepository;
 
     @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
-
-    @Autowired
     private ApplicationContext context;
 
     @Autowired
@@ -128,9 +125,9 @@ public class SewerageApplicationDetailsService {
 
     @Autowired
     private SimpleWorkflowService<SewerageApplicationDetails> sewerageApplicationWorkflowService;
-
+   
     @Autowired
-    private SewerageTaxNumberGenerator sewerageTaxNumberGenerator;
+    private AutonumberServiceBeanResolver beanResolver;
 
     @Autowired
     private SewerageDemandService sewerageDemandService;
@@ -174,8 +171,15 @@ public class SewerageApplicationDetailsService {
     public SewerageApplicationDetails createNewSewerageConnection(
             final SewerageApplicationDetails sewerageApplicationDetails, final Long approvalPosition,
             final String approvalComent, final String additionalRule, final String workFlowAction) {
-        if (sewerageApplicationDetails.getApplicationNumber() == null)
-            sewerageApplicationDetails.setApplicationNumber(applicationNumberGenerator.generate());
+      
+        if (sewerageApplicationDetails.getApplicationNumber() == null) {
+            SewerageApplicationNumberGenerator sewerageApplnNumberGenerator = beanResolver
+                    .getAutoNumberServiceFor(SewerageApplicationNumberGenerator.class);
+            if (sewerageApplnNumberGenerator != null)
+                sewerageApplicationDetails.setApplicationNumber(sewerageApplnNumberGenerator
+                        .generateNextApplicationNumber(sewerageApplicationDetails));
+        }
+        
         sewerageApplicationDetails.setApplicationDate(new Date());
 
         final SewerageApplicationType applicationType = sewerageApplicationTypeRepository
