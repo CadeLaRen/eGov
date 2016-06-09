@@ -37,56 +37,30 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.lineestimate.service;
+package org.egov.wtms.autonumber.impl;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.hibernate.exception.SQLGrammarException;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.wtms.autonumber.ConsumerNumberGenerator;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class BudgetAppropriationNumberGenerator {
+public class ConsumerNumberGeneratorImpl implements ConsumerNumberGenerator {
+    private static final String CONSUMER_NUMBER_SEQ_PREFIX = "SEQ_CONSUMER_NUMBER";
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
     @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private WaterTaxUtils waterTaxUtils;
 
-    @Autowired
-    private FinancialYearHibernateDAO financialYearHibernateDAO;
-
-    @Transactional
-    public String generateBudgetAppropriationNumber(final LineEstimateDetails lineEstimateDetails) {
-        try {
-            final CFinancialYear cFinancialYear = financialYearHibernateDAO
-                    .getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
-            final String sequenceName = "SEQ_LINEESTIMATEAPPROPRIATION_NUMBER";
-            Serializable sequenceNumber;
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
-            return String.format("BAS/%05d/%s", sequenceNumber,
-                    cFinancialYear.getFinYearRange());
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating Budget Appropriation Number", e);
-        }
+    @Override
+    public String generateConsumerNumber() {
+        final String sequenceName = CONSUMER_NUMBER_SEQ_PREFIX;
+        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        return String.format("%s%06d", waterTaxUtils.getCityCode(), nextSequence);
     }
 
-    @Transactional
-    public String generateCancelledBudgetAppropriationNumber(final String appropriationNumber) {
-        final String original = appropriationNumber.split("/")[0];
-        final String modified = original + "/C";
-        return appropriationNumber.replace(original, modified);
-    }
 }

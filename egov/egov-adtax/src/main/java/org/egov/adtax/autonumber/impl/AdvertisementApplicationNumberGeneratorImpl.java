@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2016>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,26 +37,23 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.contractorbill.service;
+package org.egov.adtax.autonumber.impl;
 
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.adtax.autonumber.AdvertisementApplicationNumberGenerator;
+import org.egov.adtax.entity.Advertisement;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ContractorBillNumberGeneratorImpl implements ContractorBillNumberGenerator {
-
+public class AdvertisementApplicationNumberGeneratorImpl implements  AdvertisementApplicationNumberGenerator{
+    
     @Autowired
-    private LineEstimateService lineEstimateService;
-
+    private ApplicationNumberGenerator applicationNumberGenerator;
+    
     @Override
-    public String generateContractorBillNumber(final ContractorBillRegister contractorBillRegister) {
-        final LineEstimateDetails lineEstimateDetails = lineEstimateService
-                .findByEstimateNumber(contractorBillRegister.getWorkOrder().getEstimateNumber());
-        return String.format("%s%02d/%s", "BILL", contractorBillRegister.getBillSequenceNumber(),
-                lineEstimateDetails.getProjectCode().getCode());
-    }
-
+    public String getNextAdvertisementApplicationNumber(Advertisement advertisement) {
+        return applicationNumberGenerator.generate();
+        }
+    
 }

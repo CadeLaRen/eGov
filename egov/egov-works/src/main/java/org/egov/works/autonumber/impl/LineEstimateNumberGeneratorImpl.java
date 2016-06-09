@@ -37,56 +37,42 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.lineestimate.service;
+package org.egov.works.autonumber.impl;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.works.autonumber.LineEstimateNumberGenerator;
 import org.egov.works.lineestimate.entity.LineEstimate;
-import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class LineEstimateNumberGenerator {
+public class LineEstimateNumberGeneratorImpl implements LineEstimateNumberGenerator {
 
     private static final String LINEESTIMATE_NUMBER_SEQ_PREFIX = "SEQ_LINEESTIMATE_NUMBER";
 
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
-
-    @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Transactional
-    public String generateLineEstimateNumber(final LineEstimate lineEstimate) {
-        try {
-            final CFinancialYear financialYear = financialYearHibernateDAO
-                    .getFinancialYearByDate(lineEstimate.getLineEstimateDate());
-            final String finYearRange[] = financialYear.getFinYearRange().split("-");
-            final String sequenceName = LINEESTIMATE_NUMBER_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
-            Serializable sequenceNumber;
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
-            return String.format("LE/%s/%05d/%02d/%s", lineEstimate.getExecutingDepartment().getCode(), sequenceNumber,
-                    getMonthOfTransaction(lineEstimate.getLineEstimateDate()), financialYear.getFinYearRange());
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating Line Estimate Number", e);
-        }
+    public String getNextNumber(final LineEstimate lineEstimate) {
+        final CFinancialYear financialYear = financialYearHibernateDAO
+                .getFinancialYearByDate(lineEstimate.getLineEstimateDate());
+        final String finYearRange[] = financialYear.getFinYearRange().split("-");
+        final String sequenceName = LINEESTIMATE_NUMBER_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
+        Serializable sequenceNumber;
+        sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        return String.format("LE/%s/%05d/%02d/%s", lineEstimate.getExecutingDepartment().getCode(), sequenceNumber,
+                getMonthOfTransaction(lineEstimate.getLineEstimateDate()), financialYear.getFinYearRange());
     }
 
     private int getMonthOfTransaction(final Date lineEstimateDate) {

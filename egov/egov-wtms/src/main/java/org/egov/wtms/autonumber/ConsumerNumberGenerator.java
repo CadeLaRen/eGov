@@ -37,11 +37,12 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.works.contractorbill.service;
+package org.egov.wtms.autonumber;
 
-import org.egov.works.contractorbill.entity.ContractorBillRegister;
+import org.springframework.stereotype.Service;
 
-public interface ContractorBillNumberGenerator {
+@Service
+public interface ConsumerNumberGenerator {
 
-    public String generateContractorBillNumber(final ContractorBillRegister contractorBillRegister);
+    public String generateConsumerNumber();
 }

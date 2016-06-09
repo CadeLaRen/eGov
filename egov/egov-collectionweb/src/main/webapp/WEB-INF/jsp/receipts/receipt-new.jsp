@@ -1606,13 +1606,13 @@ function checkForCurrentDate(obj)
 		   } else{
 			   document.getElementById("receipt_dateerror_area").style.display="block";
 				  document.getElementById("receipt_dateerror_area").innerHTML+=
-						'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
+						'<s:text name="billreceipt.datelessthanreceiptdate.errormessage" />'+ '<br>';
 			  	 }
 		   </s:if>
 		   <s:else>
 		   document.getElementById("receipt_dateerror_area").style.display="block";
 			  document.getElementById("receipt_dateerror_area").innerHTML+=
-					'<s:text name="billreceipt.datelessthancurrentdate.errormessage" />'+ '<br>';
+					'<s:text name="billreceipt.datelessthanreceiptdate.errormessage" />'+ '<br>';
 		   </s:else>
 		   jQuery(obj).val('');
 		   scrolltop();
@@ -1770,9 +1770,10 @@ function onChangeBankAccount(branchId)
 {
     var serviceName=document.getElementById("serviceName").value;
     var fundName="",fundId=-1;
-    if(document.getElementById('fundId')!=null){
+    if(document.getElementById('fundId')!=null && document.getElementById('fundId')!=null){
+    	var serviceId=document.getElementById("serviceId").value;
     	fundId=document.getElementById('fundId').value;
-    	populateaccountNumberMaster({branchId:branchId,serviceName:serviceName,fundId:fundId});
+    	populateaccountNumberMaster({branchId:branchId,serviceId:serviceId,fundId:fundId});
     }
     else if(document.getElementById("fundName")!=null){
     	fundName=document.getElementById("fundName").value;
