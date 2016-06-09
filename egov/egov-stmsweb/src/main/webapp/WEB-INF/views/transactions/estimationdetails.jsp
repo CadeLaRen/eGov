@@ -44,7 +44,6 @@
 
 <div class="row">
 	<div class="col-md-12">
-	<%--  <form:hidden path="fieldInspectionDetails" id="fieldInspectionDetails" value="${sewerageApplicationDetails.id}"/>  --%> 
 		<div class="panel panel-primary" data-collapsed="0">				
 			<div class="panel-heading">
 				<div class="panel-title">
@@ -57,7 +56,7 @@
 					<div class="row">
 						<label class="col-sm-3 control-label"><spring:message  code="lbl.inspectiondate"/></label> 
 						<div class="col-sm-3 add-margin">
-							<input class="form-control datepicker today" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" id="inspectionDate" name="inspectionDate" required="required" /> 
+							<input class="form-control datepicker today" data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" id="inspectionDate" name="inspectionDate" required="required"/> 
 						</div>
 				
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.attachdocument"/></label>
@@ -96,13 +95,13 @@
 					<c:choose>
 						<c:when test="${!sewerageApplicationDetails.fieldInspections.isEmpty() &&
 						 !sewerageApplicationDetails.fieldInspections[sewerageApplicationDetails.fieldInspections.size()].fieldInspectionDetails.isEmpty()}">
-							<c:forEach items="${sewerageApplicationDetails.fieldInspections[sewerageApplicationDetails.fieldInspections.size()].fieldInspectionDetails}" var="var1"
+							<c:forEach items="${sewerageApplicationDetails.fieldInspections[0].fieldInspectionDetails}" var="var1"
 								varStatus="counter"> 
 							      <tr class="">
 									<td class="text-center"><span id="slNoInsp1">${counter.index+1}</span></td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[${sewerageApplicationDetails.fieldInspections.size()+1}].fieldInspectionDetails[${counter.index}].noOfPipes" id="fieldInspectionDetails${counter.index}noOfPipes" maxlength="8" value="${var1.noOfPipes}" /></td>
+									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetails[${counter.index}].noOfPipes" id="fieldInspectionDetails${counter.index}noOfPipes" maxlength="8" value="${var1.noOfPipes}" /></td>
 									<td class="text-center">
-										<form:select path="fieldInspections[${sewerageApplicationDetails.fieldInspections.size()+1}].fieldInspectionDetails[${counter.index}].pipeSize" data-first-option="false" id="fieldInspectionDetails${counter.index}pipeSize"
+										<form:select path="fieldInspections[0].fieldInspectionDetails[${counter.index}].pipeSize" data-first-option="false" id="fieldInspectionDetails${counter.index}pipeSize"
 											cssClass="form-control" required="required" >
 											<form:option value="">
 												<spring:message code="lbl.select" />
@@ -112,9 +111,9 @@
 										    </c:forEach>
 										</form:select>		
 									</td>						
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[${sewerageApplicationDetails.fieldInspections.size()+1}].fieldInspectionDetails[${counter.index}].pipeLength" id="fieldInspectionDetails${counter.index}pipeLength" maxlength="8" value="${var1.pipeLength}" /></td>
+									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetails[${counter.index}].pipeLength" id="fieldInspectionDetails${counter.index}pipeLength" maxlength="8" value="${var1.pipeLength}" /></td>
 									<td class="text-right">
-									<form:select path="fieldInspections[${sewerageApplicationDetails.fieldInspections.size()+1}].fieldInspectionDetails[${counter.index}].screwSize" data-first-option="false" id="fieldInspectionDetails${counter.index}screwSize"
+									<form:select path="fieldInspections[0].fieldInspectionDetails[${counter.index}].screwSize" data-first-option="false" id="fieldInspectionDetails${counter.index}screwSize"
 											cssClass="form-control" required="required" >
 											<form:option value="">
 												<spring:message code="lbl.select" />
@@ -124,19 +123,19 @@
 										    </c:forEach>
 										</form:select>	 
 									</td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[${sewerageApplicationDetails.fieldInspections.size()+1}].fieldInspectionDetails[${counter.index}].noOfScrews" id="fieldInspectionDetails${counter.index}noOfScrews" maxlength="8" value="${var1.noOfScrews}" /></td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[${sewerageApplicationDetails.fieldInspections.size()+1}].fieldInspectionDetails[${counter.index}].distance" id="fieldInspectionDetails${counter.index}distance" maxlength="8" value="${var1.distance}" /></td>
-									<td class="text-right"><form:checkbox cssClass="form-control" path="fieldInspections[${sewerageApplicationDetails.fieldInspections.size()+1}].fieldInspectionDetails[${counter.index}].roadDigging" id="fieldInspectionDetails${counter.index}roadDigging" maxlength="8" value="${var1.roadDigging}" /></td>
-									<td class="text-right"><form:input type="text" disabled="true" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[${sewerageApplicationDetails.fieldInspections.size()+1}].fieldInspectionDetails[${counter.index}].roadLength" id="fieldInspectionDetails${counter.index}roadLength" maxlength="8" value="${var1.roadLength}" /></td>
+									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetails[${counter.index}].noOfScrews" id="fieldInspectionDetails${counter.index}noOfScrews" maxlength="8" value="${var1.noOfScrews}" /></td>
+									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetails[${counter.index}].distance" id="fieldInspectionDetails${counter.index}distance" maxlength="8" value="${var1.distance}" /></td>
+									<td class="text-right"><form:checkbox cssClass="form-control" path="fieldInspections[0].fieldInspectionDetails[${counter.index}].roadDigging" id="fieldInspectionDetails${counter.index}roadDigging" maxlength="8" value="${var1.roadDigging}" /></td>
+									<td class="text-right"><form:input type="text" disabled="true" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="fieldInspections[0].fieldInspectionDetails[${counter.index}].roadLength" id="fieldInspectionDetails${counter.index}roadLength" maxlength="8" value="${var1.roadLength}" /></td>
 							      	<td class="text-right">
-									<form:select path="fieldInspections[${sewerageApplicationDetails.fieldInspections.size()+1}].fieldInspectionDetails[${counter.index}].roadOwner" disabled="true" data-first-option="false" id="fieldInspectionDetails${counter.index}roadOwner"
+									<form:select path="fieldInspections[0].fieldInspectionDetails[${counter.index}].roadOwner" disabled="true" data-first-option="false" id="fieldInspectionDetails${counter.index}roadOwner"
 											cssClass="form-control" required="required" >
 											<form:option value="">
 												<spring:message code="lbl.select" />
 											</form:option>
 											<c:forEach items="${roadOwner}" var="entry">
 										        <option value="${entry}">${entry}</option>  
-										    </c:forEach>
+										    </c:forEach> 
 										</form:select>	 
 									</td>
 									
@@ -235,7 +234,7 @@
 											    </c:forEach>
 										</form:select>	
 									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation unitrate" data-pattern="decimalvalue" path="estimationDetails[${counter.index}].unitRate" id="estimationDetails${counter.index}unitRate" maxlength="8" onblur="calculateTotalAmount();" value="${var1.unitRate}" /></td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="estimationDetails[${counter.index}].amount" id="estimationDetails${counter.index}amount" maxlength="8" onblur="calculateTotalAmount();" value="${var1.amount}" /></td>
+									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="estimationDetails[${counter.index}].amount" id="estimationDetails${counter.index}amount" maxlength="8" onblur="calculateGrandTotal();" value="${var1.amount}" /></td>
 									<c:if test="${counter.index==0}">
 										<td class="text-center"><span style="cursor:pointer;" id="addRowId"><i class="fa fa-plus"></i></span></td>
 									</c:if>
@@ -261,7 +260,7 @@
 											    </c:forEach>
 										</form:select>	
 									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation unitrate" data-pattern="decimalvalue" path="estimationDetails[0].unitRate" id="estimationDetails0unitRate" maxlength="8" onblur="calculateTotalAmount();" value="0.00" /></td>
-									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="estimationDetails[0].amount" id="estimationDetails0amount" maxlength="8" onblur="calculateTotalAmount();" value="0.00" /></td>
+									<td class="text-right"><form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="estimationDetails[0].amount" id="estimationDetails0amount" maxlength="8" onblur="calculateGrandTotal();" value="0.00" /></td>
 									<td class="text-center"><span style="cursor:pointer;" id="addRowId"><i class="fa fa-plus"></i></span></td>
 							      </tr>
 							</c:otherwise> 
@@ -278,36 +277,6 @@
 					</tbody>
 				</table>
 				
-				<div class="panel-heading">
-					<div class="panel-title">
-							<spring:message code="lbl.fees.details" />
-					</div>	
-				</div>
-				<table class="table table-striped table-bordered" id="estimateDetails">
-					<thead>
-					      <tr>
-							<th class="text-center"><spring:message code="lbl.slno" /></th>
-							<th class="text-center"><spring:message code="lbl.feestype" /></th>
-							<th class="text-center"><spring:message code="lbl.amount" /></th>
-					      </tr>
-			         </thead>
-			         <tbody>
-			         <c:choose>
-							<c:when test="${!feesDetails.isEmpty()}">
-								<c:forEach items="${feesDetails}" var="var1"
-									varStatus="counter">
-							      <tr class="">
-									<td class="text-center"><span id="slNo1">${counter.index+1}</span></td>
-									<td class="text-center">${var1.description}</td>
-									<td class="text-right">
-									<form:hidden path="connectionFees[${connectionFees.size()+1}].feesDetail" value="${var1.id}"/>
-									<form:input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" path="connectionFees[${connectionFees.size()+1}].amount" id="connectionFees${counter.index}amount" maxlength="8" value="0.00" /></td>
-								  </tr>
-								</c:forEach>
-							</c:when>
-					 </c:choose>
-			         </tbody> 
-				</table>
 			</div>				
 		</div>
 	</div>

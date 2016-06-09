@@ -51,6 +51,7 @@
 	<form:hidden path="" id="wfstate" value="${sewerageApplicationDetails.state.id}"/> 
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
 	<input type="hidden" id="sewerageTaxDue" value="${sewerageTaxDue}" name="sewerageTaxDue"/>  
+	<input type="hidden" id="estimationChargesExists" value="${estimationChargesExists}"/>  
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<form:hidden path="applicationType" id="applicationType" value="${sewerageApplicationDetails.applicationType.id}"/>
 	<form:hidden path="connection.status" id="connection.status" value="${sewerageApplicationDetails.connection.status}"/>
@@ -68,46 +69,60 @@
 	<c:choose>
 	<c:when test="${mode =='editOnReject'}">
 	 	<div class="panel-body custom-form ">
+		 	<div class="panel panel-primary" data-collapsed="0">
 				<jsp:include page="applicantdetails.jsp"></jsp:include>
+			</div>			
+			<div class="panel panel-primary" data-collapsed="0">
 				<jsp:include page="connectiondetails.jsp"></jsp:include>
-				<jsp:include page="documentdetails.jsp"></jsp:include> 
+			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<jsp:include page="documentdetails.jsp"></jsp:include>
+			</div> 
+			<div class="panel panel-primary" data-collapsed="0">
+				<jsp:include page="inspectionCharges.jsp"></jsp:include>
+			</div> 
 		 </div>
 	</c:when>
 	<c:otherwise>
-	
-	<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-heading">
-			<div class="panel-title">
-				<spring:message code="lbl.applicant.details" />
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message code="lbl.applicant.details" />
+				</div>
+			</div>
+			<div class="panel-body custom-form ">
+				<jsp:include page="commonApplicationDetails-view.jsp"></jsp:include>
 			</div>
 		</div>
-		<div class="panel-body custom-form ">
-				<jsp:include page="commonApplicationDetails-view.jsp"></jsp:include>
-		</div>
-	</div>
-	<c:if test="${sewerageApplicationDetails.status.code != 'CREATED'}">
-		<jsp:include page="connectionDetails-view.jsp"></jsp:include>
-	</c:if>
-	<c:if test="${(sewerageApplicationDetails.status.code =='CREATED' || sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE') && mode=='fieldInspection'}">
-		<div class="panel panel-primary" data-collapsed="0">
-			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
-		</div>
-		<%-- <jsp:include page="documentdetails-view.jsp"></jsp:include> --%> 
-		<jsp:include page="estimationdetails.jsp"></jsp:include>
-	</c:if>				
-	<c:if test="${sewerageApplicationDetails.status.code =='CREATED' && mode=='edit' }">
-		<div class="panel panel-primary" data-collapsed="0">
-			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
-		</div>
-		<%-- <jsp:include page="documentdetails-view.jsp"></jsp:include> --%> 
-			</c:if>
+		
+		<c:choose>
+			<c:when test="${mode =='edit'}">
+			 	<div class="panel-body custom-form ">
+				 	 <div class="panel panel-primary" data-collapsed="0"> 
+				 		<jsp:include page="connectiondetails.jsp"></jsp:include>
+				 	</div>
+						<jsp:include page="estimationdetails.jsp"></jsp:include> 
+						
+					 <div class="panel panel-primary" data-collapsed="0"> 
+						<div class="panel-heading">
+							<div class="panel-title">
+								<spring:message code="lbl.fees.details" />
+							</div>
+						</div>
+						<div class="panel-body">
+							<jsp:include page="inspectionCharges.jsp"></jsp:include>
 	
-	<c:if test="${sewerageApplicationDetails.status.code =='CREATED' && mode=='' && sewerageApplicationDetails.state.value =='Rejected'}">
-		<div class="panel panel-primary" data-collapsed="0">
-			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
-		</div>
-		<%-- <jsp:include page="documentdetails-view.jsp"></jsp:include> --%> 
-	</c:if>			
+						</div>
+					 </div>
+				 </div>
+			</c:when>
+			<c:otherwise>
+				<jsp:include page="connectionDetails-view.jsp"></jsp:include> 	
+			</c:otherwise>
+		</c:choose>
+		
+		<%-- <jsp:include page="documentdetails-view.jsp"></jsp:include>  --%>
+		
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">

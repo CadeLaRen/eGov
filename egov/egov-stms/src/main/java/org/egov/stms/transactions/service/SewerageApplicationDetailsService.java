@@ -566,7 +566,8 @@ public class SewerageApplicationDetailsService {
             final SewerageApplicationDetails sewerageApplicationDetails, final Long approvalPosition,
             final String approvalComent, final String additionalRule, final String workFlowAction, final String mode,
             final ReportOutput reportOutput) throws ValidationException {
-        applicationStatusChange(sewerageApplicationDetails, workFlowAction, mode);
+        
+            applicationStatusChange(sewerageApplicationDetails, workFlowAction, mode);
 
         sewerageDemandService.updateDemand(sewerageApplicationDetails.getConnectionFees(), sewerageApplicationDetails
                 .getConnection().getDemand());
@@ -587,16 +588,27 @@ public class SewerageApplicationDetailsService {
     }
 
     //TODO : commented out code as statuses are changed. Need to correct
+    
     public void applicationStatusChange(final SewerageApplicationDetails sewerageApplicationDetails,
             final String workFlowAction, final String mode) {
+        
         if (null != sewerageApplicationDetails && null != sewerageApplicationDetails.getStatus()
                 && null != sewerageApplicationDetails.getStatus().getCode())
-            if (sewerageApplicationDetails.getStatus().getCode()
+            if (SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
+                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                        SewerageTaxConstants.APPLICATION_STATUS_REJECTED, SewerageTaxConstants.MODULETYPE));
+            } else if (SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)){
+                sewerageApplicationDetails.getConnection().setStatus(SewerageConnectionStatus.INACTIVE);
+                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                        SewerageTaxConstants.APPLICATION_STATUS_CANCELLED, SewerageTaxConstants.MODULETYPE));
+            }
+            else if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(SewerageTaxConstants.APPLICATION_STATUS_CREATED)
                     || sewerageApplicationDetails.getStatus().getCode()
-                            .equals(SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID))
+                            .equals(SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID)){
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED, SewerageTaxConstants.MODULETYPE));
+            }
             else if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE))
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
@@ -605,8 +617,8 @@ public class SewerageApplicationDetailsService {
                     .equals(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED))
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED, SewerageTaxConstants.MODULETYPE));
-            /*else if (sewerageApplicationDetails.getStatus().getCode()
-                    .equals(SewerageTaxConstants.APPLICATION_STATUS_VERIFIED))
+            else if (sewerageApplicationDetails.getStatus().getCode()
+                    .equals(SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED))
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN, SewerageTaxConstants.MODULETYPE));
             else if (sewerageApplicationDetails.getStatus().getCode()
@@ -616,30 +628,29 @@ public class SewerageApplicationDetailsService {
             else if (sewerageApplicationDetails.getStatus().getCode()
                     .equals(SewerageTaxConstants.APPLICATION_STATUS_FEEPAID))
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                        SewerageTaxConstants.APPLICATION_STATUS_CHECKED, SewerageTaxConstants.MODULETYPE));
+                        SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED, SewerageTaxConstants.MODULETYPE));
             else if (sewerageApplicationDetails.getStatus().getCode()
-                    .equals(SewerageTaxConstants.APPLICATION_STATUS_CHECKED)
-                    && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.APPROVEWORKFLOWACTION)) {
-                if (sewerageApplicationDetails.getConnection().getDhscNumber() == null)
-                    sewerageApplicationDetails.getConnection().setDhscNumber(
-                            sewerageTaxNumberGenerator.generateDhscNumber());
-                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                        SewerageTaxConstants.APPLICATION_STATUS_APPROVED, SewerageTaxConstants.MODULETYPE));
-            } else if (sewerageApplicationDetails.getStatus().getCode()
-                    .equals(SewerageTaxConstants.APPLICATION_STATUS_APPROVED)) {
+                    .equals(SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED))
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_WOGENERATED, SewerageTaxConstants.MODULETYPE));
-                if (sewerageApplicationDetails.getWorkOrderNumber() == null) {
-                    sewerageApplicationDetails.setWorkOrderDate(new Date());
-                    sewerageApplicationDetails.setWorkOrderNumber(sewerageTaxNumberGenerator.generateWorkOrderNumber());
-                }
-            } else if (SewerageTaxConstants.APPLICATION_STATUS_WOGENERATED.equalsIgnoreCase(sewerageApplicationDetails
-                    .getStatus().getCode()))
+            else if (sewerageApplicationDetails.getStatus().getCode()
+                    .equals(SewerageTaxConstants.APPLICATION_STATUS_WOGENERATED))
                 sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                         SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED, SewerageTaxConstants.MODULETYPE));
-            else if (workFlowAction.equals("Reject"))
-                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                        SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));*/
+            else if (sewerageApplicationDetails.getStatus().getCode()
+                    .equals(SewerageTaxConstants.APPLICATION_STATUS_REJECTED)){ 
+                if(sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
+                    if(sewerageApplicationDetails.getConnection().getDemand().getAmtCollected().compareTo(BigDecimal.ZERO) == 0)
+                        sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                                SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE, SewerageTaxConstants.MODULETYPE));
+                    else
+                        sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                            SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID, SewerageTaxConstants.MODULETYPE));
+                } else{
+                    sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                            SewerageTaxConstants.APPLICATION_STATUS_CREATED, SewerageTaxConstants.MODULETYPE));
+                }
+            }
     }
 
     public List<Hashtable<String, Object>> getHistory(final SewerageApplicationDetails sewerageApplicationDetails) {

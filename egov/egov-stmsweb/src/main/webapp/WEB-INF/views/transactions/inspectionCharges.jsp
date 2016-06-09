@@ -52,9 +52,29 @@
 					      </tr>
 				    </thead>
 				<tbody>
+		<c:if test="${mode == 'edit'}"> 
+			<c:forEach var="inspection" items="${sewerageApplicationDetails.connectionFees}" varStatus="counter">
+				<c:if test="${sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code == 'INSPECTIONCHARGE' }">
+				<tr>
+					<td  class="text-center"><c:out value="${counter.index+1}" /></td>
+					<td id="description"><c:out value="${inspection.feesDetail.description}" /></td>
+					<td class="text-right"><c:out value="${inspection.amount}" /></td>
+				</tr>
+				</c:if>
+			</c:forEach>
+		</c:if>
+		<c:choose>
+			<c:when test="${estimationChargesExists =='no' || estimationChargesExists == null}">
 					<c:forEach items="${inspectionFeeMasterList}" var="fm" varStatus="counter"> 
-				       	<tr class="">  
-									<td class="text-center"><span id="slNo1">${counter.index+1}</span></td>
+				       	<tr class=""> 
+				       			<c:choose>
+				       				<c:when test="${mode == 'edit'}">
+										<td class="text-center"><span id="slNo1">${sewerageApplicationDetails.connectionFees.size()+counter.index+1}</span></td>
+									</c:when>
+									<c:otherwise>
+										<td class="text-center"><span id="slNo1">${counter.index+1}</span></td>
+									</c:otherwise>
+								</c:choose>	
 									<td >
 									<c:out value="${fm.description}"/><c:if test="${fm.isMandatory == 'true'}"><span class="mandatory"></span>  </c:if> </td>   
 									<td class="text-right">  
@@ -79,6 +99,38 @@
 							    </tr>  
 						
 					</c:forEach>
+		</c:when>
+		<c:otherwise>
+			<c:forEach items="${sewerageApplicationDetails.connectionFees}" var="fm" varStatus="counter">  
+				<c:if test="${sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code != 'INSPECTIONCHARGE' }">
+				       	<tr class=""> 
+										<td class="text-center"><span id="slNo1">${counter.index+1}</span></td>
+									<td >
+									<c:out value="${fm.feesDetail.description}"/><c:if test="${fm.feesDetail.isMandatory == 'true'}"><span class="mandatory"></span>  </c:if> </td>   
+									<td class="text-right">  
+											<%-- <form:hidden path="connectionFees[${counter.index}].feesDetail" value="${fm.feesDetail.id}"></form:hidden> --%>      
+									<c:choose>			
+									  <c:when test="${fm.feesDetail.isFixedRate == 'true'}">  	
+											<form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" readonly="true" /> 
+								      </c:when>  
+								  <c:otherwise>  
+								    <c:choose>
+								     	<c:when test="${fm.feesDetail.isMandatory == 'true'}">
+								     	     <form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" required="required" /> 
+								     	 </c:when>
+								     	<c:otherwise>   
+								     	    <form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" /> 
+								        </c:otherwise> 	
+								    
+								     </c:choose>	
+								      </c:otherwise> 	 
+								      </c:choose>	
+									</td> 
+							    </tr>  
+						</c:if>	
+					</c:forEach>
+		</c:otherwise>
+		</c:choose>
 				</tbody>
 				</table>
 		

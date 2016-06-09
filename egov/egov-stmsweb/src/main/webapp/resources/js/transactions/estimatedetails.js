@@ -160,6 +160,7 @@ $(document).ready(function()
         total.type = "text";
         total.setAttribute("name", "estimationDetails[" + elementIndex + "].amount");
         total.setAttribute("id", "estimationDetails"+elementIndex+"amount");
+        total.setAttribute("onblur", "calculateGrandTotal();");
         total.setAttribute("value", 0.00);
         cell6.appendChild(total);  
         
@@ -201,7 +202,7 @@ $(document).ready(function()
 	        	j++;
         	}
         }	
-        calculateTotalAmount();
+        calculateGrandTotal();
 	});	
 	
 });
@@ -224,6 +225,21 @@ function calculateTotalAmount() {
     }
     $('#grandTotal').val(grandTotal);
 }
+
+function calculateGrandTotal(){
+	var table = document.getElementById('estimateDetails');
+    var rowCount = table.rows.length;     
+    var i;
+	var grandTotal=0;
+    for(i=1;i<=rowCount-2;i++){  
+    	currentIndex = i-1; 
+    	var total = 0;
+    	total = $('#estimationDetails'+currentIndex+'amount').val();
+    	grandTotal = eval(grandTotal) + eval(total);
+    }
+	 $('#grandTotal').val(grandTotal);	
+}
+
 
 $("#addInspctRowId").click(function(){	
 	add_Inspection_Row();

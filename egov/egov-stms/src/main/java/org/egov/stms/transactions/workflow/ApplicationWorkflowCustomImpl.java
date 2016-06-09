@@ -39,6 +39,7 @@
  ******************************************************************************/
 package org.egov.stms.transactions.workflow;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.egov.eis.entity.Assignment;
@@ -248,7 +249,6 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
                          sewerageApplicationDetails.getStateType(), null, null, additionalRule, stateValue, SewerageTaxConstants.WF_STATE_REJECTED);
                 } 
-                
                 sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName()) 
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
@@ -256,11 +256,6 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withNatureOfTask(natureOfwork);
         } else if(SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL.equalsIgnoreCase(workFlowAction)){
             // Incase of reject / cancel from the creator, end the workflow
-            sewerageApplicationDetails.getConnection().setStatus(SewerageConnectionStatus.INACTIVE);
-
-            sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
-                    SewerageTaxConstants.APPLICATION_STATUS_CANCELLED, SewerageTaxConstants.MODULETYPE));
-
             sewerageApplicationDetails.transition(true).end().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
         } else {
@@ -314,11 +309,19 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 }   
                 wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                         null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
+                
+                if(sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
+                    if(sewerageApplicationDetails.getConnection().getDemand().getAmtCollected().compareTo(BigDecimal.ZERO) == 0)
+                        wfmatrix.setNextState(SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING);
+                    else
+                        wfmatrix.setNextState(SewerageTaxConstants.WF_STATE_INSPECTIONFEE_COLLECTED);
+                } 
+                
                 sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
-            }
+            }  
         }
         if (LOG.isDebugEnabled())
             LOG.debug(" WorkFlow Transition Completed  ...");

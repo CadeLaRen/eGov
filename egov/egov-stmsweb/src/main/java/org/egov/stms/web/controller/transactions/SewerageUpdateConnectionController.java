@@ -66,6 +66,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.stms.masters.entity.DocumentTypeMaster;
+import org.egov.stms.masters.entity.FeesDetailMaster;
 import org.egov.stms.masters.entity.enums.OwnerOfTheRoad;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.service.DocumentTypeMasterService;
@@ -78,6 +79,7 @@ import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.entity.SewerageFieldInspection;
 import org.egov.stms.transactions.entity.SewerageFieldInspectionDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
+import org.egov.stms.transactions.service.SewerageConnectionFeeService;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,8 +134,11 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     
     @Autowired
     private DocumentTypeMasterService documentTypeMasterService;
-
-
+    
+    @Autowired
+    private SewerageConnectionFeeService SewerageConnectionFeeService;
+    
+    
     @Autowired
     public SewerageUpdateConnectionController(
             final SewerageApplicationDetailsService sewerageApplicationDetailsService,
@@ -178,14 +183,29 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
 
         model.addAttribute("pipeSize", SewerageTaxConstants.PIPE_SCREW_SIZE); 
         model.addAttribute("roadOwner", OwnerOfTheRoad.values());
-        model.addAttribute("feesDetails",
-                feesDetailMasterService.findAllFeesDetailByFeesCode(SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE));
+        
         model.addAttribute("uomList", uOMService.findAllOrderByCategory());
-       // appendModeBasedOnApplicationCreator(model, request, sewerageApplicationDetails);
         
         Map<String, String> modelParams = sewerageApplicationDetailsService.showApprovalDetailsByApplcationCurState(sewerageApplicationDetails);
         model.addAttribute("mode", modelParams.get("mode"));
         model.addAttribute("showApprovalDtls", modelParams.get("showApprovalDtls"));
+        
+        
+        if(modelParams.get("mode").equalsIgnoreCase("editOnReject"))
+            model.addAttribute("inspectionFeeMasterList", feesDetailMasterService
+                .findAllActiveFeesDetailByFeesCode(SewerageTaxConstants.FEE_INSPECTIONCHARGE));
+        else if(modelParams.get("mode").equalsIgnoreCase("edit")){
+            FeesDetailMaster fdm = feesDetailMasterService.findByCodeAndIsActive(SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE, true);
+            List<SewerageConnectionFee> connectionFeeList = SewerageConnectionFeeService.findAllByApplicationDetailsAndFeesDetail(sewerageApplicationDetails, fdm);
+            if(connectionFeeList.isEmpty()){
+                model.addAttribute("estimationChargesExists", "no");
+                model.addAttribute("inspectionFeeMasterList", feesDetailMasterService
+                        .findAllActiveFeesDetailByFeesCode(SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE));
+            } else {
+                model.addAttribute("estimationChargesExists", "yes");
+            }
+        }
+        
         
         model.addAttribute("documentNamesList", documentTypeMasterList(sewerageApplicationDetails));
         
@@ -195,11 +215,12 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
         return "newconnection-edit";
     } 
     
+    
    public List<DocumentTypeMaster> documentTypeMasterList(final SewerageApplicationDetails sewerageApplicationDetails) {
         return documentTypeMasterService.getAllActiveDocumentTypeMasterByApplicationType(sewerageApplicationDetails
                 .getApplicationType());
     }  
-
+   
     private void appendModeBasedOnApplicationCreator(final Model model, final HttpServletRequest request,
             final SewerageApplicationDetails sewerageApplicationDetails) {
         final Boolean recordCreatedBYNonEmployee = sewerageTaxUtils.getCurrentUserRole(sewerageApplicationDetails
@@ -254,10 +275,11 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
 
         request.getSession().setAttribute(SewerageTaxConstants.WORKFLOW_ACTION, workFlowAction);
 
-        if (sewerageApplicationDetails.getStatus().getCode()
-                .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_CREATED)
-                && mode.equalsIgnoreCase("fieldInspection"))
-            if (workFlowAction.equalsIgnoreCase(SewerageTaxConstants.SUBMITWORKFLOWACTION)) {
+        if ((sewerageApplicationDetails.getStatus().getCode()
+                .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_CREATED) || sewerageApplicationDetails.getStatus().getCode()
+                        .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID))
+                && mode.equalsIgnoreCase("edit"))
+            if (workFlowAction.equalsIgnoreCase(SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD)) {
                 populateEstimationDetails(sewerageApplicationDetails);
                 populateInspectionDetails(sewerageApplicationDetails, request, files);
                 populateFeesDetails(sewerageApplicationDetails);
@@ -360,15 +382,15 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     private void populateFeesDetails(final SewerageApplicationDetails sewerageApplicationDetails) {
         if (!sewerageApplicationDetails.getConnectionFees().isEmpty()){
             for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees()) {
-                scf.setApplicationDetails(sewerageApplicationDetails);
+                    scf.setApplicationDetails(sewerageApplicationDetails);
             }
         }
         // Add donation charges. Donation charge is from the master based on propertytype and closets
-        final SewerageConnectionFee connectionFee = new SewerageConnectionFee(); 
+        /*final SewerageConnectionFee connectionFee = new SewerageConnectionFee(); 
         connectionFee.setFeesDetail(feesDetailMasterService.findByCodeAndIsActive(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE, true));
         connectionFee.setAmount(sewerageChargeCalculationService.calculateDonationCharges(sewerageApplicationDetails).doubleValue());
         connectionFee.setApplicationDetails(sewerageApplicationDetails);
-        sewerageApplicationDetails.getConnectionFees().add(connectionFee);
+        sewerageApplicationDetails.getConnectionFees().add(connectionFee);*/
     } 
 
     private void populateInspectionDetails(final SewerageApplicationDetails sewerageApplicationDetails,
