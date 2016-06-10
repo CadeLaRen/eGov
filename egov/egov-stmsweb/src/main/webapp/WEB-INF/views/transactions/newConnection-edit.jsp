@@ -56,7 +56,7 @@
 	<form:hidden path="applicationType" id="applicationType" value="${sewerageApplicationDetails.applicationType.id}"/>
 	<form:hidden path="connection.status" id="connection.status" value="${sewerageApplicationDetails.connection.status}"/>
 	
-	<c:if test="${sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE'}">
+	<c:if test="${sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE'}"> 
 	 <div  data-collapsed="0">
 		<div class="panel-heading">
 			<div  style="color: red; font-size: 16px;" align="center">
@@ -111,13 +111,13 @@
 						</div>
 						<div class="panel-body">
 							<jsp:include page="inspectionCharges.jsp"></jsp:include>
-	
 						</div>
 					 </div>
 				 </div>
 			</c:when>
 			<c:otherwise>
-				<jsp:include page="connectionDetails-view.jsp"></jsp:include> 	
+				<jsp:include page="connectionDetails-view.jsp"></jsp:include> 
+				<jsp:include page="seweragechargesdetails.jsp"/>
 			</c:otherwise>
 		</c:choose>
 		

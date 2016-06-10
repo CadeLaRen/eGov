@@ -41,28 +41,32 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-	<div class="row" id="page-content">
-				<div class="panel-group">
-					<div class="panel panel-primary">
-								<table class="table table-striped table-bordered" id="sewerageChargesDetail" style="width:50%;margin:0 auto;">
-									<thead>
-									       <tr>  
-										        <th  class="text-center"><spring:message code="lbl.slno" /></th>
-												<th style="width:50%;"><spring:message code="lbl.feestype" /></th>
-												<th class="text-right"><spring:message code="lbl.amount" /></th>  
-									       </tr>
-				   					  </thead>
-									<tbody id="tblBody">
-										<c:forEach var="inspection" items="${sewerageApplicationDetails.connectionFees}" varStatus="counter">
-											<tr>
-												<td  class="text-center"><c:out value="${counter.index+1}" /></td>
-												<td id="description"><c:out value="${inspection.feesDetail.description}" /></td>
-												<td class="text-right"><c:out value="${inspection.amount}" /></td>
-											</tr>
-										</c:forEach>
-									</tbody>
-								</table>
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<spring:message code="title.seweragecharges"/>
 					</div>
 				</div>
+				<div class="panel-body">
+					<table class="table table-striped table-bordered" id="sewerageChargesDetail" style="width:50%;margin:0 auto;">
+						<thead>
+						       <tr>  
+							        <th  class="text-center"><spring:message code="lbl.slno" /></th>
+									<th style="width:50%;"><spring:message code="lbl.feestype" /></th>
+									<th class="text-right"><spring:message code="lbl.amount" /></th>  
+						       </tr>
+		  					  </thead>
+						<tbody id="tblBody">
+							<c:forEach var="inspection" items="${sewerageApplicationDetails.connectionFees}" varStatus="counter">
+								<tr>
+									<td  class="text-center"><c:out value="${counter.index+1}" /></td>
+									<td id="description"><c:out value="${inspection.feesDetail.description}" /></td>
+									<td class="text-right"><c:out value="${inspection.amount}" /></td>
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
 			</div>
+					
 

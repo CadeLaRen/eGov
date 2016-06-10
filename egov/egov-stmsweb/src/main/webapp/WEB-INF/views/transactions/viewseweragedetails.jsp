@@ -65,16 +65,7 @@
 
 						</div>
 					</div>
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="title.seweragecharges"/>
-				</div>
-			</div>
-			<div class="panel-body">
-				<jsp:include page="seweragechargesdetails.jsp"/>
-			</div>
-		</div>
+		<jsp:include page="seweragechargesdetails.jsp"/>
 		
 		</form:form>
 	</div>					

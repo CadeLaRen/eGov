@@ -175,6 +175,7 @@ public class SewerageTaxConstants {
     public static final String FEES_ESTIMATIONCHARGES_CODE = "ESTIMATIONCHARGE";
     public static final String FEES_DONATIONCHARGE_CODE = "DONATIONCHARGE";
     public static final String FEE_INSPECTIONCHARGE = "INSPECTIONCHARGE";
+    public static final String FEES_SEWERAGETAX_CODE = "SEWERAGETAX";
     // Fees Master Code - end
     
     

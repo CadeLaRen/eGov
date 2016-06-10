@@ -289,6 +289,12 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                 sewerageApplicationDetails = sewerageApplicationDetailsService.findBy(sewerageApplicationDetails
                         .getId());
             }
+        
+        if(sewerageApplicationDetails.getStatus().getCode()!=null && 
+                sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED)){
+            populateDonationSewerageTax(sewerageApplicationDetails);
+        }
+        
         Long approvalPosition = 0l;
         String approvalComment = "";
 
@@ -363,6 +369,22 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
             return "redirect:/transactions/application-success?pathVars=" + pathVars;
         } else
             return loadViewData(model, request, sewerageApplicationDetails);
+    }
+    
+
+    private void populateDonationSewerageTax(final SewerageApplicationDetails sewerageApplicationDetails){
+        // Add donation charges and sewerage tax from the master based on propertytype and closets
+        SewerageConnectionFee connectionFee = new SewerageConnectionFee(); 
+        connectionFee.setFeesDetail(feesDetailMasterService.findByCodeAndIsActive(SewerageTaxConstants.FEES_DONATIONCHARGE_CODE, true));
+        connectionFee.setAmount(sewerageChargeCalculationService.calculateDonationCharges(sewerageApplicationDetails).doubleValue());
+        connectionFee.setApplicationDetails(sewerageApplicationDetails);
+        sewerageApplicationDetails.getConnectionFees().add(connectionFee);
+        
+        connectionFee = new SewerageConnectionFee(); 
+        connectionFee.setFeesDetail(feesDetailMasterService.findByCodeAndIsActive(SewerageTaxConstants.FEES_SEWERAGETAX_CODE, true));
+        connectionFee.setAmount(sewerageChargeCalculationService.calculateSewerageCharges(sewerageApplicationDetails).doubleValue());
+        connectionFee.setApplicationDetails(sewerageApplicationDetails);
+        sewerageApplicationDetails.getConnectionFees().add(connectionFee);
     }
 
     private void populateEstimationDetails(final SewerageApplicationDetails sewerageApplicationDetails) {
