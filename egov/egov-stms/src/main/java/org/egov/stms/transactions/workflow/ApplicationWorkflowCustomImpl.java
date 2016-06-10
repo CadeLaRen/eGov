@@ -298,7 +298,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
             } else {
-                 String pendingActions=null;
+                String pendingActions=null;
                 
                 if (sewerageApplicationDetails.getCurrentState().getValue().equalsIgnoreCase(SewerageTaxConstants.WF_STATE_REJECTED)){
                     if(sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
@@ -306,21 +306,31 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     } else {
                         pendingActions = SewerageTaxConstants.WF_STATE_REJECTED ; 
                     } 
-                }   
-                wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
+                    wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
+                            null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
+                    
+                    String nextState = null;
+                    if(sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
+                        if(sewerageApplicationDetails.getConnection().getDemand().getAmtCollected().compareTo(BigDecimal.ZERO) == 0)
+                            nextState=SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING;
+                        else
+                            nextState=SewerageTaxConstants.WF_STATE_INSPECTIONFEE_COLLECTED;
+                    } 
+                    
+                    sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                    .withComments(approvalComent).withStateValue(nextState)
+                    .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
+                    .withNatureOfTask(natureOfwork);
+                    
+                }  else{ 
+                        wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                         null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
                 
-                if(sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
-                    if(sewerageApplicationDetails.getConnection().getDemand().getAmtCollected().compareTo(BigDecimal.ZERO) == 0)
-                        wfmatrix.setNextState(SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING);
-                    else
-                        wfmatrix.setNextState(SewerageTaxConstants.WF_STATE_INSPECTIONFEE_COLLECTED);
-                } 
-                
-                sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
+                        sewerageApplicationDetails.transition(true).withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
+                }
             }  
         }
         if (LOG.isDebugEnabled())
