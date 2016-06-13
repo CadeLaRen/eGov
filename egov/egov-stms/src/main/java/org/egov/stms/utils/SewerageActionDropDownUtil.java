@@ -61,8 +61,15 @@ public class SewerageActionDropDownUtil {
 
     static {
         // Status wise define different actions.
+        STATUSACTIONMAP.put(DEFAULT, Arrays.asList(SewerageTaxConstants.VIEW));
+        
+        
         STATUSACTIONMAP.put("CREATED", Arrays.asList(SewerageTaxConstants.VIEW));
         STATUSACTIONMAP.put("COLLECTINSPECTIONFEE",Arrays.asList(SewerageTaxConstants.VIEW, SewerageTaxConstants.COLLECTDONATIONCHARHGES));
+        STATUSACTIONMAP.put("ESTIMATION NOTICE GENERATED",Arrays.asList(SewerageTaxConstants.VIEW, SewerageTaxConstants.COLLECTDONATIONCHARHGES)); 
+        STATUSACTIONMAP.put("ESTIMATION AMOUNT PAID",Arrays.asList(SewerageTaxConstants.VIEW)); 
+        STATUSACTIONMAP.put("FINAL APPROVED",Arrays.asList(SewerageTaxConstants.VIEW)); 
+
 
         //Rolewise define action mappings
         SEWERAGEROLEACTIONMAP.put(SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR, Arrays.asList(SewerageTaxConstants.VIEW));
@@ -97,17 +104,27 @@ public class SewerageActionDropDownUtil {
                 LOGGER.info(" ************ registrationStatus  " + status);
                 statusActionList = STATUSACTIONMAP.get(status.toUpperCase());
                 LOGGER.info(" ....... statusActionList  " + statusActionList);
-                for (String action : actions) {
-                    if (statusActionList != null && statusActionList.contains(action)) {
-                        result.putAll(actionUrlMap.get(action));
-                    }
-                }
+                selectUserMappingActions(actions, result, statusActionList);
 
+                if(result!=null && result.size()==0) //GET default actions 
+                {
+                    statusActionList = STATUSACTIONMAP.get(DEFAULT);
+                    selectUserMappingActions(actions, result, statusActionList);
+                }
                 return result;
             } else
                 return Collections.EMPTY_MAP;
         } else
             return Collections.EMPTY_MAP;
+    }
+
+    private static void selectUserMappingActions(List<String> actions, Map<String, String> result,
+            List<String> statusActionList) {
+        for (String action : actions) {
+            if (statusActionList != null && statusActionList.contains(action)) {
+                result.putAll(actionUrlMap.get(action));
+            }
+        }
     }
 
     public static Map<String, String> getActionsByRoles(List<String> roleName, String collectionStatus) {

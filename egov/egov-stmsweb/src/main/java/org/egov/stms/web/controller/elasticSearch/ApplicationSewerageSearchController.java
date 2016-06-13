@@ -139,6 +139,8 @@ public class ApplicationSewerageSearchController {
         final BigDecimal sewerageTaxDue = sewerageConnectionService.getTotalAmount(sewerageApplicationDetails
                 .getConnection());
         modelMap.addAttribute("sewerageTaxDue", sewerageTaxDue);
+        model.addAttribute("applicationHistory",
+                sewerageApplicationDetailsService.getHistory(sewerageApplicationDetails));
         return new ModelAndView("viewseweragedetails", "sewerageApplicationDetails", sewerageApplicationDetails);
     }
 

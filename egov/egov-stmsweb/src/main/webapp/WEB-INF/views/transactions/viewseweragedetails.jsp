@@ -67,6 +67,14 @@
 					</div>
 		<jsp:include page="seweragechargesdetails.jsp"/>
 		
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">
+					<spring:message  code="lbl.apphistory"/>
+				</div>
+			</div>
+			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
+		</div>	
 		</form:form>
 	</div>					
 </div>					

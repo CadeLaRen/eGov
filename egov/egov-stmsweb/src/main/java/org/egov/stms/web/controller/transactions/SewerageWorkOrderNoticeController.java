@@ -133,9 +133,12 @@ public class SewerageWorkOrderNoticeController {
             reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
             reportParams.put("purpose", null);
-            reportParams.put("workorderdate", formatter.format(sewerageApplicationDetails.getWorkOrderDate()));
+            
+            if(sewerageApplicationDetails.getWorkOrderDate()!=null)
+                reportParams.put("workorderdate", formatter.format(sewerageApplicationDetails.getWorkOrderDate()));
             reportParams.put("workorderno", sewerageApplicationDetails.getWorkOrderNumber());
             reportParams.put("workFlowAction", workFlowAction);
+            if(sewerageApplicationDetails.getConnection().getDhscNumber()!=null)
             reportParams.put("consumerNumber", sewerageApplicationDetails.getConnection().getDhscNumber());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", assessmentDetails.getPropertyAddress());

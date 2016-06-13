@@ -204,9 +204,9 @@ public class SewerageBillable extends AbstractBillable implements Billable {
 
     @Override
     public String getServiceCode() {
-        if (getSewerageApplicationDetails().getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
+      /*  if (getSewerageApplicationDetails().getStatus().getCode().equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
             return SewerageTaxConstants.EST_STRING_SERVICE_CODE;
-        else
+        else*/
         return SewerageTaxConstants.STRING_SERVICE_CODE;
     }
 

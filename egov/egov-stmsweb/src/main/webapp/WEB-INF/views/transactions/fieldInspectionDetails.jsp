@@ -63,8 +63,9 @@
 				         </thead>
 					<tbody>
 						<c:if test="${sewerageApplicationDetails.fieldInspections != null}">
-								<c:forEach items="${sewerageApplicationDetails.fieldInspections}" var="fid"
-									varStatus="counter">
+								<c:forEach items="${sewerageApplicationDetails.fieldInspections[0].fieldInspectionDetails}" var="fid"
+								
+									varStatus="counter"> 
 							      <tr class="">
 									<%-- <td class="text-center"><span id="slNo1">${counter.index+1}</span></td> --%>
 									<td class="text-center"><c:out value="${fid.noOfPipes}" /></td>

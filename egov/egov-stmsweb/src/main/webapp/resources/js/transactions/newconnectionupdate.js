@@ -160,6 +160,7 @@ $(document).ready(function()
 		
 		$(".btn-primary").click(function() { 
 			var action = document.getElementById("workFlowAction").value;
+			
 			 var status=$('#statuscode').val();
 			 if((action == 'Generate Estimation Notice' && status=='VERIFIED') || (action == 'Generate WorkOrder' && status=='APPROVED')) {
 				 document.forms[0].submit();	
@@ -169,7 +170,6 @@ $(document).ready(function()
 				 document.forms[0].submit();	
 			 }
 			  if(status=='CLOSERINITIATED' && action == 'Reject' ) {
-				 
 				 $('#Reject').attr('formnovalidate','true');	
 				 var approvalComent=$('#approvalComent').val();
 				  if(approvalComent == "") {
@@ -197,6 +197,19 @@ $(document).ready(function()
 						  document.forms[0].submit();
 					  }
 				  }
+			  if(action == 'Reject' && status=='INITIALAPPROVED' ) { 
+					 $('#Reject').attr('formnovalidate','true');	
+					 var approvalComent=$('#approvalComent').val();
+					  if(approvalComent == "") {
+						  bootbox.alert("Please enter rejection comments!");
+							$('#approvalComent').focus();
+							return false;
+					  }
+					  else {
+						  validateWorkFlowApprover(action);
+						  document.forms[0].submit();
+					  }
+				  } 
 			 if(status=='CREATED' && action == 'Submit' && mode == 'fieldInspection') {
 				 $('#approvalComent').removeAttr('required');	
 	    		 if($('form').valid())	{
@@ -261,6 +274,7 @@ $(document).ready(function()
 					}
 			    }
 		    	else {
+		    		 
 		    		validateWorkFlowApprover(action);
 		    		if($('form').valid())
 		    			document.forms[0].submit();	
